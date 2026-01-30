@@ -14,7 +14,8 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', MediaType::cases());
+            // $table->enum('type', MediaTypeArray);
+            $table->string('type');
             $table->string('url');
             $table->integer('size');
             $table->foreignId('user_id')->constrained()->onDelete('set null');

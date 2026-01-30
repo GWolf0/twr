@@ -2,11 +2,33 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    protected $fillable = [ 
-        "user_id", "vehicle_id", "start_date", "end_date", "status", "payment_status", "payment_method", "total_amount"
+    use HasFactory;
+
+    protected $fillable = [
+        "user_id",
+        "vehicle_id",
+        "start_date",
+        "end_date",
+        "status",
+        "payment_status",
+        "payment_method",
+        "total_amount"
     ];
+
+    protected $with = ['user', 'vehicle'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
 }

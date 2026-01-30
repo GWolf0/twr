@@ -9,4 +9,11 @@ class Vehicle extends Model
     protected $fillable = [
         "name", "type", "media", "price_per_hour", "availability"
     ];
+
+    protected $with = ['bookings'];
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

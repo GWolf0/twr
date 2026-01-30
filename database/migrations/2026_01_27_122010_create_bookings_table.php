@@ -20,9 +20,9 @@ return new class extends Migration
             $table->foreignId('vehicle_id')->constrained()->onDelete("set null");
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->enum('status', BookingStatus::cases());
-            $table->enum('payment_status', BookingPaymentStatus::cases());
-            $table->enum('payment_method', BookingPaymentMethod::cases());
+            $table->enum('status', BookingStatusArray);
+            $table->enum('payment_status', BookingPaymentStatusArray);
+            $table->enum('payment_method', BookingPaymentMethodArray);
             $table->decimal('total_amout', 8, 2);
             $table->timestamps();
         });

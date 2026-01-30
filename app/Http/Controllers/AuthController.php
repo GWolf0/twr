@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\IAuthInterface;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+
+use function App\Helpers\app_response;
 
 // auth requests
 class AuthController extends Controller
@@ -15,43 +16,27 @@ class AuthController extends Controller
     // /register, METHOD=GET
     public function registerPage(Request $request): JsonResponse | RedirectResponse
     {
-        if ($request->expectsJson()) {
-            return response()->json();
-        }
-
-        return response()->redirectToRoute("auth.register_page");
+        return app_response($request, [], 200, "auth.register_page");
     }
     // /auth/register, METHOD=POST
     public function register(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
         $m_response = $authService->register($request);
 
-        if ($request->expectsJson()) {
-            return response()->json($m_response->data, $m_response->status);
-        }
-
-        return redirect()->back()->with("data", $m_response->data);
+        return app_response($request, $m_response->data, $m_response->status);
     }
 
     // /login, METHOD=GET
     public function loginPage(Request $request): JsonResponse | RedirectResponse
     {
-        if ($request->expectsJson()) {
-            return response()->json();
-        }
-
-        return response()->redirectToRoute("auth.login_page");
+        return app_response($request, [], 200, "auth.login_page");
     }
     // /auth/login, METHOD=POST
     public function login(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
         $m_response = $authService->login($request);
 
-        if ($request->expectsJson()) {
-            return response()->json($m_response->data, $m_response->status);
-        }
-
-        return redirect()->back()->with("data", $m_response->data);
+        return app_response($request, $m_response->data, $m_response->status);
     }
 
     // /auth/logout, METHOD=POST
@@ -59,44 +44,27 @@ class AuthController extends Controller
     {
         $m_response = $authService->logout($request);
 
-        if ($request->expectsJson()) {
-            return response()->json($m_response->data, $m_response->status);
-        }
-
-        return redirect()->back()->with("data", $m_response->data);
+        return app_response($request, $m_response->data, $m_response->status);
     }
 
     // /reset-password, METHOD=GET
     public function resetPasswordPage(Request $request): JsonResponse | RedirectResponse
     {
-        if ($request->expectsJson()) {
-            return response()->json();
-        }
+        return app_response($request, [], 200, "auth.reset_password_page");
+    }
+    // /auth/reset-password, METHOD=POST
+    public function resetPassword(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    {
+        $m_response = $authService->resetPassword($request);
 
-        return response()->redirectToRoute("auth.reset_password_page");
+        return app_response($request, $m_response->data, $m_response->status);
     }
     // /auth/send-password-reset-notification, METHOD=POST
     public function sendPasswordResetNotification(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
         $m_response = $authService->sendPasswordResetNotification($request);
 
-        if ($request->expectsJson()) {
-            return response()->json($m_response->data, $m_response->status);
-        }
-
-        return redirect()->back()->with("data", $m_response->data);
-    }
-
-    // /auth/reset-password, METHOD=POST
-    public function resetPassword(AuthService $authService, Request $request): JsonResponse | RedirectResponse
-    {
-        $m_response = $authService->resetPassword($request);
-
-        if ($request->expectsJson()) {
-            return response()->json($m_response->data, $m_response->status);
-        }
-
-        return redirect()->back()->with("data", $m_response->data);
+        return app_response($request, $m_response->data, $m_response->status);
     }
 
     // /auth/send-email-confirmation-notification, METHOD=POST
@@ -104,11 +72,7 @@ class AuthController extends Controller
     {
         $m_response = $authService->sendEmailConfirmationNotification($request);
 
-        if ($request->expectsJson()) {
-            return response()->json($m_response->data, $m_response->status);
-        }
-
-        return redirect()->back()->with("data", $m_response->data);
+        return app_response($request, $m_response->data, $m_response->status);
     }
 
     // /auth/confirm-email, METHOD=POST
@@ -116,10 +80,6 @@ class AuthController extends Controller
     {
         $m_response = $authService->confirmEmail($request);
 
-        if ($request->expectsJson()) {
-            return response()->json($m_response->data, $m_response->status);
-        }
-
-        return redirect()->back()->with("data", $m_response->data);
+        return app_response($request, $m_response->data, $m_response->status);
     }
 }

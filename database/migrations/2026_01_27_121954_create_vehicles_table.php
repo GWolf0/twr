@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('type');
             $table->text('media')->nullable(); // csv media urls
             $table->decimal('price_per_hour', 8, 2);
-            $table->enum('availability', VehicleAvailability::cases());
+            $table->enum('availability', VehicleAvailabilityArray);
             $table->timestamps();
         });
     }
