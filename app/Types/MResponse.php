@@ -11,4 +11,13 @@ class MResponse
     {
         return new MResponse($data, $status);
     }
+
+    public function success(): bool
+    {
+        return $this->status < 400;
+    }
+    public function failed(): bool
+    {
+        return $this->status >= 400;
+    }
 }

@@ -11,7 +11,9 @@ use App\Misc\BookingStatus;
 use App\Misc\BookingPaymentStatus;
 use App\Misc\BookingPaymentMethod;
 use App\Misc\VehicleAvailability;
+use App\Types\MResponse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class BookingService implements IBookingInterface
 {
@@ -19,22 +21,41 @@ class BookingService implements IBookingInterface
      * Checks whether a vehicle can be booked for a given period.
      */
     public function canBook(
-        Vehicle $vehicle,
-        ?User $user,
-        Carbon $from,
-        Carbon $to,
-        ?array $options = null
-    ): DOE {
-        if (!$user || !$user->is_customer()) {
-            return DOE::create(false, 'Unauthorized');
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        $validator = Validator::make($data, [
+            "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
+            "vehicle" => ["required_without:vehicle_id"],
+            "user_id" => ["required_without:user", "exists:users,id"],
+            "user" => ["required_without:user_id"],
+            "start_date" => ["required", "date"],
+            "end_date" => ["required", "date", "after:start_date"],
+        ]);
+
+        if ($validator->failed()) {
+            return MResponse::create($validator->errors(), 422);
         }
 
+        $validated = $validator->validate();
+        $vehicle = $validated["vehicle"] ?? Vehicle::find($validated["vehicle_id"]);
+        $user = $validated["user"] ?? User::find($validated["user_id"]);
+        $from = Carbon::parse($validated["start_date"]);
+        $to = Carbon::parse($validated["end_date"]);
+
+        if (!$auth_user || (!$auth_user->is_admin() && $auth_user->id != $user->id)) {
+            return MResponse::create([
+                "message" => 'Unauthorized'
+            ], 403);
+        }
+
+        $error_msg = "";
         if ($vehicle->status !== VehicleAvailability::available->name) {
-            return DOE::create(false, 'Vehicle not available');
+            $error_msg =  'Vehicle not available';
         }
 
         if ($from->gte($to)) {
-            return DOE::create(false, 'Invalid booking period');
+            $error_msg = 'Invalid booking period';
         }
 
         $overlapExists = Booking::query()
@@ -50,156 +71,255 @@ class BookingService implements IBookingInterface
                         $q->where('start_date', '<=', $from)
                             ->where('end_date', '>=', $to);
                     });
-            })
-            ->exists();
+            })->exists();
 
         if ($overlapExists) {
-            return DOE::create(false, 'Vehicle already booked for this period');
+            $error_msg = 'Vehicle already booked for this period';
         }
 
-        return DOE::create(true);
+        return MResponse::create([
+            "message" => $error_msg,
+            "success" => empty($error_msg)
+        ], empty($error_msg) ? 200 : 422);
     }
 
     /**
      * Calculates the total booking amount for the given period.
      */
     public function calculateAmount(
-        Vehicle $vehicle,
-        Carbon $from,
-        Carbon $to,
-        ?array $options = null
-    ): float {
-        $hours = max(1, ceil($from->floatDiffInHours($to)));
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        $validator = Validator::make($data, [
+            "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
+            "vehicle" => ["required_without:vehicle_id"],
+            "start_date" => ["required", "date"],
+            "end_date" => ["required", "date", "after:start_date"],
+        ]);
 
-        return $vehicle->price_per_hour * $hours;
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $validated = $validator->validate();
+
+        $vehicle = $validated["vehicle"] ?? Vehicle::find($validated["vehicle_id"]);
+        $from = Carbon::parse($validated["start_date"]);
+        $to = Carbon::parse($validated["end_date"]);
+
+        $hours = max(1, ceil($from->floatDiffInHours($to)));
+        $amount = $vehicle->price_per_hour * $hours;
+
+        return MResponse::create([
+            "amount" => $amount,
+            "hours" => $hours,
+        ]);
     }
 
     /**
      * Creates and persists a new booking.
      */
     public function createBooking(
-        Vehicle $vehicle,
-        User $user,
-        Carbon $from,
-        Carbon $to,
-        ?array $options = null
-    ): DOE {
-        $canBook = $this->canBook($vehicle, $user, $from, $to, $options);
-
-        if (!$canBook->is_success() || $canBook->data !== true) {
-            return DOE::create(null, $canBook->error ?? 'Booking not allowed');
-        }
-
-        $amount = $this->calculateAmount($vehicle, $from, $to, $options);
-
-        $booking = Booking::create([
-            'vehicle_id'     => $vehicle->id,
-            'user_id'        => $user->id,
-            'start_date'     => $from,
-            'end_date'       => $to,
-            'status'         => BookingStatus::pending->name,
-            'payment_status' => BookingPaymentStatus::unpaid->name,
-            'payment_method' => $options['payment_method'] ?? BookingPaymentMethod::cash->name,
-            'total_amount'   => $amount,
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        $validator = Validator::make($data, [
+            "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
+            "vehicle" => ["required_without:vehicle_id"],
+            "user_id" => ["required_without:user", "exists:users,id"],
+            "user" => ["required_without:user_id"],
+            "start_date" => ["required", "date"],
+            "end_date" => ["required", "date", "after:start_date"],
+            "payment_method" => ["nullable", "string"],
         ]);
 
-        return DOE::create($booking);
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $validated = $validator->validate();
+        $vehicle = $validated["vehicle"] ?? Vehicle::find($validated["vehicle_id"]);
+        $user = $validated["user"] ?? User::find($validated["user_id"]);
+
+        $canBook = $this->canBook(array_merge($validated, ["vehicle" => $vehicle, "user" => $user]), $auth_user);
+
+        if ($canBook->failed()) {
+            return MResponse::create($canBook->data, $canBook->status);
+        }
+
+        $from = Carbon::parse($validated["start_date"]);
+        $to = Carbon::parse($validated["end_date"]);
+        $amount = $this->calculateAmount(array_merge([$validated, ["vehicle" => $vehicle]]), $auth_user)->data["amount"];
+
+        $booking = Booking::create([
+            "vehicle_id" => $vehicle->id,
+            "user_id" => $user->id,
+            "start_date" => $from,
+            "end_date" => $to,
+            "status" => BookingStatus::pending->name,
+            "payment_status" => BookingPaymentStatus::unpaid->name,
+            "payment_method" => $validated["payment_method"] ?? BookingPaymentMethod::cash->name,
+            "total_amount" => $amount,
+        ]);
+
+        return MResponse::create(["booking" => $booking], 201);
     }
 
     /**
      * Confirms a pending booking (admin only).
      */
-    public function confirm(Booking $booking, User $user): DOE
-    {
-        if (!$user->is_admin()) {
-            return DOE::create(false, 'Unauthorized');
+    public function confirm(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
+        $validator = Validator::make($data, [
+            "booking_id" => ["required", "exists:bookings,id"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $booking = Booking::find($data["booking_id"]);
+
         if ($booking->status !== BookingStatus::pending->name) {
-            return DOE::create(false, 'Booking cannot be confirmed');
+            return MResponse::create(["message" => "Booking cannot be confirmed"], 422);
         }
 
         $booking->update([
-            'status' => BookingStatus::confirmed->name,
+            "status" => BookingStatus::confirmed->name,
         ]);
 
-        return DOE::create(true);
+        return MResponse::create(["success" => true]);
     }
 
     /**
      * Cancels a booking.
      */
-    public function cancel(Booking $booking, User $user): DOE
-    {
+    public function cancel(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        $validator = Validator::make($data, [
+            "booking_id" => ["required", "exists:bookings,id"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $booking = Booking::find($data["booking_id"]);
+
         if (
-            !$user->is_admin() &&
-            (!$user->is_customer() || $booking->user_id !== $user->id)
+            !$auth_user ||
+            (
+                !$auth_user->is_admin() &&
+                (!$auth_user->is_customer() || $booking->user_id !== $auth_user->id)
+            )
         ) {
-            return DOE::create(false, 'Unauthorized');
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
         if ($booking->status === BookingStatus::completed->name) {
-            return DOE::create(false, 'Completed bookings cannot be canceled');
+            return MResponse::create(["message" => "Completed bookings cannot be canceled"], 422);
         }
 
         $booking->update([
-            'status' => BookingStatus::canceled->name,
+            "status" => BookingStatus::canceled->name,
         ]);
 
-        return DOE::create(true);
+        return MResponse::create(["success" => true]);
     }
 
     /**
      * Marks a booking as completed (admin only).
      */
-    public function complete(Booking $booking, User $user): DOE
-    {
-        if (!$user->is_admin()) {
-            return DOE::create(false, 'Unauthorized');
+    public function complete(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
+        $validator = Validator::make($data, [
+            "booking_id" => ["required", "exists:bookings,id"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $booking = Booking::find($data["booking_id"]);
+
         if ($booking->status !== BookingStatus::confirmed->name) {
-            return DOE::create(false, 'Booking cannot be completed');
+            return MResponse::create(["message" => "Booking cannot be completed"], 422);
         }
 
         $booking->update([
-            'status' => BookingStatus::completed->name,
+            "status" => BookingStatus::completed->name,
         ]);
 
-        return DOE::create(true);
+        return MResponse::create(["success" => true]);
     }
 
     /**
      * Refunds a booking payment (admin only).
      */
-    public function refund(Booking $booking, User $user): DOE
-    {
-        if (!$user->is_admin()) {
-            return DOE::create(false, 'Unauthorized');
+    public function refund(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
+        $validator = Validator::make($data, [
+            "booking_id" => ["required", "exists:bookings,id"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $booking = Booking::find($data["booking_id"]);
+
         if ($booking->payment_status !== BookingPaymentStatus::paid->name) {
-            return DOE::create(false, 'Booking is not paid');
+            return MResponse::create(["message" => "Booking is not paid"], 422);
         }
 
         $booking->update([
-            'payment_status' => BookingPaymentStatus::refunded->name,
+            "payment_status" => BookingPaymentStatus::refunded->name,
         ]);
 
-        return DOE::create(true);
+        return MResponse::create(["success" => true]);
     }
 
     /**
      * Deletes a booking permanently (admin only).
      */
-    public function delete(Booking $booking, User $user): DOE
-    {
-        if (!$user->is_admin()) {
-            return DOE::create(false, 'Unauthorized');
+    public function delete(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
-        $booking->delete();
+        $validator = Validator::make($data, [
+            "booking_id" => ["required", "exists:bookings,id"],
+        ]);
 
-        return DOE::create(true);
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        Booking::find($data["booking_id"])->delete();
+
+        return MResponse::create(["success" => true]);
     }
 }

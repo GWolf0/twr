@@ -63,22 +63,17 @@ class BookingCRUDService implements ICRUDInterface
             return MResponse::create(['message' => 'Specified vehicle not found'], 404);
         }
 
-        $bookingDOE = $this->bookingService->createBooking(
-            $vehicle,
-            $user,
-            Carbon::parse($validated['start_date']),
-            Carbon::parse($validated['end_date']),
-            ['payment_method' => $validated['payment_method']]
+        $bookingResponse = $this->bookingService->createBooking(
+            [
+                "vehicle" => $vehicle,
+                "user" => $user,
+                "start_date" => Carbon::parse($validated['start_date']),
+                "end_date" => Carbon::parse($validated['end_date']),
+            ],
+            $auth_user
         );
 
-        if (!$bookingDOE->is_success()) {
-            return MResponse::create(['message' => $bookingDOE->error], 400);
-        }
-
-        return MResponse::create([
-            'message' => 'Booking created successfully',
-            'model'   => $bookingDOE->data,
-        ], 201);
+        return $bookingResponse;
     }
 
     /**
@@ -152,12 +147,8 @@ class BookingCRUDService implements ICRUDInterface
             return MResponse::create(['message' => 'Booking not found'], 404);
         }
 
-        $result = $this->bookingService->delete($booking, $auth_user);
+        $m_response = $this->bookingService->delete($booking, $auth_user);
 
-        if (!$result->is_success()) {
-            return MResponse::create(['message' => $result->error], 403);
-        }
-
-        return MResponse::create(null, 204);
+        return $m_response;
     }
 }

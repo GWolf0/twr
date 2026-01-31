@@ -3,121 +3,213 @@
 namespace App\Services;
 
 use App\Interfaces\IFileUploadInterface;
-use App\Types\DOE;
-use Illuminate\Http\UploadedFile;
+use App\Models\User;
+use App\Types\MResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class FileUploadService implements IFileUploadInterface
 {
     public function uploadFile(
-        UploadedFile $file,
-        string $directory,
-        array $acceptedMimes = [],
-        int $maxSize = 0,
-        ?string $fileName = null
-    ): DOE {
-        // mime validation
-        if (!empty($acceptedMimes) && !in_array($file->getMimeType(), $acceptedMimes, true)) {
-            return DOE::create(null, 'Invalid file type');
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
-        // size validation (bytes)
-        if ($maxSize > 0 && $file->getSize() > $maxSize) {
-            return DOE::create(null, 'File size exceeds limit');
+        $validator = Validator::make($data, [
+            "file" => ["required", "file", "mimes:" . config("twr.file_upload_mimes"), "max:" . config("twr.file_upload_max_size_kb")],
+            "directory" => ["nullable", Rule::in(config("twr.file_upload_dirs"))],
+            "file_name" => ["nullable", "string", "min:3", "max:64"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
         }
 
-        $name = $fileName
-            ? $fileName . '.' . $file->getClientOriginalExtension()
+        $validated = $validator->validate();
+        $file = $validated["file"];
+        $directory = $validated["directory"] ?? "images";
+
+        $name = isset($validated["file_name"])
+            ? $validated["file_name"] . '.' . $file->getClientOriginalExtension()
             : Str::uuid() . '.' . $file->getClientOriginalExtension();
 
         $path = $file->storeAs($directory, $name);
 
         if (!$path) {
-            return DOE::create(null, 'File upload failed');
+            return MResponse::create(["message" => "File upload failed"], 500);
         }
 
-        return DOE::create($path);
+        return MResponse::create([
+            "path" => $path,
+        ], 201);
     }
 
     public function uploadFiles(
-        array $files,
-        string $directory,
-        array $acceptedMimes = [],
-        int $maxSize = 0
-    ): DOE {
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
+        }
+
+        $validator = Validator::make($data, [
+            "files" => ["required", "array", "min:1"],
+            "files.*" => ["file"],
+            "directory" => ["nullable", Rule::in(config("twr.file_upload_dirs"))],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $validated = $validator->validate();
+        $directory = $validated["directory"] ?? "images";
+
         $paths = [];
 
-        foreach ($files as $file) {
-            if (!$file instanceof UploadedFile) {
-                return DOE::create(null, 'Invalid file input');
-            }
+        foreach ($validated["files"] as $file) {
+            $result = $this->uploadFile([
+                "file" => $file,
+                "directory" => $directory,
+            ], $auth_user);
 
-            $result = $this->uploadFile($file, $directory, $acceptedMimes, $maxSize);
-
-            if (!$result->is_success()) {
+            if (!$result->success()) {
                 return $result;
             }
 
-            $paths[] = $result->data;
+            $paths[] = $result->data["path"];
         }
 
-        return DOE::create($paths);
+        return MResponse::create(["paths" => $paths], 201);
     }
 
-    public function removeUploadedFile(string $filePath): DOE
-    {
-        if (!Storage::exists($filePath)) {
-            return DOE::create(null, 'File does not exist');
+    public function removeUploadedFile(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
-        return Storage::delete($filePath)
-            ? DOE::create(true)
-            : DOE::create(null, 'Failed to delete file');
+        $validator = Validator::make($data, [
+            "path" => ["required", "string"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $path = $validator->validate()["path"];
+
+        if (!Storage::exists($path)) {
+            return MResponse::create(["message" => "File does not exist"], 404);
+        }
+
+        if (!Storage::delete($path)) {
+            return MResponse::create(["message" => "Failed to delete file"], 500);
+        }
+
+        return MResponse::create(true);
     }
 
-    public function removeUploadedFiles(array $filePaths): DOE
-    {
-        foreach ($filePaths as $path) {
-            $result = $this->removeUploadedFile($path);
-            if (!$result->is_success()) {
+    public function removeUploadedFiles(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
+        }
+
+        $validator = Validator::make($data, [
+            "paths" => ["required", "array", "min:1"],
+            "paths.*" => ["string"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        foreach ($validator->validate()["paths"] as $path) {
+            $result = $this->removeUploadedFile(["path" => $path], $auth_user);
+            if (!$result->success()) {
                 return $result;
             }
         }
 
-        return DOE::create(true);
+        return MResponse::create(true);
     }
 
-    public function moveFile(string $from, string $to): DOE
-    {
-        if (!Storage::exists($from)) {
-            return DOE::create(null, 'Source file does not exist');
+    public function moveFile(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
-        if (!Storage::move($from, $to)) {
-            return DOE::create(null, 'Failed to move file');
+        $validator = Validator::make($data, [
+            "from" => ["required", "string"],
+            "to" => ["required", "string"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
         }
 
-        return DOE::create($to);
+        $validated = $validator->validate();
+
+        if (!Storage::exists($validated["from"])) {
+            return MResponse::create(["message" => "Source file does not exist"], 404);
+        }
+
+        if (!Storage::move($validated["from"], $validated["to"])) {
+            return MResponse::create(["message" => "Failed to move file"], 500);
+        }
+
+        return MResponse::create(["path" => $validated["to"]]);
     }
 
-    public function moveFiles(array $filePaths, string $toDirectory): DOE
-    {
+    public function moveFiles(
+        array $data,
+        ?User $auth_user,
+    ): MResponse {
+        if (!$auth_user || !$auth_user->is_admin()) {
+            return MResponse::create(["message" => "Unauthorized"], 403);
+        }
+
+        $validator = Validator::make($data, [
+            "paths" => ["required", "array", "min:1"],
+            "paths.*" => ["string"],
+            "to_directory" => ["required", "string"],
+        ]);
+
+        if ($validator->fails()) {
+            return MResponse::create($validator->errors(), 422);
+        }
+
+        $validated = $validator->validate();
         $newPaths = [];
 
-        foreach ($filePaths as $path) {
-            $fileName = basename($path);
-            $newPath  = rtrim($toDirectory, '/') . '/' . $fileName;
+        foreach ($validated["paths"] as $path) {
+            $newPath = rtrim($validated["to_directory"], '/') . '/' . basename($path);
 
-            $result = $this->moveFile($path, $newPath);
+            $result = $this->moveFile([
+                "from" => $path,
+                "to" => $newPath,
+            ], $auth_user);
 
-            if (!$result->is_success()) {
+            if (!$result->success()) {
                 return $result;
             }
 
             $newPaths[] = $newPath;
         }
 
-        return DOE::create($newPaths);
+        return MResponse::create(["paths" => $newPaths]);
     }
 }
