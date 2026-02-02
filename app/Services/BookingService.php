@@ -20,10 +20,8 @@ class BookingService implements IBookingInterface
     /**
      * Checks whether a vehicle can be booked for a given period.
      */
-    public function canBook(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function canBook(array $data, ?User $auth_user): MResponse
+    {
         $validator = Validator::make($data, [
             "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
             "vehicle" => ["required_without:vehicle_id"],
@@ -38,6 +36,7 @@ class BookingService implements IBookingInterface
         }
 
         $validated = $validator->validate();
+
         $vehicle = $validated["vehicle"] ?? Vehicle::find($validated["vehicle_id"]);
         $user = $validated["user"] ?? User::find($validated["user_id"]);
         $from = Carbon::parse($validated["start_date"]);
@@ -86,10 +85,8 @@ class BookingService implements IBookingInterface
     /**
      * Calculates the total booking amount for the given period.
      */
-    public function calculateAmount(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function calculateAmount(array $data, ?User $auth_user): MResponse
+    {
         $validator = Validator::make($data, [
             "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
             "vehicle" => ["required_without:vehicle_id"],
@@ -119,10 +116,8 @@ class BookingService implements IBookingInterface
     /**
      * Creates and persists a new booking.
      */
-    public function createBooking(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function createBooking(array $data, ?User $auth_user): MResponse
+    {
         $validator = Validator::make($data, [
             "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
             "vehicle" => ["required_without:vehicle_id"],
@@ -162,16 +157,17 @@ class BookingService implements IBookingInterface
             "total_amount" => $amount,
         ]);
 
-        return MResponse::create(["booking" => $booking], 201);
+        return MResponse::create([
+            "message" => "Booking created successfully!",
+            "booking" => $booking
+        ], 201);
     }
 
     /**
      * Confirms a pending booking (admin only).
      */
-    public function confirm(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function confirm(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -191,19 +187,21 @@ class BookingService implements IBookingInterface
         }
 
         $booking->update([
+            "payment_status" => BookingPaymentStatus::paid->name,
             "status" => BookingStatus::confirmed->name,
         ]);
 
-        return MResponse::create(["success" => true]);
+        return MResponse::create([
+            "message" => "Booking confirmed!",
+            "success" => true
+        ]);
     }
 
     /**
      * Cancels a booking.
      */
-    public function cancel(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function cancel(array $data, ?User $auth_user): MResponse
+    {
         $validator = Validator::make($data, [
             "booking_id" => ["required", "exists:bookings,id"],
         ]);
@@ -232,16 +230,17 @@ class BookingService implements IBookingInterface
             "status" => BookingStatus::canceled->name,
         ]);
 
-        return MResponse::create(["success" => true]);
+        return MResponse::create([
+            "message" => "Booking canceled!",
+            "success" => true
+        ]);
     }
 
     /**
      * Marks a booking as completed (admin only).
      */
-    public function complete(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function complete(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -264,16 +263,17 @@ class BookingService implements IBookingInterface
             "status" => BookingStatus::completed->name,
         ]);
 
-        return MResponse::create(["success" => true]);
+        return MResponse::create([
+            "message" => "Booking marked completed!",
+            "success" => true
+        ]);
     }
 
     /**
      * Refunds a booking payment (admin only).
      */
-    public function refund(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function refund(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -296,16 +296,17 @@ class BookingService implements IBookingInterface
             "payment_status" => BookingPaymentStatus::refunded->name,
         ]);
 
-        return MResponse::create(["success" => true]);
+        return MResponse::create([
+            "message" => "Booking refunded!",
+            "success" => true
+        ]);
     }
 
     /**
      * Deletes a booking permanently (admin only).
      */
-    public function delete(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function delete(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -318,8 +319,14 @@ class BookingService implements IBookingInterface
             return MResponse::create($validator->errors(), 422);
         }
 
-        Booking::find($data["booking_id"])->delete();
+        $validated = $validator->validate();
 
-        return MResponse::create(["success" => true]);
+        $deleted = Booking::destroy($validated["booking_id"]);
+        // Booking::find($data["booking_id"])->delete();
+
+        return MResponse::create([
+            "message" => $deleted > 0 ? "Booking deleted!" : "Counldn't delete booking!",
+            "success" => $deleted > 0
+        ], $deleted > 0 ? 204 : 400);
     }
 }

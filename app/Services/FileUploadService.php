@@ -12,17 +12,15 @@ use Illuminate\Validation\Rule;
 
 class FileUploadService implements IFileUploadInterface
 {
-    public function uploadFile(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function uploadFile(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
         $validator = Validator::make($data, [
-            "file" => ["required", "file", "mimes:" . config("twr.file_upload_mimes"), "max:" . config("twr.file_upload_max_size_kb")],
-            "directory" => ["nullable", Rule::in(config("twr.file_upload_dirs"))],
+            "file" => ["required", "file", "mimes:" . config("twr.file_upload.mimes"), "max:" . config("twr.file_upload.max_size_kb")],
+            "directory" => ["nullable", Rule::in(config("twr.file_upload.dirs"))],
             "file_name" => ["nullable", "string", "min:3", "max:64"],
         ]);
 
@@ -45,22 +43,21 @@ class FileUploadService implements IFileUploadInterface
         }
 
         return MResponse::create([
+            "message" => "File upload success!",
             "path" => $path,
         ], 201);
     }
 
-    public function uploadFiles(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function uploadFiles(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
         $validator = Validator::make($data, [
             "files" => ["required", "array", "min:1"],
-            "files.*" => ["file"],
-            "directory" => ["nullable", Rule::in(config("twr.file_upload_dirs"))],
+            "files.*" => ["file", "mimes:" . config("twr.file_upload.mimes"), "max:" . config("twr.file_upload.max_size_kb")],
+            "directory" => ["nullable", Rule::in(config("twr.file_upload.dirs"))],
         ]);
 
         if ($validator->fails()) {
@@ -73,10 +70,7 @@ class FileUploadService implements IFileUploadInterface
         $paths = [];
 
         foreach ($validated["files"] as $file) {
-            $result = $this->uploadFile([
-                "file" => $file,
-                "directory" => $directory,
-            ], $auth_user);
+            $result = $this->uploadFile(["file" => $file, "directory" => $directory], $auth_user);
 
             if (!$result->success()) {
                 return $result;
@@ -85,13 +79,14 @@ class FileUploadService implements IFileUploadInterface
             $paths[] = $result->data["path"];
         }
 
-        return MResponse::create(["paths" => $paths], 201);
+        return MResponse::create([
+            "message" => "File(s) upload success",
+            "paths" => $paths
+        ], 201);
     }
 
-    public function removeUploadedFile(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function removeUploadedFile(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -114,13 +109,14 @@ class FileUploadService implements IFileUploadInterface
             return MResponse::create(["message" => "Failed to delete file"], 500);
         }
 
-        return MResponse::create(true);
+        return MResponse::create([
+            "message" => "File removed successfully!",
+            "success" => true
+        ]);
     }
 
-    public function removeUploadedFiles(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function removeUploadedFiles(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -141,13 +137,14 @@ class FileUploadService implements IFileUploadInterface
             }
         }
 
-        return MResponse::create(true);
+        return MResponse::create([
+            "message" => "File(s) removed successfully!",
+            "success" => true
+        ]);
     }
 
-    public function moveFile(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function moveFile(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -171,13 +168,14 @@ class FileUploadService implements IFileUploadInterface
             return MResponse::create(["message" => "Failed to move file"], 500);
         }
 
-        return MResponse::create(["path" => $validated["to"]]);
+        return MResponse::create([
+            "message" => "File moved successfully!",
+            "path" => $validated["to"]
+        ]);
     }
 
-    public function moveFiles(
-        array $data,
-        ?User $auth_user,
-    ): MResponse {
+    public function moveFiles(array $data, ?User $auth_user): MResponse
+    {
         if (!$auth_user || !$auth_user->is_admin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
@@ -198,10 +196,7 @@ class FileUploadService implements IFileUploadInterface
         foreach ($validated["paths"] as $path) {
             $newPath = rtrim($validated["to_directory"], '/') . '/' . basename($path);
 
-            $result = $this->moveFile([
-                "from" => $path,
-                "to" => $newPath,
-            ], $auth_user);
+            $result = $this->moveFile(["from" => $path, "to" => $newPath], $auth_user);
 
             if (!$result->success()) {
                 return $result;
@@ -210,6 +205,9 @@ class FileUploadService implements IFileUploadInterface
             $newPaths[] = $newPath;
         }
 
-        return MResponse::create(["paths" => $newPaths]);
+        return MResponse::create([
+            "message" => "File(s) moved successfully!",
+            "paths" => $newPaths
+        ]);
     }
 }

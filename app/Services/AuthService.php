@@ -38,9 +38,16 @@ class AuthService implements IAuthInterface
 
         event(new Registered($user));
 
+        Auth::login($user);
+
+        if ($request->expectsJson()) {
+            $token = $user->createToken('auth_token')->plainTextToken;
+        }
+
         return MResponse::create([
             'message' => 'User registered successfully.',
             'user'    => $user,
+            'token'   => $token
         ], 201);
     }
 
