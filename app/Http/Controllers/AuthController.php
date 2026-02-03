@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-use function App\Helpers\app_response;
+use function App\Helpers\appResponse;
 
 // auth requests
 class AuthController extends Controller
@@ -16,70 +16,70 @@ class AuthController extends Controller
     // /register, METHOD=GET
     public function registerPage(Request $request): JsonResponse | RedirectResponse
     {
-        return app_response($request, [], 200, "auth.register_page");
+        return appResponse($request, [], 200, "auth.page.register");
     }
     // /auth/register, METHOD=POST
     public function register(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
-        $m_response = $authService->register($request);
+        $mResponse = $authService->register($request);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // /login, METHOD=GET
     public function loginPage(Request $request): JsonResponse | RedirectResponse
     {
-        return app_response($request, [], 200, "auth.login_page");
+        return appResponse($request, [], 200, "auth.page.login");
     }
     // /auth/login, METHOD=POST
     public function login(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
-        $m_response = $authService->login($request);
+        $mResponse = $authService->login($request);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // /auth/logout, METHOD=POST
     public function logout(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
-        $m_response = $authService->logout($request);
+        $mResponse = $authService->logout($request);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // /reset-password, METHOD=GET
     public function resetPasswordPage(Request $request): JsonResponse | RedirectResponse
     {
-        return app_response($request, [], 200, "auth.reset_password_page");
+        return appResponse($request, [], 200, "auth.page.reset_password");
     }
     // /auth/reset-password, METHOD=POST
     public function resetPassword(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
-        $m_response = $authService->resetPassword($request);
+        $mResponse = $authService->resetPassword($request);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
     // /auth/send-password-reset-notification, METHOD=POST
     public function sendPasswordResetNotification(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
-        $m_response = $authService->sendPasswordResetNotification($request);
+        $mResponse = $authService->sendPasswordResetNotification($request);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // /auth/send-email-confirmation-notification, METHOD=POST
     public function sendEmailConfirmationNotification(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
-        $m_response = $authService->sendEmailConfirmationNotification($request);
+        $mResponse = $authService->sendEmailConfirmationNotification($request);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // /auth/confirm-email, METHOD=POST
     public function confirmEmail(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
-        $m_response = $authService->confirmEmail($request);
+        $mResponse = $authService->confirmEmail($request);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 }

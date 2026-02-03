@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-use function App\Helpers\app_response;
+use function App\Helpers\appResponse;
 
 // controller for admin allowed actions only
 // includes pages GET requests
@@ -23,83 +23,88 @@ class AdminController extends Controller
     public function stats(Request $request): JsonResponse | RedirectResponse
     {
         // stats to do later
-        $stats_data = [
+        $statsData = [
             "message" => "stats to do later!"
         ];
 
-        return app_response($request, $stats_data, 200, "admin.dashboard.stats");
+        return appResponse($request, $statsData, 200, "admin.page.dashboard.stats");
     }
 
     // settings page (update settings single record)
     // /dashboard/settings, METHOD=GET
-    public function editSettings(MasterCRUDService $crudService, Request $request): JsonResponse | RedirectResponse
+    public function editSettings(Request $request): JsonResponse | RedirectResponse
     {
-        $settings_instance = Setting::instance();
+        $settingsInstance = Setting::instance();
         $data = [
-            "model" => $settings_instance
+            "model" => $settingsInstance
         ];
 
-        return app_response($request, $data, 200, "admin.dashboard.settings");
+        return appResponse($request, $data, 200, "admin.page.dashboard.settings");
     }
     // /admin/settings METHOD=PATCH
     public function updateSettings(MasterCRUDService $crudService, Request $request): JsonResponse | RedirectResponse
     {
         $user = $request->user();
-        $m_response = $crudService->update("settings", 1, $request->all(), $user);
+        $settingsInstance = Setting::instance();
+        if (!$settingsInstance) return appResponse($request, ["message" => "Settings instance not found!"], 404);
 
-        return app_response($request, $m_response->data, $m_response->status);
+        $mResponse = $crudService->update("settings", $settingsInstance->id, $request->all(), $user);
+
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // index (list filtered) model
     // /dashboard/model/{table}?query , METHOD=GET
     public function indexRecords(MasterCRUDService $crudService, Request $request, string $table): JsonResponse | RedirectResponse
     {
-        $m_response = $crudService->readMany($table, $request->getQueryString(), $request->user());
+        $page = $request->query("page", 1);
+        $perPage = $request->query("per_page", 30);
+        $mResponse = $crudService->readMany($table, $request->getQueryString(), $request->user(), $page, $perPage);
 
-        return app_response($request, $m_response->data, $m_response->status, "admin.dashboard.models.index", ["table" => $table]);
+        return appResponse($request, $mResponse->data, $mResponse->status, "admin.page.dashboard.models.index", ["table" => $table]);
     }
 
     // create (create new record)
     // /dashboard/model/{table}/create, METHOD=GET
     public function createRecord(MasterCRUDService $crudService, Request $request, string $table): JsonResponse | RedirectResponse
     {
-        $new_model = $crudService->get_new_model_instance($table);
+        $newModel = $crudService->getNewModelInstance($table);
         $data = [
-            "new_model" => $new_model
+            "new_model" => $newModel
         ];
 
-        return app_response($request, $data, $new_model == null ? 400 : 200, "admin.dashboard.models.create", ["table" => $table]);
+        return appResponse($request, $data, $newModel == null ? 400 : 200, "admin.page.dashboard.models.create", ["table" => $table]);
     }
     // /admin/model/{table}/create METHOD=POST
     public function storeRecord(MasterCRUDService $crudService, Request $request, string $table): JsonResponse | RedirectResponse
     {
-        $m_response = $crudService->create($table, $request->all(), $request->user());
+        $mResponse = $crudService->create($table, $request->all(), $request->user());
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // edit (edit record)
     // /dashboard/model/{table}/{id}, METHOD=GET
     public function editRecord(MasterCRUDService $crudService, Request $request, string $table, string $id): JsonResponse | RedirectResponse
     {
-        $m_response = $crudService->read($table, $id, $request->user());
+        $mResponse = $crudService->read($table, $id, $request->user());
 
-        return app_response($request, $m_response->data, $m_response->status, "admin.dashboard.models.edit", ["table" => $table, "id" => $id]);
+        return appResponse($request, $mResponse->data, $mResponse->status, "admin.page.dashboard.models.edit", ["table" => $table, "id" => $id]);
     }
     // /admin/model/{table}/{id} METHOD=PATCH
     public function updateRecord(MasterCRUDService $crudService, Request $request, string $table, string $id): JsonResponse | RedirectResponse
     {
-        $m_response = $crudService->update($table, $id, $request->all(), $request->user());
+        $mResponse = $crudService->update($table, $id, $request->all(), $request->user());
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
     // destroy (delete record(s))
     // /admin/model/{table}/{ids} METHOD=DELETE
     public function deleteRecords(MasterCRUDService $crudService, Request $request, string $table, string $ids): JsonResponse | RedirectResponse
     {
-        $m_response = $crudService->delete($table, $ids, $request->user());
+        $mResponse = $crudService->delete($table, $ids, $request->user());
 
-        return app_response($request, $m_response->data, $m_response->status);
+        return appResponse($request, $mResponse->data, $mResponse->status);
     }
 }

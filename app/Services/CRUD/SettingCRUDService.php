@@ -13,18 +13,18 @@ use function App\Helpers\searchFiltered;
 
 class SettingCRUDService implements ICRUDInterface
 {
-    public function get_new_model_instance(): Model
+    public function getNewModelInstance(): Model
     {
         return new Setting();
     }
 
-    public function create(array $data, ?User $auth_user): MResponse
+    public function create(array $data, ?User $authUser): MResponse
     {
         // deny create
         return MResponse::create(['message' => 'Cannot create settings record manually!'], 403);
 
         // below ignored
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         }
 
@@ -44,7 +44,7 @@ class SettingCRUDService implements ICRUDInterface
         return MResponse::create(['message' => 'New setting created successfully', 'model' => $model], 201);
     }
 
-    public function read(int|string $id, ?User $auth_user): MResponse
+    public function read(int|string $id, ?User $authUser): MResponse
     {
         // Settings are typically read all at once, but we can implement this for consistency.
         $model = Setting::find($id);
@@ -56,15 +56,15 @@ class SettingCRUDService implements ICRUDInterface
         return MResponse::create(['message' => 'Model read successfully', 'model' => $model]);
     }
 
-    public function readMany(string $queryParams, ?User $auth_user): MResponse
+    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
-        $models = searchFiltered(Setting::query(), $queryParams);
+        $models = searchFiltered(Setting::query(), $queryParams)->paginate(perPage: $perPage, page: $page);
         return MResponse::create(['message' => 'Models filtered successfully', 'models' => $models]);
     }
 
-    public function update(int|string $id, array $data, ?User $auth_user): MResponse
+    public function update(int|string $id, array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         }
 
@@ -86,18 +86,18 @@ class SettingCRUDService implements ICRUDInterface
         }
 
         $model->update($validator->validated());
-        Setting::invalidate_instance(); // do not forget to invalidate instance
+        Setting::invalidateInstance(); // do not forget to invalidate instance
 
         return MResponse::create(['message' => 'Model updated successfully', 'model' => $model]);
     }
 
-    public function delete(int|string $id, ?User $auth_user): MResponse
+    public function delete(int|string $id, ?User $authUser): MResponse
     {
         // deny delete
         return MResponse::create(['message' => 'Cannot delete settings record!'], 403);
 
         // below ignored
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         }
 
@@ -108,6 +108,9 @@ class SettingCRUDService implements ICRUDInterface
             return MResponse::create(['message' => 'No models were deleted.'], 400);
         }
 
-        return MResponse::create(null, 204);
+        return MResponse::create([
+            "message" => "Model(s) deleted successfully!",
+            "success" => true,
+        ], 204);
     }
 }

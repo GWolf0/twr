@@ -20,7 +20,7 @@ class BookingService implements IBookingInterface
     /**
      * Checks whether a vehicle can be booked for a given period.
      */
-    public function canBook(array $data, ?User $auth_user): MResponse
+    public function canBook(array $data, ?User $authUser): MResponse
     {
         $validator = Validator::make($data, [
             "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
@@ -42,19 +42,19 @@ class BookingService implements IBookingInterface
         $from = Carbon::parse($validated["start_date"]);
         $to = Carbon::parse($validated["end_date"]);
 
-        if (!$auth_user || (!$auth_user->is_admin() && $auth_user->id != $user->id)) {
+        if (!$authUser || (!$authUser->isAdmin() && $authUser->id != $user->id)) {
             return MResponse::create([
                 "message" => 'Unauthorized'
             ], 403);
         }
 
-        $error_msg = "";
+        $errorMsg = "";
         if ($vehicle->status !== VehicleAvailability::available->name) {
-            $error_msg =  'Vehicle not available';
+            $errorMsg =  'Vehicle not available';
         }
 
         if ($from->gte($to)) {
-            $error_msg = 'Invalid booking period';
+            $errorMsg = 'Invalid booking period';
         }
 
         $overlapExists = Booking::query()
@@ -73,19 +73,19 @@ class BookingService implements IBookingInterface
             })->exists();
 
         if ($overlapExists) {
-            $error_msg = 'Vehicle already booked for this period';
+            $errorMsg = 'Vehicle already booked for this period';
         }
 
         return MResponse::create([
-            "message" => $error_msg,
-            "success" => empty($error_msg)
-        ], empty($error_msg) ? 200 : 422);
+            "message" => $errorMsg,
+            "success" => empty($errorMsg)
+        ], empty($errorMsg) ? 200 : 422);
     }
 
     /**
      * Calculates the total booking amount for the given period.
      */
-    public function calculateAmount(array $data, ?User $auth_user): MResponse
+    public function calculateAmount(array $data, ?User $authUser): MResponse
     {
         $validator = Validator::make($data, [
             "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
@@ -116,7 +116,7 @@ class BookingService implements IBookingInterface
     /**
      * Creates and persists a new booking.
      */
-    public function createBooking(array $data, ?User $auth_user): MResponse
+    public function createBooking(array $data, ?User $authUser): MResponse
     {
         $validator = Validator::make($data, [
             "vehicle_id" => ["required_without:vehicle", "exists:vehicles,id"],
@@ -136,7 +136,7 @@ class BookingService implements IBookingInterface
         $vehicle = $validated["vehicle"] ?? Vehicle::find($validated["vehicle_id"]);
         $user = $validated["user"] ?? User::find($validated["user_id"]);
 
-        $canBook = $this->canBook(array_merge($validated, ["vehicle" => $vehicle, "user" => $user]), $auth_user);
+        $canBook = $this->canBook(array_merge($validated, ["vehicle" => $vehicle, "user" => $user]), $authUser);
 
         if ($canBook->failed()) {
             return MResponse::create($canBook->data, $canBook->status);
@@ -144,7 +144,7 @@ class BookingService implements IBookingInterface
 
         $from = Carbon::parse($validated["start_date"]);
         $to = Carbon::parse($validated["end_date"]);
-        $amount = $this->calculateAmount(array_merge([$validated, ["vehicle" => $vehicle]]), $auth_user)->data["amount"];
+        $amount = $this->calculateAmount(array_merge([$validated, ["vehicle" => $vehicle]]), $authUser)->data["amount"];
 
         $booking = Booking::create([
             "vehicle_id" => $vehicle->id,
@@ -166,9 +166,9 @@ class BookingService implements IBookingInterface
     /**
      * Confirms a pending booking (admin only).
      */
-    public function confirm(array $data, ?User $auth_user): MResponse
+    public function confirm(array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
@@ -200,7 +200,7 @@ class BookingService implements IBookingInterface
     /**
      * Cancels a booking.
      */
-    public function cancel(array $data, ?User $auth_user): MResponse
+    public function cancel(array $data, ?User $authUser): MResponse
     {
         $validator = Validator::make($data, [
             "booking_id" => ["required", "exists:bookings,id"],
@@ -213,10 +213,10 @@ class BookingService implements IBookingInterface
         $booking = Booking::find($data["booking_id"]);
 
         if (
-            !$auth_user ||
+            !$authUser ||
             (
-                !$auth_user->is_admin() &&
-                (!$auth_user->is_customer() || $booking->user_id !== $auth_user->id)
+                !$authUser->isAdmin() &&
+                (!$authUser->isCustomer() || $booking->user_id !== $authUser->id)
             )
         ) {
             return MResponse::create(["message" => "Unauthorized"], 403);
@@ -239,9 +239,9 @@ class BookingService implements IBookingInterface
     /**
      * Marks a booking as completed (admin only).
      */
-    public function complete(array $data, ?User $auth_user): MResponse
+    public function complete(array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
@@ -272,9 +272,9 @@ class BookingService implements IBookingInterface
     /**
      * Refunds a booking payment (admin only).
      */
-    public function refund(array $data, ?User $auth_user): MResponse
+    public function refund(array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
 
@@ -305,9 +305,9 @@ class BookingService implements IBookingInterface
     /**
      * Deletes a booking permanently (admin only).
      */
-    public function delete(array $data, ?User $auth_user): MResponse
+    public function delete(array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(["message" => "Unauthorized"], 403);
         }
 

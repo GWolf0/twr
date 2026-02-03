@@ -22,50 +22,34 @@ class MediaCRUDService implements ICRUDInterface
         $this->fileUploadService = $fileUploadService;
     }
 
-    public function get_new_model_instance(): Model
+    public function getNewModelInstance(): Model
     {
         return new Media();
     }
 
-    public function create(array $data, ?User $auth_user): MResponse
+    public function create(array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
-            return MResponse::create(['message' => 'Unauthorized operation!'], 403);
+        $uploadResult = $this->fileUploadService->uploadFile($data, $authUser);
+
+        if (!$uploadResult->success()) {
+            return $uploadResult;
         }
 
-        $validator = Validator::make($data, [
-            'file' => ['required', 'file'],
-            'directory' => ['sometimes', 'string'],
-        ]);
-
-        if ($validator->fails()) {
-            return MResponse::create($validator->errors(), 422);
-        }
-
-        $validated = $validator->validated();
-
-        $file = $validated['file'];
-        $directory = $validated['directory'] ?? 'uploads';
-
-        $uploadResult = $this->fileUploadService->uploadFile($file, $directory);
-
-        if (!$uploadResult->is_success()) {
-            return MResponse::create(['message' => $uploadResult->error], 400);
-        }
+        $file = $uploadResult["file"];
 
         $media = Media::create([
             'type' => $file->getMimeType(),
             'url' => $uploadResult->data,
             'size' => $file->getSize(),
-            'user_id' => $auth_user->id,
+            'user_id' => $authUser->id,
         ]);
 
         return MResponse::create(['message' => 'File uploaded successfully', 'model' => $media], 201);
     }
 
-    public function read(int|string $id, ?User $auth_user): MResponse
+    public function read(int|string $id, ?User $authUser): MResponse
     {
-        // if (!$auth_user) {
+        // if (!$authUser) {
         //     return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         // }
 
@@ -76,39 +60,39 @@ class MediaCRUDService implements ICRUDInterface
         }
 
         // Optional: Add ownership check
-        // if (!$auth_user->is_admin() && $auth_user->id !== $model->user_id) {
+        // if (!$authUser->is_admin() && $authUser->id !== $model->user_id) {
         //     return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         // }
 
         return MResponse::create(['message' => 'Model read successfully', 'model' => $model]);
     }
 
-    public function readMany(string $queryParams, ?User $auth_user): MResponse
+    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
-        // if (!$auth_user) {
+        // if (!$authUser) {
         //     return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         // }
 
         $query = Media::query();
 
         // Optional: Add ownership filtering for non-admins
-        // if (!$auth_user->is_admin()) {
-        //     $query->where('user_id', $auth_user->id);
+        // if (!$authUser->is_admin()) {
+        //     $query->where('user_id', $authUser->id);
         // }
 
-        $models = searchFiltered($query, $queryParams);
+        $models = searchFiltered($query, $queryParams)->paginate(perPage: $perPage, page: $page);
 
         return MResponse::create(['message' => 'Models filtered successfully', 'models' => $models]);
     }
 
-    public function update(int|string $id, array $data, ?User $auth_user): MResponse
+    public function update(int|string $id, array $data, ?User $authUser): MResponse
     {
         return MResponse::create(['message' => 'Update operation is not supported for Media.'], 405);
     }
 
-    public function delete(int|string $id, ?User $auth_user): MResponse
+    public function delete(int|string $id, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         }
 
@@ -117,14 +101,17 @@ class MediaCRUDService implements ICRUDInterface
         $models = Media::findMany($ids);
 
         foreach ($models as $model) {
-            // Optional: Add ownership check
-            // if (!$auth_user->is_admin() && $auth_user->id !== $model->user_id) {
-            //     continue; // Skip unauthorized deletions
-            // }
-            $this->fileUploadService->removeUploadedFile($model->url);
+            $mResponse = $this->fileUploadService->removeUploadedFile(["path" => $model["path"]], $authUser);
+            if (!$mResponse->success()) {
+                return $mResponse;
+            }
+
             $model->delete();
         }
 
-        return MResponse::create(null, 204);
+        return MResponse::create([
+            "message" => "Model(s) deleted successfully!",
+            "success" => true,
+        ], 204);
     }
 }

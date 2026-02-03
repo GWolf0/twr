@@ -17,7 +17,7 @@ use function App\Helpers\searchFiltered;
 class UserCRUDService implements ICRUDInterface
 {
 
-    public function get_new_model_instance(): Model
+    public function getNewModelInstance(): Model
     {
         return new Model([
             "name" => "",
@@ -30,9 +30,9 @@ class UserCRUDService implements ICRUDInterface
     /* ---------------------------------
      * CREATE
      * --------------------------------- */
-    public function create(array $data, ?User $auth_user): MResponse
+    public function create(array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create([
                 'message' => 'Unauthorized operation!',
             ], 403);
@@ -64,9 +64,9 @@ class UserCRUDService implements ICRUDInterface
     /* ---------------------------------
      * READ (single)
      * --------------------------------- */
-    public function read(int|string $id, ?User $auth_user): MResponse
+    public function read(int|string $id, ?User $authUser): MResponse
     {
-        if (!$auth_user || (!$auth_user->is_admin() && $auth_user->id != $id)) {
+        if (!$authUser || (!$authUser->isAdmin() && $authUser->id != $id)) {
             return MResponse::create([
                 'message' => 'Unauthorized operation!',
             ], 403);
@@ -88,9 +88,9 @@ class UserCRUDService implements ICRUDInterface
     /* ---------------------------------
      * READ MANY
      * --------------------------------- */
-    public function readMany(string $queryParams, ?User $auth_user): MResponse
+    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
-        if (!$auth_user) {
+        if (!$authUser) {
             return MResponse::create([
                 'message' => 'Unauthorized operation!',
             ], 403);
@@ -100,10 +100,10 @@ class UserCRUDService implements ICRUDInterface
             User::query(),
             $queryParams,
             [],
-            $auth_user->is_admin()
+            $authUser->isAdmin()
                 ? null
-                : fn(Builder $b) => $b->where('id', $auth_user->id)
-        );
+                : fn(Builder $b) => $b->where('id', $authUser->id)
+        )->paginate(perPage: $perPage, page: $page);
 
         return MResponse::create([
             'message' => 'Models filtered successfully',
@@ -114,9 +114,9 @@ class UserCRUDService implements ICRUDInterface
     /* ---------------------------------
      * UPDATE
      * --------------------------------- */
-    public function update(int|string $id, array $data, ?User $auth_user): MResponse
+    public function update(int|string $id, array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || (!$auth_user->is_admin() && $auth_user->id != $id)) {
+        if (!$authUser || (!$authUser->isAdmin() && $authUser->id != $id)) {
             return MResponse::create([
                 'message' => 'Unauthorized operation!',
             ], 403);
@@ -133,7 +133,7 @@ class UserCRUDService implements ICRUDInterface
             'name' => ['sometimes', 'string', 'min:3', 'max:64'],
         ];
 
-        if ($auth_user->is_admin()) {
+        if ($authUser->isAdmin()) {
             $rules['email'] = [
                 'sometimes',
                 'email',
@@ -165,9 +165,9 @@ class UserCRUDService implements ICRUDInterface
     /* ---------------------------------
      * DELETE
      * --------------------------------- */
-    public function delete(int|string $id, ?User $auth_user): MResponse
+    public function delete(int|string $id, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create([
                 'message' => 'Unauthorized operation!',
             ], 403);
@@ -176,7 +176,7 @@ class UserCRUDService implements ICRUDInterface
         $ids = is_int($id) ? [$id] : array_map('intval', explode(',', $id));
 
         // Prevent admin from deleting themselves
-        if (in_array($auth_user->id, $ids)) {
+        if (in_array($authUser->id, $ids)) {
             return MResponse::create([
                 'message' => 'Cannot delete your own account.',
             ], 400);
@@ -190,6 +190,9 @@ class UserCRUDService implements ICRUDInterface
             ], 400);
         }
 
-        return MResponse::create(null, 204);
+        return MResponse::create([
+            "message" => "Model(s) deleted successfully!",
+            "success" => true,
+        ], 204);
     }
 }

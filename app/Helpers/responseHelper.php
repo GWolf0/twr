@@ -24,20 +24,25 @@ use Illuminate\Support\Facades\DB;
  * @param int $status                 HTTP status code
  * @param string|null $redirectRoute  Route name to redirect to (null = back)
  * @param array $redirectParams       Route parameters
+ * @param array $page                 Page identifier
  * @param array $authorizations       UI permissions map
+ * @param array $fkValues             fk fields possible values (if needed in UI)
  */
-function app_response(
+function appResponse(
     Request $request,
     array $data = [],
     int $status = 200,
     ?string $redirectRoute = null,
     array $redirectParams = [],
-    array $authorizations = []
+    ?string $page = null,
+    array $authorizations = [],
+    array $fkValues = [],
 ): JsonResponse|RedirectResponse {
     $payload = array_merge($data, [
         'user' => $request->user(),
-        'page' => $redirectRoute,
+        'page' => $page ?? $redirectRoute,
         'authorizations' => $authorizations,
+        'fk_values' => $fkValues,
     ]);
 
     if ($request->expectsJson()) {

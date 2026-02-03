@@ -29,7 +29,7 @@ class Setting extends Model
         );
     }
 
-    public static function invalidate_instance()
+    public static function invalidateInstance()
     {
         cache()->forget('settings');
     }

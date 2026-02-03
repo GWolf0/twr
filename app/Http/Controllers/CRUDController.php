@@ -7,58 +7,47 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 // controller for models crud (rest api only)
-// expect route format excluding "/api" to be "/api_version/table_name/?..params"
+// expect route format excluding "/api" to be "/api_version/crud/table_name/...params"
 class CRUDController extends Controller
 {
 
-    // show (read)
-    public function show(MasterCRUDService $crudService, Request $request, string $id): JsonResponse
+    // show (read), GET
+    public function show(MasterCRUDService $crudService, Request $request, string $table, string $id): JsonResponse
     {
-        $table = $request->segment(2);
+        $mResponse = $crudService->read($table, $id, $request->user());
 
-        // crudService accepts nullable table (if null return error response)
-        $m_response = $crudService->read($table, $id, $request->user());
-
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
-    // index (readMany)
-    public function index(MasterCRUDService $crudService, Request $request): JsonResponse
+    // index (readMany), GET
+    public function index(MasterCRUDService $crudService, Request $request, string $table): JsonResponse
     {
-        $table = $request->segment(2);
+        $mResponse = $crudService->readMany($table, $request->getQueryString(), $request->user());
 
-        $m_response = $crudService->readMany($table, $request->getQueryString(), $request->user());
-
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
-    // store (create)
-    public function store(MasterCRUDService $crudService, Request $request): JsonResponse
+    // store (create), POST
+    public function store(MasterCRUDService $crudService, Request $request, string $table): JsonResponse
     {
-        $table = $request->segment(2);
+        $mResponse = $crudService->create($table, $request->all(), $request->user());
 
-        $m_response = $crudService->create($table, $request->all(), $request->user());
-
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
-    // update (update)
-    public function update(MasterCRUDService $crudService, Request $request, string $id): JsonResponse
+    // update (update), PATCH
+    public function update(MasterCRUDService $crudService, Request $request, string $table, string $id): JsonResponse
     {
-        $table = $request->segment(2);
+        $mResponse = $crudService->update($table, $id, $request->all(), $request->user());
 
-        $m_response = $crudService->update($table, $id, $request->all(), $request->user());
-
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
-    // destroy (delete)
-    public function destroy(MasterCRUDService $crudService, Request $request, string $ids): JsonResponse
+    // destroy (delete), DELETE
+    public function destroy(MasterCRUDService $crudService, Request $request, string $table, string $ids): JsonResponse
     {
-        $table = $request->segment(2);
+        $mResponse = $crudService->delete($table, $ids, $request->user());
 
-        $m_response = $crudService->delete($table, $ids, $request->user());
-
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 }

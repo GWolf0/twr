@@ -13,33 +13,33 @@ interface IFileUploadInterface
      * Upload a single file.
      * Returns DOE->data = uploaded file path on success
      */
-    public function uploadFile(array $data, ?User $auth_user): MResponse;
+    public function uploadFile(array $data, ?User $authUser): MResponse;
 
     /**
      * Upload multiple files.
      * Returns DOE->data = array of uploaded file paths
      */
-    public function uploadFiles(array $data, ?User $auth_user): MResponse;
+    public function uploadFiles(array $data, ?User $authUser): MResponse;
 
     /**
      * Remove a single uploaded file.
      */
-    public function removeUploadedFile(array $data, ?User $auth_user): MResponse;
+    public function removeUploadedFile(array $data, ?User $authUser): MResponse;
 
     /**
      * Remove multiple uploaded files.
      */
-    public function removeUploadedFiles(array $data, ?User $auth_user): MResponse;
+    public function removeUploadedFiles(array $data, ?User $authUser): MResponse;
 
     /**
      * Move a file to a new location.
      * Returns DOE->data = new file path
      */
-    public function moveFile(array $data, ?User $auth_user): MResponse;
+    public function moveFile(array $data, ?User $authUser): MResponse;
 
     /**
      * Move multiple files to a directory.
      * Returns DOE->data = array of new file paths
      */
-    public function moveFiles(array $data, ?User $auth_user): MResponse;
+    public function moveFiles(array $data, ?User $authUser): MResponse;
 }

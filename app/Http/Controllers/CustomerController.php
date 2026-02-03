@@ -10,20 +10,30 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-use function App\Helpers\app_response;
+use function App\Helpers\appResponse;
 
 class CustomerController extends Controller
 {
 
     /**
      * book vehicle page
-     * GET /vehicles/{vehicle_id}/book
+     * GET /bookings/vehicles/{vehicle_id}
      */
     public function bookVehiclePage(VehicleCRUDService $vehicleCRUDService, Request $request, string $vehicle_id): RedirectResponse | JsonResponse
     {
-        $vehicle_response = $vehicleCRUDService->read($vehicle_id, $request->user());
+        // get vehicle to book
+        $vehicleResponse = $vehicleCRUDService->read($vehicle_id, $request->user());
+        if (!$vehicleResponse->success()) {
+            return appResponse($request, $vehicleResponse->data, $vehicleResponse->status);
+        }
+        $vehicle = $vehicleResponse->data["model"];
 
-        return app_response($request, $vehicle_response->data, $vehicle_response->status, "customer.book_vehicle_page");
+        // construct data response
+        $data = [
+            "vehicle" => $vehicle
+        ];
+
+        return appResponse($request, $data, 200, "customer.page.book_vehicle");
     }
 
     /**
@@ -32,22 +42,58 @@ class CustomerController extends Controller
      */
     public function bookingsListPage(BookingCRUDService $bookingCRUDService, Request $request): RedirectResponse | JsonResponse
     {
-        $auth_user = $request->user();
-        $bookings_response = $bookingCRUDService->readMany("user_id=" . $auth_user?->id, $auth_user);
+        $authUser = $request->user();
 
-        return app_response($request, $bookings_response->data, $bookings_response->status, "customer.bookings_list_page");
+        // get list of bookings
+        $bookingsResponse = $bookingCRUDService->readMany("user_id=" . $authUser?->id, $authUser);
+        if (!$bookingsResponse->success()) {
+            return appResponse($request, $bookingsResponse->data, $bookingsResponse->status);
+        }
+
+        // make data
+        $data = [
+            "bookings" => $bookingsResponse["models"]
+        ];
+
+        return appResponse($request, $data, 200, "customer.page.bookings_list");
+    }
+
+    /**
+     * booking details page
+     * GET /bookings/{booking_id}
+     */
+    public function bookingDetailsPage(BookingCRUDService $bookingCRUDService, Request $request, string $booking_id): RedirectResponse | JsonResponse
+    {
+        $authUser = $request->user();
+
+        // get the booking model
+        $bookingResponse = $bookingCRUDService->read($booking_id, $authUser);
+        if (!$bookingResponse->success()) {
+            return appResponse($request, $bookingResponse->data, $bookingResponse->status);
+        }
+
+        // make data
+        $data = [
+            "booking" => $bookingResponse["model"]
+        ];
+
+        return appResponse($request, $data, 200, "customer.page.booking_details");
     }
 
     /**
      * profile page
      * GET /profile
      */
-    public function profilePage(UserCRUDService $userCRUDService, Request $request): RedirectResponse | JsonResponse
+    public function profilePage(Request $request): RedirectResponse | JsonResponse
     {
-        $auth_user = $request->user();
-        $user_response = $userCRUDService->read($auth_user->id, $auth_user);
+        $authUser = $request->user();
 
-        return app_response($request, $user_response->data, $user_response->status, "customer.profile_list_page");
+        // data
+        $data = [
+            "profile" => $authUser,
+        ];
+
+        return appResponse($request, $data, 200, "customer.page.profile");
     }
 
     /**
@@ -56,10 +102,10 @@ class CustomerController extends Controller
      */
     public function book(BookingService $bookingService, Request $request): RedirectResponse | JsonResponse
     {
-        $auth_user = $request->user();
-        $bookings_response = $bookingService->createBooking($request->all(), $auth_user);
+        $authUser = $request->user();
+        $bookingsResponse = $bookingService->createBooking($request->all(), $authUser);
 
-        return app_response($request, $bookings_response->data, $bookings_response->status, "customer.action.book");
+        return appResponse($request, $bookingsResponse->data, $bookingsResponse->status);
     }
 
     /**
@@ -68,9 +114,9 @@ class CustomerController extends Controller
      */
     public function cancelBooking(BookingService $bookingService, Request $request, string $booking_id): RedirectResponse | JsonResponse
     {
-        $auth_user = $request->user();
-        $bookings_response = $bookingService->cancel(array_merge($request->all(), $request->route()->parameters()), $auth_user);
+        $authUser = $request->user();
+        $bookingsResponse = $bookingService->cancel(array_merge($request->all(), $request->route()->parameters()), $authUser);
 
-        return app_response($request, $bookings_response->data, $bookings_response->status, "customer.action.cancel_booking");
+        return appResponse($request, $bookingsResponse->data, $bookingsResponse->status);
     }
 }

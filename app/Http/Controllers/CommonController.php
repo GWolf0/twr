@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-use function App\Helpers\app_response;
+use function App\Helpers\appResponse;
 
 // controller for requests available to any user (guest or auth)
 class CommonController extends Controller
@@ -20,7 +20,7 @@ class CommonController extends Controller
      */
     public function homePage(Request $request): RedirectResponse | JsonResponse
     {
-        return app_response($request, [], 200, "common.home", [], "home");
+        return appResponse($request, [], 200, "common.page.home");
     }
 
     /**
@@ -29,9 +29,11 @@ class CommonController extends Controller
      */
     public function searchPage(VehicleCRUDService $vehicleCRUDService, Request $request): RedirectResponse | JsonResponse
     {
-        $m_response = $vehicleCRUDService->readMany($request->getQueryString(), $request->user());
+        $page = $request->query("page", 1);
+        $perPage = $request->query("per_page", 30);
+        $mResponse = $vehicleCRUDService->readMany($request->getQueryString(), $request->user(), $page, $perPage);
 
-        return app_response($request, $m_response->data, $m_response->status, "common.search", [], "search");
+        return appResponse($request, $mResponse->data, $mResponse->status, "common.page.search");
     }
 
     /**
@@ -40,8 +42,8 @@ class CommonController extends Controller
      */
     public function vehicleDetailsPage(VehicleCRUDService $vehicleCRUDService, Request $request, string $vehicle_id): RedirectResponse | JsonResponse
     {
-        $m_response = $vehicleCRUDService->read($vehicle_id, $request->user());
+        $mResponse = $vehicleCRUDService->read($vehicle_id, $request->user());
 
-        return app_response($request, $m_response->data, $m_response->status, "common.vehicle_details", [], "vehicle_details");
+        return appResponse($request, $mResponse->data, $mResponse->status, "common.page.vehicle_details");
     }
 }

@@ -15,14 +15,14 @@ use function App\Helpers\searchFiltered;
 
 class VehicleCRUDService implements ICRUDInterface
 {
-    public function get_new_model_instance(): Model
+    public function getNewModelInstance(): Model
     {
         return new Vehicle();
     }
 
-    public function create(array $data, ?User $auth_user): MResponse
+    public function create(array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         }
 
@@ -43,7 +43,7 @@ class VehicleCRUDService implements ICRUDInterface
         return MResponse::create(['message' => 'New vehicle created successfully', 'model' => $model], 201);
     }
 
-    public function read(int|string $id, ?User $auth_user): MResponse
+    public function read(int|string $id, ?User $authUser): MResponse
     {
         $model = Vehicle::find($id);
 
@@ -54,15 +54,15 @@ class VehicleCRUDService implements ICRUDInterface
         return MResponse::create(['message' => 'Model read successfully', 'model' => $model]);
     }
 
-    public function readMany(string $queryParams, ?User $auth_user): MResponse
+    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
-        $models = searchFiltered(Vehicle::query(), $queryParams);
+        $models = searchFiltered(Vehicle::query(), $queryParams)->paginate(perPage: $perPage, page: $page);
         return MResponse::create(['message' => 'Models filtered successfully', 'models' => $models]);
     }
 
-    public function update(int|string $id, array $data, ?User $auth_user): MResponse
+    public function update(int|string $id, array $data, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         }
 
@@ -89,9 +89,9 @@ class VehicleCRUDService implements ICRUDInterface
         return MResponse::create(['message' => 'Model updated successfully', 'model' => $model]);
     }
 
-    public function delete(int|string $id, ?User $auth_user): MResponse
+    public function delete(int|string $id, ?User $authUser): MResponse
     {
-        if (!$auth_user || !$auth_user->is_admin()) {
+        if (!$authUser || !$authUser->isAdmin()) {
             return MResponse::create(['message' => 'Unauthorized operation!'], 403);
         }
 
@@ -102,6 +102,9 @@ class VehicleCRUDService implements ICRUDInterface
             return MResponse::create(['message' => 'No models were deleted.'], 400);
         }
 
-        return MResponse::create(null, 204);
+        return MResponse::create([
+            "message" => "Model(s) deleted successfully!",
+            "success" => true,
+        ], 204);
     }
 }

@@ -56,11 +56,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function is_admin(): bool
+    public function isAdmin(): bool
     {
         return $this->role == UserRole::admin;
     }
-    public function is_customer(): bool
+    public function isCustomer(): bool
     {
         return $this->role == UserRole::customer;
     }

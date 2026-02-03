@@ -10,74 +10,62 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class FileUploadController extends Controller
 {
     /**
-     * POST /api/file-upload
+     * POST /api/version/file-upload
      */
-    public function uploadFile(
-        FileUploadService $fileUploadService,
-        Request $request,
-    ): JsonResponse {
-        $m_response = $fileUploadService->uploadFile($request->all(), $request->user());
+    public function uploadFile(FileUploadService $fileUploadService, Request $request): JsonResponse
+    {
+        $mResponse = $fileUploadService->uploadFile($request->all(), $request->user());
 
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
     /**
-     * POST /api/file-upload/multiple
+     * POST /api/version/file-upload-multiple
      */
-    public function uploadFiles(
-        FileUploadService $fileUploadService,
-        Request $request,
-    ): JsonResponse {
-        $m_response = $fileUploadService->uploadFiles($request->all(), $request->user());
+    public function uploadFiles(FileUploadService $fileUploadService, Request $request): JsonResponse
+    {
+        $mResponse = $fileUploadService->uploadFiles($request->all(), $request->user());
 
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
     /**
-     * DELETE /api/file-upload
+     * DELETE /api/version/file-upload
      */
-    public function deleteFile(
-        FileUploadService $fileUploadService,
-        Request $request,
-    ): JsonResponse {
-        $m_response = $fileUploadService->removeUploadedFile($request->all(), $request->user());
+    public function deleteFile(FileUploadService $fileUploadService, Request $request): JsonResponse
+    {
+        $mResponse = $fileUploadService->removeUploadedFile($request->all(), $request->user());
 
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
     /**
-     * DELETE /api/file-upload/multiple
+     * DELETE /api/version/file-upload-multiple
      */
-    public function deleteFiles(
-        FileUploadService $fileUploadService,
-        Request $request,
-    ): JsonResponse {
-        $m_response = $fileUploadService->removeUploadedFiles($request->all(), $request->user());
+    public function deleteFiles(FileUploadService $fileUploadService, Request $request): JsonResponse
+    {
+        $mResponse = $fileUploadService->removeUploadedFiles($request->all(), $request->user());
 
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
     /**
-     * POST /api/file-upload/move
+     * POST /api/version/file-upload/move
      */
-    public function moveFile(
-        FileUploadService $fileUploadService,
-        Request $request,
-    ): JsonResponse {
-        $m_response = $fileUploadService->moveFile($request->all(), $request->user());
+    public function moveFile(FileUploadService $fileUploadService, Request $request): JsonResponse
+    {
+        $mResponse = $fileUploadService->moveFile($request->all(), $request->user());
 
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
     /**
-     * POST /api/file-upload/move/multiple
+     * POST /api/version/file-upload/move-multiple
      */
-    public function moveFiles(
-        FileUploadService $fileUploadService,
-        Request $request,
-    ): JsonResponse {
-        $m_response = $fileUploadService->moveFiles($request->all(), $request->user());
+    public function moveFiles(FileUploadService $fileUploadService, Request $request): JsonResponse
+    {
+        $mResponse = $fileUploadService->moveFiles($request->all(), $request->user());
 
-        return response()->json($m_response->data, $m_response->status);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 }
