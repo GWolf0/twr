@@ -24,6 +24,15 @@ class CommonController extends Controller
     }
 
     /**
+     * Email comfirmed page
+     * GET /email-confirmed
+     */
+    public function emailConfirmedPage(Request $request): RedirectResponse | JsonResponse
+    {
+        return appResponse($request, [], 200, "common.page.email_confirmed");
+    }
+
+    /**
      * Search page (vehicles search)
      * GET /search?q=...
      */

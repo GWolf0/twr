@@ -6,6 +6,7 @@ use App\Types\MResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -18,13 +19,12 @@ use Illuminate\Support\Facades\DB;
  * - `user`: authenticated user (if any)
  * - `page`: frontend page identifier
  * - `authorizations`: frontend permission map (action => allowed)
+ * - `fkValues`: frontend values to populate select elements with valid fk options data
  *
  * @param Request $request
  * @param array $data                 Payload to expose to the client
  * @param int $status                 HTTP status code
- * @param string|null $redirectRoute  Route name to redirect to (null = back)
- * @param array $redirectParams       Route parameters
- * @param array $page                 Page identifier
+ * @param string|null $page           The identifier "name" of the page, make sure it matches the view
  * @param array $authorizations       UI permissions map
  * @param array $fkValues             fk fields possible values (if needed in UI)
  */
@@ -32,15 +32,14 @@ function appResponse(
     Request $request,
     array $data = [],
     int $status = 200,
-    ?string $redirectRoute = null,
-    array $redirectParams = [],
     ?string $page = null,
     array $authorizations = [],
     array $fkValues = [],
-): JsonResponse|RedirectResponse {
+): Response|JsonResponse|RedirectResponse {
     $payload = array_merge($data, [
-        'user' => $request->user(),
-        'page' => $page ?? $redirectRoute,
+        'user' => $request->user()?->only(['id', 'name', 'email', 'role']),
+        'page' => $page,
+        'status' => $status,
         'authorizations' => $authorizations,
         'fk_values' => $fkValues,
     ]);
@@ -49,10 +48,17 @@ function appResponse(
         return response()->json($payload, $status);
     }
 
-    return $redirectRoute
-        ? redirect()->route($redirectRoute, $redirectParams, $status)->with('data', $payload)
-        : redirect()->back($status)->with('data', $payload);
+    if ($page) {
+        return response()->view(
+            $status < 400 ? $page : 'errors.error',
+            $payload,
+            $status
+        );
+    }
+
+    return redirect()->back()->with($data);
 }
+
 
 /**
  * retrieves all records from a table as ["id" => "columnValue", ..]

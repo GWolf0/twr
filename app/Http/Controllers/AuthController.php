@@ -47,7 +47,7 @@ class AuthController extends Controller
         return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
-    // /reset-password, METHOD=GET
+    // "/reset-password/{token}", METHOD=GET
     public function resetPasswordPage(Request $request): JsonResponse | RedirectResponse
     {
         return appResponse($request, [], 200, "auth.page.reset_password");
@@ -75,11 +75,11 @@ class AuthController extends Controller
         return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
-    // /auth/confirm-email, METHOD=POST
+    // '/email/verify/{id}/{hash}', METHOD=GET
     public function confirmEmail(AuthService $authService, Request $request): JsonResponse | RedirectResponse
     {
         $mResponse = $authService->confirmEmail($request);
 
-        return appResponse($request, $mResponse->data, $mResponse->status);
+        return appResponse($request, $mResponse->data, $mResponse->status, "common.page.email_confirmed");
     }
 }

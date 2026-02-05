@@ -20,7 +20,7 @@ class MiscController extends Controller
         $page = $request->query("page", 1);
         $perPage = $request->query("per_page", 1);
         $fkValuesResponse = getFKValues($table, $column, $page, $perPage);
-
+        
         return response()->json($fkValuesResponse->data, $fkValuesResponse->status);
     }
 }

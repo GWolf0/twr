@@ -161,6 +161,15 @@ class AuthService implements IAuthInterface
     {
         $user = $request->user();
 
+        if (
+            !hash_equals((string) $user->getKey(), (string) $request->route('id'))
+            || !hash_equals(sha1($user->getEmailForVerification()), (string) $request->route('hash'))
+        ) {
+            return MResponse::create([
+                "message" => "Verification for email confirmation failed!"
+            ], 422);
+        }
+
         if ($user->hasVerifiedEmail()) {
             return MResponse::create([
                 'message' => 'Email already verified.',

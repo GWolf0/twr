@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 // controller for models crud (rest api only)
-// expect route format excluding "/api" to be "/api_version/crud/table_name/...params"
+// expect route format excluding "/api" to be "/api_version/crud/table/...params"
 class CRUDController extends Controller
 {
 

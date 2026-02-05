@@ -27,7 +27,7 @@ class AdminController extends Controller
             "message" => "stats to do later!"
         ];
 
-        return appResponse($request, $statsData, 200, "admin.page.dashboard.stats");
+        return appResponse($request, $statsData, 200, "admin.page.dashboard_stats");
     }
 
     // settings page (update settings single record)
@@ -39,7 +39,7 @@ class AdminController extends Controller
             "model" => $settingsInstance
         ];
 
-        return appResponse($request, $data, 200, "admin.page.dashboard.settings");
+        return appResponse($request, $data, 200, "admin.page.dashboard_settings");
     }
     // /admin/settings METHOD=PATCH
     public function updateSettings(MasterCRUDService $crudService, Request $request): JsonResponse | RedirectResponse
@@ -61,7 +61,7 @@ class AdminController extends Controller
         $perPage = $request->query("per_page", 30);
         $mResponse = $crudService->readMany($table, $request->getQueryString(), $request->user(), $page, $perPage);
 
-        return appResponse($request, $mResponse->data, $mResponse->status, "admin.page.dashboard.models.index", ["table" => $table]);
+        return appResponse($request, $mResponse->data, $mResponse->status, "admin.page.dashboard_records_index", ["table" => $table]);
     }
 
     // create (create new record)
@@ -73,7 +73,7 @@ class AdminController extends Controller
             "new_model" => $newModel
         ];
 
-        return appResponse($request, $data, $newModel == null ? 400 : 200, "admin.page.dashboard.models.create", ["table" => $table]);
+        return appResponse($request, $data, $newModel == null ? 400 : 200, "admin.page.dashboard_record_create", ["table" => $table]);
     }
     // /admin/model/{table}/create METHOD=POST
     public function storeRecord(MasterCRUDService $crudService, Request $request, string $table): JsonResponse | RedirectResponse
@@ -100,10 +100,10 @@ class AdminController extends Controller
     }
 
     // destroy (delete record(s))
-    // /admin/model/{table}/{ids} METHOD=DELETE
-    public function deleteRecords(MasterCRUDService $crudService, Request $request, string $table, string $ids): JsonResponse | RedirectResponse
+    // /admin/model/{table}/{id} METHOD=DELETE
+    public function deleteRecords(MasterCRUDService $crudService, Request $request, string $table, string $id): JsonResponse | RedirectResponse
     {
-        $mResponse = $crudService->delete($table, $ids, $request->user());
+        $mResponse = $crudService->delete($table, $id, $request->user());
 
         return appResponse($request, $mResponse->data, $mResponse->status);
     }
