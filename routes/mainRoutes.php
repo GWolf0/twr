@@ -7,14 +7,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommonController;
-use App\Http\Controllers\CRUD\AdminController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 // auth (authentication reltated routes)
 Route::name("auth.")->group(function () {
-    // any
-
     // requires auth
     Route::middleware("auth")->group(function () {
         // logout

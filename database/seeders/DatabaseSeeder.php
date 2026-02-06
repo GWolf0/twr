@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Misc\VehicleAvailability;
+use App\Misc\Enums\VehicleAvailability;
 use App\Models\Booking;
 use App\Models\Setting;
 use App\Models\User;

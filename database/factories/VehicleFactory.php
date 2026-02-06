@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,7 @@ class VehicleFactory extends Factory
             'type' => $this->faker->word,
             'media' => $this->faker->imageUrl() . ',' . $this->faker->imageUrl(),
             'price_per_hour' => $this->faker->randomFloat(2, 10, 100),
-            'availability' => $this->faker->randomElement(['available', 'unavailable', 'maintenance']),
+            'availability' => $this->faker->randomElement(Vehicle::Availabilities()),
         ];
     }
 }

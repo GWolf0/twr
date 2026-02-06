@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('type');
             $table->string('url');
             $table->integer('size');
-            $table->foreignId('user_id')->constrained()->onDelete('set null');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }

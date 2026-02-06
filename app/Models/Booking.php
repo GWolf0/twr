@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Misc\Enums\BookingPaymentMethod;
+use App\Misc\Enums\BookingPaymentStatus;
+use App\Misc\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +24,17 @@ class Booking extends Model
     ];
 
     protected $with = ['user', 'vehicle'];
+
+    // enums arrays
+    public static function Statuses() {
+        return array_column(BookingStatus::cases(), "name");
+    }
+    public static function PaymentStatuses() {
+        return array_column(BookingPaymentStatus::cases(), "name");
+    }
+    public static function PaymentMethods() {
+        return array_column(BookingPaymentMethod::cases(), "name");
+    }
 
     public function user()
     {

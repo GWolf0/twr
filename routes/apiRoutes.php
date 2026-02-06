@@ -8,6 +8,9 @@ use App\Http\Controllers\CRUDController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("v1")->group(function () {
+    // include main routes (reason: most handles json response)
+    include(__DIR__. "/mainRoutes.php");
+
     // crud api routes
     Route::name("crud.")->prefix("/crud")->middleware(["user.role:admin"])->group(function () {
         // show

@@ -3,10 +3,8 @@
 namespace App\Helpers;
 
 use App\Types\MResponse;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -35,7 +33,7 @@ function appResponse(
     ?string $page = null,
     array $authorizations = [],
     array $fkValues = [],
-): Response|JsonResponse|RedirectResponse {
+): Response {
     $payload = array_merge($data, [
         'user' => $request->user()?->only(['id', 'name', 'email', 'role']),
         'page' => $page,

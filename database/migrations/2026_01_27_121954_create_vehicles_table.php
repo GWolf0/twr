@@ -1,6 +1,6 @@
 <?php
 
-use App\Misc\VehicleAvailability;
+use App\Models\Vehicle;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('type');
             $table->text('media')->nullable(); // csv media urls
             $table->decimal('price_per_hour', 8, 2);
-            $table->enum('availability', VehicleAvailabilityArray);
+            $table->enum('availability', Vehicle::Availabilities());
             $table->timestamps();
         });
     }

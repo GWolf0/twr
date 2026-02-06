@@ -1,8 +1,6 @@
 <?php
 
-use App\Misc\BookingPaymentMethod;
-use App\Misc\BookingPaymentStatus;
-use App\Misc\BookingStatus;
+use App\Models\Booking;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,14 +14,14 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete("set null");
-            $table->foreignId('vehicle_id')->constrained()->onDelete("set null");
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete("set null");
+            $table->foreignId('vehicle_id')->nullable()->constrained()->onDelete("set null");
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->enum('status', BookingStatusArray);
-            $table->enum('payment_status', BookingPaymentStatusArray);
-            $table->enum('payment_method', BookingPaymentMethodArray);
-            $table->decimal('total_amout', 8, 2);
+            $table->enum('status', Booking::Statuses());
+            $table->enum('payment_status', Booking::PaymentStatuses());
+            $table->enum('payment_method', Booking::PaymentMethods());
+            $table->decimal('total_amount', 8, 2);
             $table->timestamps();
         });
     }

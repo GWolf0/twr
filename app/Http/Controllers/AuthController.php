@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\AuthService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 
 use function App\Helpers\appResponse;
@@ -14,12 +13,12 @@ class AuthController extends Controller
 {
 
     // /register, METHOD=GET
-    public function registerPage(Request $request): JsonResponse | RedirectResponse
+    public function registerPage(Request $request): Response
     {
-        return appResponse($request, [], 200, "auth.page.register");
+        return appResponse($request, [], 400, "auth.page.register");
     }
     // /auth/register, METHOD=POST
-    public function register(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    public function register(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->register($request);
 
@@ -27,12 +26,12 @@ class AuthController extends Controller
     }
 
     // /login, METHOD=GET
-    public function loginPage(Request $request): JsonResponse | RedirectResponse
+    public function loginPage(Request $request): Response
     {
         return appResponse($request, [], 200, "auth.page.login");
     }
     // /auth/login, METHOD=POST
-    public function login(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    public function login(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->login($request);
 
@@ -40,7 +39,7 @@ class AuthController extends Controller
     }
 
     // /auth/logout, METHOD=POST
-    public function logout(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    public function logout(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->logout($request);
 
@@ -48,19 +47,19 @@ class AuthController extends Controller
     }
 
     // "/reset-password/{token}", METHOD=GET
-    public function resetPasswordPage(Request $request): JsonResponse | RedirectResponse
+    public function resetPasswordPage(Request $request): Response
     {
         return appResponse($request, [], 200, "auth.page.reset_password");
     }
     // /auth/reset-password, METHOD=POST
-    public function resetPassword(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    public function resetPassword(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->resetPassword($request);
 
         return appResponse($request, $mResponse->data, $mResponse->status);
     }
     // /auth/send-password-reset-notification, METHOD=POST
-    public function sendPasswordResetNotification(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    public function sendPasswordResetNotification(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->sendPasswordResetNotification($request);
 
@@ -68,7 +67,7 @@ class AuthController extends Controller
     }
 
     // /auth/send-email-confirmation-notification, METHOD=POST
-    public function sendEmailConfirmationNotification(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    public function sendEmailConfirmationNotification(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->sendEmailConfirmationNotification($request);
 
@@ -76,10 +75,10 @@ class AuthController extends Controller
     }
 
     // '/email/verify/{id}/{hash}', METHOD=GET
-    public function confirmEmail(AuthService $authService, Request $request): JsonResponse | RedirectResponse
+    public function confirmEmail(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->confirmEmail($request);
 
-        return appResponse($request, $mResponse->data, $mResponse->status, "common.page.email_confirmed");
+        return appResponse($request, $mResponse->data, $mResponse->status, "auth.page.email_confirmed");
     }
 }
