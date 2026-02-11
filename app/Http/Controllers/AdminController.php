@@ -89,7 +89,7 @@ class AdminController extends Controller
     {
         $mResponse = $crudService->read($table, $id, $request->user());
 
-        return appResponse($request, $mResponse->data, $mResponse->status, "admin.page.dashboard.models.edit", ["table" => $table, "id" => $id]);
+        return appResponse($request, $mResponse->data, $mResponse->status, "admin.page.dashboard_record_edit", ["table" => $table, "id" => $id]);
     }
     // /admin/model/{table}/{id} METHOD=PATCH
     public function updateRecord(MasterCRUDService $crudService, Request $request, string $table, string $id): JsonResponse | RedirectResponse

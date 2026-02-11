@@ -15,7 +15,7 @@ class AuthController extends Controller
     // /register, METHOD=GET
     public function registerPage(Request $request): Response
     {
-        return appResponse($request, [], 400, "auth.page.register");
+        return appResponse($request, [], 200, "auth.page.register");
     }
     // /auth/register, METHOD=POST
     public function register(AuthService $authService, Request $request): Response
@@ -79,6 +79,6 @@ class AuthController extends Controller
     {
         $mResponse = $authService->confirmEmail($request);
 
-        return appResponse($request, $mResponse->data, $mResponse->status, "auth.page.email_confirmed");
+        return appResponse($request, $mResponse->data, $mResponse->status, "auth.page.confirm_email");
     }
 }

@@ -143,6 +143,81 @@ The system provides a clear separation between client and admin roles and focuse
     - reddish accent color
     - white rabbit, red scarf, riding a red scooter
 
+## UI hierarchy
+### pages:
+- auth:
+    - register
+    - login
+    - send_reset_password_notification
+    - reset_password
+    - confirm_email
+- admin:
+    - dashboard_stats (default dashboard page)
+    - dashboard_settings
+    - dashboard_records_index
+    - dashboard_record_create
+    - dashboard_record_edit
+- customer:
+    - bookings_list
+    - booking_details
+    - profile
+- common:
+    - home
+    - search
+    - vehicle details
+### components:
+- layouts:
+    - mainLayout
+    - dashboardLayout
+    - main-header
+    - main-footer
+    - dashboard-header
+    - dashboard-footer
+    - logo
+- forms:
+    - auth:
+        - register-form
+        - login-form
+        - send-password-reset-notificationForm
+        - reset-password-form
+        - send-email-confirmation-notificationForm
+    - admin:
+        - settings-form
+        - user-form
+        - vehicle-form
+        - booking-form
+    - customer:
+        - book-form
+    - common:
+        - vehicles-search-form
+        - vehicle-card
+- ui:
+    - form:
+        - label
+        - input
+        - textarea
+        - checkbox
+        - select
+        - file
+    - button:
+        - button
+    - text:
+        - header
+        - paragraph
+    - layout:
+        - paper
+        - card
+    - data:
+        - table
+    - misc:
+        - link
+        - dropdown
+        - modal
+        - alert
+        - error
+- modals:
+    - file-upload-modal
+
 ## Non-goals
 - No real payment gateway integration (mocked/manual)
 - No real-time availability syncing

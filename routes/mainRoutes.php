@@ -52,7 +52,6 @@ Route::name("auth.")->group(function () {
 
 // common (routes available to guest or any auth user)
 Route::name("common.")->group(function () {
-    // any
     // home page
     Route::get("/", [CommonController::class, "homePage"])->name("page.home");
 
@@ -64,6 +63,9 @@ Route::name("common.")->group(function () {
 
     // vehicle details
     Route::get("/vehicles/{vehicle_id}", [CommonController::class, "vehicleDetailsPage"])->name("page.vehicle_details");
+
+    // display ui
+    Route::get("/ui", fn () => view("common.page.ui"))->name("page.ui");
 
     // requires auth
     Route::middleware("auth")->group(function () {});
@@ -122,3 +124,4 @@ Route::name("customer.")->middleware("user.role:customer")->group(function () {
     // cancel booking
     Route::post("/customer/bookings/{booking_id}/cancel", [CustomerController::class, "cancelBooking"])->name("action.cancel_booking");
 });
+
