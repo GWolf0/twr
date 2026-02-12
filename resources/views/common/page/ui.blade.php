@@ -29,17 +29,17 @@
         <h2>Alerts</h2>
 
         <div class="flex flex-col w-full gap-1">
-            <x-ui.misc.alert severity="info">
+            <x-ui.alert severity="info">
                 This is an info message.
-            </x-ui.misc.alert>
+            </x-ui.alert>
 
-            <x-ui.misc.alert severity="success" :autoclose="false">
+            <x-ui.alert severity="success" :autoclose="false">
                 Saved successfully.
-            </x-ui.misc.alert>
+            </x-ui.alert>
 
-            <x-ui.misc.alert severity="error" :closeBtn="false">
+            <x-ui.alert severity="error" :closeBtn="false">
                 Something went wrong.
-            </x-ui.misc.alert>
+            </x-ui.alert>
 
         </div>
     </section>
@@ -49,18 +49,18 @@
         <h2>Dropdown</h2>
 
         <div class="flex w-full gap-1">
-            <x-ui.misc.dropdown alignX="left">
+            <x-ui.dropdown alignX="left">
                 <x-slot:trigger>
-                    <x-ui.button.button variant="outline">
+                    <x-ui.button variant="outline">
                         Profile
-                    </x-ui.button.button>
+                    </x-ui.button>
                 </x-slot:trigger>
 
                 <x-slot:content>
                     <a href="#" class="block px-4 py-2 text-sm hover:bg-muted">Settings</a>
                     <a href="#" class="block px-4 py-2 text-sm hover:bg-muted">Logout</a>
                 </x-slot:content>
-            </x-ui.misc.dropdown>
+            </x-ui.dropdown>
 
         </div>
     </section>
@@ -71,11 +71,11 @@
 
         <div class="flex w-full gap-1">
 
-            <x-ui.button.button onclick="openModal('deleteUserModal')">Open Modal</x-ui.button.button>
+            <x-ui.button onclick="openModal('deleteUserModal')">Open Modal</x-ui.button>
 
-            <x-ui.misc.modals-container>
+            <x-ui.modals-container>
 
-                <x-ui.misc.modal id="deleteUserModal" width="md">
+                <x-ui.modal id="deleteUserModal" width="md">
                     <x-slot:header>
                         Delete User
                     </x-slot:header>
@@ -85,17 +85,17 @@
                     </x-slot:content>
 
                     <x-slot:footer>
-                        <x-ui.button.button variant="ghost" onclick="closeModal('deleteUserModal')">
+                        <x-ui.button variant="ghost" onclick="closeModal('deleteUserModal')">
                             Cancel
-                        </x-ui.button.button>
+                        </x-ui.button>
 
-                        <x-ui.button.button variant="destructive">
+                        <x-ui.button variant="destructive">
                             Delete
-                        </x-ui.button.button>
+                        </x-ui.button>
                     </x-slot:footer>
-                </x-ui.misc.modal>
+                </x-ui.modal>
 
-            </x-ui.misc.modals-container>
+            </x-ui.modals-container>
 
         </div>
     </section>
@@ -106,8 +106,8 @@
 
         <div class="flex w-full gap-1">
 
-            <x-ui.misc.toasts-container />
-            <x-ui.button.button onclick="toast('Saved successfully', 'success')">Show Toast</x-ui.button.button>
+            <x-ui.toasts-container />
+            <x-ui.button onclick="toast('Saved successfully', 'success')">Show Toast</x-ui.button>
 
         </div>
     </section>
@@ -118,12 +118,45 @@
 
         <div class="flex flex-col w-full gap-1">
 
-            <x-ui.misc.error error="Email already exists." />
+            <x-ui.error error="Email already exists." />
 
             @php
-            $errorArray = ["email" => "Invalid email!"];
+                $errorArray = ['email' => 'Invalid email!'];
             @endphp
-            <x-ui.misc.error :error="$errorArray" key="email" />
+            <x-ui.error :error="$errorArray" key="email" />
+
+        </div>
+    </section>
+
+    {{-- // Form --}}
+    <section class="space-y-4">
+        <h2>Form</h2>
+
+        <div class="flex flex-col w-full gap-1">
+
+            <x-ui action="{{ route('auth.action.register') }}" method="POST">
+
+                <x-ui-group>
+                    <x-ui.label for="email">Email</x-ui.label>
+                    <x-ui.input name="email" type="email" />
+                    <x-ui.error key="email" />
+                </x-ui-group>
+
+                <x-ui-group>
+                    <x-ui.label for="role">Role</x-ui.label>
+                    <x-ui.select name="role">
+                        <option value="admin">Admin</option>
+                        <option value="customer">Customer</option>
+                    </x-ui.select>
+                    <x-ui.error key="role" />
+                </x-ui-group>
+
+                <x-ui-actions>
+                    <x-ui type="reset" variant="secondary">Clear</x-ui>
+                    <x-ui type="submit">Create User</x-ui>
+                </x-ui-actions>
+
+            </x-ui>
 
         </div>
     </section>
@@ -136,24 +169,24 @@
 
         <div class="flex w-full flex-col gap-2">
 
-            <x-ui.form.label for="email">Label element</x-ui.form.label>
+            <x-ui.label for="email">Label element</x-ui.label>
 
-            <x-ui.form.input name="email" type="email" placeholder="email" required />
+            <x-ui.input name="email" type="email" placeholder="email" required />
 
-            <x-ui.form.input name="file" type="file" />
+            <x-ui.input name="file" type="file" />
 
-            <x-ui.form.textarea name="text" rows="3">
+            <x-ui.textarea name="text" rows="3">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Soluta aliquam eaque laboriosam, a qui dolores
                 quae recusandae blanditiis voluptatum ipsa tenetur? Officiis voluptatem accusantium minus eligendi at
                 consequuntur porro optio!
-            </x-ui.form.textarea>
+            </x-ui.textarea>
 
             @php
                 $o = ['option 1' => 'val 1', 'option 2' => 'val 2', 'option 3' => 'val 3'];
             @endphp
-            <x-ui.form.select :options="$o" />
+            <x-ui.select :options="$o" />
 
-            <x-ui.form.checkbox name="is_private" label="is private" checked />
+            <x-ui.checkbox name="is_private" label="is private" checked />
 
         </div>
     </section>
@@ -164,15 +197,15 @@
 
         <div class="flex w-full flex-col gap-2">
 
-            <x-ui.layout.paper>
+            <x-ui.paper>
                 <p class="text-gray-800 text-sm">
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit. Totam in aut tenetur praesentium dolores esse
                     consequuntur tempora nostrum natus maiores reprehenderit sit corrupti, nesciunt earum cum? Soluta
                     consequatur voluptatum quo.
                 </p>
-            </x-ui.layout.paper>
+            </x-ui.paper>
 
-            <x-ui.layout.card>
+            <x-ui.card>
                 @slot('header')
                     <div class="space-y-1">
                         <h1 class="text-xl text-gray-800">Some Title</h1>
@@ -190,10 +223,10 @@
                 @endslot
                 @slot('footer')
                     <div class="flex items-center justify-end gap-4">
-                        <x-ui.button.button>Button</x-ui.button.button>
+                        <x-ui.button>Button</x-ui.button>
                     </div>
                 @endslot
-            </x-ui.layout.card>
+            </x-ui.card>
 
         </div>
 
@@ -205,17 +238,17 @@
 
         <div class="flex flex-wrap w-full flex-row gap-2 items-center">
 
-            <x-ui.button.button variant="primary" size="lg" class="">Primary</x-ui.button.button>
-            <x-ui.button.button variant="primary" size="icon-lg" class="">P</x-ui.button.button>
-            <x-ui.button.button variant="primary" size="md" class="">Primary</x-ui.button.button>
-            <x-ui.button.button variant="primary" size="icon-md" class="">P</x-ui.button.button>
-            <x-ui.button.button variant="primary" size="sm" class="">Primary</x-ui.button.button>
-            <x-ui.button.button variant="primary" size="icon-sm" class="">P</x-ui.button.button>
+            <x-ui.button variant="primary" size="lg" class="">Primary</x-ui.button>
+            <x-ui.button variant="primary" size="icon-lg" class="">P</x-ui.button>
+            <x-ui.button variant="primary" size="md" class="">Primary</x-ui.button>
+            <x-ui.button variant="primary" size="icon-md" class="">P</x-ui.button>
+            <x-ui.button variant="primary" size="sm" class="">Primary</x-ui.button>
+            <x-ui.button variant="primary" size="icon-sm" class="">P</x-ui.button>
 
-            <x-ui.button.button variant="secondary" size="md" class="">Secondary</x-ui.button.button>
-            <x-ui.button.button variant="outline" size="md" class="">Outline</x-ui.button.button>
-            <x-ui.button.button variant="ghost" size="md" class="">Ghost</x-ui.button.button>
-            <x-ui.button.button variant="link" size="md" class="">Link</x-ui.button.button>
+            <x-ui.button variant="secondary" size="md" class="">Secondary</x-ui.button>
+            <x-ui.button variant="outline" size="md" class="">Outline</x-ui.button>
+            <x-ui.button variant="ghost" size="md" class="">Ghost</x-ui.button>
+            <x-ui.button variant="link" size="md" class="">Link</x-ui.button>
 
         </div>
 
