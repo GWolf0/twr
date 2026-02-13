@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 
 interface IFileUploadInterface
 {
+
     /**
      * Upload a single file.
      * Returns DOE->data = uploaded file path on success

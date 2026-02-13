@@ -54,9 +54,9 @@ class BookingController extends Controller
     }
 
     /**
-     * POST /api/booking/{booking}/complete
+     * POST /api/booking/{booking_id}/complete
      */
-    public function complete(BookingService $bookingService, Request $request, Booking $booking_id): JsonResponse
+    public function complete(BookingService $bookingService, Request $request, string $booking_id): JsonResponse
     {
         $mResponse = $bookingService->complete(array_merge($request->all(), $request->route()->parameters()), $request->user());
 
@@ -64,9 +64,9 @@ class BookingController extends Controller
     }
 
     /**
-     * POST /api/booking/{booking}/refund
+     * POST /api/booking/{booking_id}/refund
      */
-    public function refund(BookingService $bookingService, Request $request, Booking $booking_id): JsonResponse
+    public function refund(BookingService $bookingService, Request $request, string $booking_id): JsonResponse
     {
         $mResponse = $bookingService->refund(array_merge($request->all(), $request->route()->parameters()), $request->user());
 
@@ -74,9 +74,9 @@ class BookingController extends Controller
     }
 
     /**
-     * DELETE /api/booking/{booking}
+     * DELETE /api/booking/{booking_id}
      */
-    public function delete(BookingService $bookingService, Request $request, Booking $booking_id): JsonResponse
+    public function delete(BookingService $bookingService, Request $request, string $booking_id): JsonResponse
     {
         $mResponse = $bookingService->delete(array_merge($request->all(), $request->route()->parameters()), $request->user());
 

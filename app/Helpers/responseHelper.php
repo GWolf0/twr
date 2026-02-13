@@ -48,7 +48,7 @@ function appResponse(
 
     if ($page) {
         return response()->view(
-            $status < 400 ? $page : 'errors.error',
+            $status < 400 ? $page : 'common.page.error',
             $payload,
             $status
         );

@@ -71,4 +71,10 @@ class User extends Authenticatable
     {
         return $this->role == UserRole::customer;
     }
+
+    // relations
+    public function media()
+    {
+        return $this->hasMany(Media::class);
+    }
 }

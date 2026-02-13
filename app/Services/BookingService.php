@@ -3,14 +3,14 @@
 namespace App\Services;
 
 use App\Interfaces\IBookingInterface;
+use App\Misc\Enums\BookingPaymentMethod;
+use App\Misc\Enums\BookingPaymentStatus;
+use App\Misc\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\User;
 use App\Models\Vehicle;
 use App\Types\DOE;
-use App\Misc\BookingStatus;
-use App\Misc\BookingPaymentStatus;
-use App\Misc\BookingPaymentMethod;
-use App\Misc\VehicleAvailability;
+use App\Misc\Enums\VehicleAvailability as EnumsVehicleAvailability;
 use App\Types\MResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -49,7 +49,7 @@ class BookingService implements IBookingInterface
         }
 
         $errorMsg = "";
-        if ($vehicle->status !== VehicleAvailability::available->name) {
+        if ($vehicle->status !== EnumsVehicleAvailability::available->name) {
             $errorMsg =  'Vehicle not available';
         }
 

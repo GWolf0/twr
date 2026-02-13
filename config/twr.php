@@ -8,6 +8,7 @@ return [
         "max_size" => 2048000,
         "max_size_kb" => 2048,
         "dirs" => ["images", "videos", "docs"],
+        "storage_capacity" => 1e+9 // ~1GB
     ]
 
 ];

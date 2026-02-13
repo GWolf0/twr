@@ -46,11 +46,18 @@ class AuthController extends Controller
         return appResponse($request, $mResponse->data, $mResponse->status);
     }
 
+    // "/forgot-password", METHOD=GET
+    public function forgotPasswordPage(Request $request): Response
+    {
+        return appResponse($request, [], 200, "auth.page.forgot_password");
+    }
+    
     // "/reset-password/{token}", METHOD=GET
     public function resetPasswordPage(Request $request): Response
     {
         return appResponse($request, [], 200, "auth.page.reset_password");
     }
+
     // /auth/reset-password, METHOD=POST
     public function resetPassword(AuthService $authService, Request $request): Response
     {
@@ -58,6 +65,7 @@ class AuthController extends Controller
 
         return appResponse($request, $mResponse->data, $mResponse->status);
     }
+
     // /auth/send-password-reset-notification, METHOD=POST
     public function sendPasswordResetNotification(AuthService $authService, Request $request): Response
     {

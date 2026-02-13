@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Interfaces\IFileUploadInterface;
+use App\Models\Media;
 use App\Models\User;
 use App\Types\MResponse;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,7 @@ use Illuminate\Validation\Rule;
 
 class FileUploadService implements IFileUploadInterface
 {
+
     public function uploadFile(array $data, ?User $authUser): MResponse
     {
         if (!$authUser || !$authUser->isAdmin()) {
