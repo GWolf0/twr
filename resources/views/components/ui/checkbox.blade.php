@@ -12,8 +12,8 @@
         ]) }} />
 
     @if ($label)
-        <x-ui.form.label :for="$name" class="cursor-pointer">
+        <x-ui.label :for="$name" class="cursor-pointer">
             {{ $label }}
-        </x-ui.form.label>
+        </x-ui.label>
     @endif
 </div>

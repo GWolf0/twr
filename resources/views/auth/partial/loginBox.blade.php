@@ -1,7 +1,41 @@
-<!--
-login box:
-- displays a box that contains the login form, includes the remember me checkbox
-- includes a link to "auth.page.register" page for users who don't have account
-- includes a link to "auth.page.forgot_password" for users that forgot their password
-- maybe add the logo to the top of the box for better ui
--->
+<x-ui.card class="w-full max-w-md p-6 sm:p-8 space-y-6">
+    <x-slot:header>
+        <div class="flex flex-col items-center gap-4">
+            <x-layout.logo size="lg" />
+            <h2 class="text-2xl font-bold text-foreground">Sign in to your account</h2>
+        </div>
+    </x-slot:header>
+
+    <x-slot:content>
+        <x-ui.form action="{{ route('auth.action.login') }}" method="POST" class="space-y-4">
+            <x-ui.form-group>
+                <x-ui.label for="email" value="Email">Email</x-ui.label>
+                <x-ui.input type="email" id="email" name="email" placeholder="john.doe@example.com" required
+                    autofocus />
+            </x-ui.form-group>
+
+            <x-ui.form-group>
+                <x-ui.label for="password" value="Password">Password</x-ui.label>
+                <x-ui.input type="password" id="password" name="password" placeholder="••••••••" required />
+            </x-ui.form-group>
+
+            <div class="flex items-center justify-between">
+                <x-ui.checkbox id="remember" name="remember" label="Remember me" />
+                <x-ui.link href="{{ route('auth.page.forgot_password') }}" class="text-sm">
+                    Forgot password?
+                </x-ui.link>
+            </div>
+
+            <x-ui.button type="submit" class="w-full">
+                Login
+            </x-ui.button>
+        </x-ui.form>
+
+        <div class="text-center text-sm text-muted-foreground">
+            Don't have an account?
+            <x-ui.link href="{{ route('auth.page.register') }}" class="font-medium">
+                Register
+            </x-ui.link>
+        </div>
+    </x-slot:content>
+</x-ui.card>

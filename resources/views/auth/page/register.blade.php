@@ -1,7 +1,7 @@
-<!--
-Register page
-extends layout ("layouts.mainLayout")
-main purpose:
-- displays the "auth.partial.registerBox" partial
-- allows the user to register using email and password
--->
+@extends('layouts.mainLayout')
+
+@section('content')
+    <main class="w-full grow flex items-center justify-center">
+        @include('auth.partial.registerBox')
+    </main>
+@endsection
