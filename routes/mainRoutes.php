@@ -39,7 +39,10 @@ Route::name("auth.")->group(function () {
         // login action
         Route::post("/auth/login", [AuthController::class, "login"])->name("action.login");
 
-        // reset password page
+        // 
+        Route::get("/forgot-password", [AuthController::class, "forgotPasswordPage"])->name("page.forgot_password");
+
+        // reset password page (redirected from received email)
         Route::get("/reset-password/{token}", [AuthController::class, "resetPasswordPage"])->name("page.reset_password");
 
         // reset password action
