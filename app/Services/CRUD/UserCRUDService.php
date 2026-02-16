@@ -3,6 +3,7 @@
 namespace App\Services\CRUD;
 
 use App\Interfaces\ICRUDInterface;
+use App\Misc\Enums\UserRole as EnumsUserRole;
 use App\Misc\UserRole;
 use App\Models\User;
 use App\Types\MResponse;
@@ -23,7 +24,7 @@ class UserCRUDService implements ICRUDInterface
             "name" => "",
             "email" => "",
             "password" => "",
-            "role" => UserRole::customer->name
+            "role" => EnumsUserRole::customer->name
         ]);
     }
 
@@ -42,7 +43,7 @@ class UserCRUDService implements ICRUDInterface
             'name'     => ['required', 'string', 'min:3', 'max:64'],
             'email'    => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role'     => ['required', Rule::in(UserRoleArray)],
+            'role'     => ['required', Rule::in(User::Roles())],
         ]);
 
         if ($validator->fails()) {
@@ -140,7 +141,7 @@ class UserCRUDService implements ICRUDInterface
                 Rule::unique('users', 'email')->ignore($id),
             ];
             $rules['password'] = ['sometimes', 'string', 'min:8', 'confirmed'];
-            $rules['role'] = ['sometimes', Rule::in(UserRoleArray)];
+            $rules['role'] = ['sometimes', Rule::in(User::Roles())];
         }
 
         $validator = Validator::make($data, $rules);

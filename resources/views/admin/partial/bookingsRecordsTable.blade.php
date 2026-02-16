@@ -1,0 +1,1 @@
+<!-- same as usersRecordsTable but form Booking model -->

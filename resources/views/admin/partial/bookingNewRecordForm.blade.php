@@ -1,0 +1,1 @@
+<!-- same as userNewRecordForm but form Booking model -->

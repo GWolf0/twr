@@ -13,6 +13,10 @@ class MasterCRUDService implements IMasterCRUDInterface
 {
     private const MAP = [
         'users' => UserCRUDService::class,
+        'vehicles' => VehicleCRUDService::class,
+        'bookings' => BookingCRUDService::class,
+        'settings' => SettingCRUDService::class,
+        'media' => MediaCRUDService::class,
     ];
 
     public function __construct(

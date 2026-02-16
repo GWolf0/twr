@@ -77,7 +77,8 @@ class SettingCRUDService implements ICRUDInterface
         $validator = Validator::make($data, [
             'business_name' => ['sometimes', 'string'],
             'business_description' => ['nullable', 'string'],
-            'business_phone_number' => ['sometimes', 'string'],
+            'business_email' => ['nullable', 'string', "email"],
+            'business_phone_number' => ['nullable', 'string'],
             'business_addresses' => ['nullable', 'string'],
         ]);
 

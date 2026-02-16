@@ -19,6 +19,7 @@ class SettingFactory extends Factory
         return [
             'business_name' => $this->faker->company,
             'business_description' => $this->faker->sentence,
+            'business_email' => $this->faker->email(),
             'business_phone_number' => $this->faker->phoneNumber,
             'business_addresses' => $this->faker->address,
         ];

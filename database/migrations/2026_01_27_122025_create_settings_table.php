@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('business_name');
             $table->string('business_description')->nullable();
-            $table->string('business_phone_number');
+            $table->string('business_email')->nullable();
+            $table->string('business_phone_number')->nullable();
             $table->string('business_addresses')->nullable(); // csv of addresses
             $table->timestamps();
         });

@@ -12,6 +12,7 @@ class Setting extends Model
     protected $fillable = [
         'business_name',
         'business_description',
+        'business_email',
         'business_phone_number',
         'business_addresses',
     ];
@@ -25,6 +26,7 @@ class Setting extends Model
                 [
                     'business_name' => 'Business Name',
                     'business_description' => 'Description (optional)',
+                    'business_email' => 'business@email.com',
                     'business_phone_number' => 'Phone number',
                     'business_addresses' => 'Address 1, Address 2',
                 ]

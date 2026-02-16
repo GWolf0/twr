@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Setting;
+use App\Models\User;
+use App\Models\Vehicle;
 use App\Services\CRUD\MasterCRUDService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -22,9 +26,98 @@ class AdminController extends Controller
     // /dashboard | /dashboard/stats, METHOD=GET
     public function stats(Request $request): JsonResponse | RedirectResponse
     {
-        // stats to do later
+        $now = Carbon::now();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $startOfToday = $now->copy()->startOfDay();
+
+        // ================= USERS =================
+        $totalUsers = User::where('role', 'customer')->count();
+        $totalAdmins = User::where('role', 'admin')->count();
+        $newUsersThisMonth = User::where('role', 'customer')
+            ->where('created_at', '>=', $startOfMonth)
+            ->count();
+
+        // ================= VEHICLES =================
+        $totalVehicles = Vehicle::count();
+        $availableVehicles = Vehicle::where('availability', 'available')->count();
+        $maintenanceVehicles = Vehicle::where('availability', 'maintenance')->count();
+        $unavailableVehicles = Vehicle::where('availability', 'unavailable')->count();
+
+        // ================= BOOKINGS =================
+        $totalBookings = Booking::count();
+
+        $pendingBookings = Booking::where('status', 'pending')->count();
+        $confirmedBookings = Booking::where('status', 'confirmed')->count();
+        $completedBookings = Booking::where('status', 'completed')->count();
+        $canceledBookings = Booking::where('status', 'canceled')->count();
+
+        // Active bookings (currently ongoing)
+        $activeBookings = Booking::where('status', 'confirmed')
+            ->where('start_date', '<=', $now)
+            ->where('end_date', '>=', $now)
+            ->count();
+
+        // ================= REVENUE =================
+        $totalRevenue = Booking::where('payment_status', 'paid')
+            ->sum('total_amount');
+
+        $monthlyRevenue = Booking::where('payment_status', 'paid')
+            ->where('created_at', '>=', $startOfMonth)
+            ->sum('total_amount');
+
+        $todayRevenue = Booking::where('payment_status', 'paid')
+            ->where('created_at', '>=', $startOfToday)
+            ->sum('total_amount');
+
+        $refundedAmount = Booking::where('payment_status', 'refunded')
+            ->sum('total_amount');
+
+        // ================= PAYMENT METHODS =================
+        $paymentMethodsStats = Booking::selectRaw('payment_method, COUNT(*) as count')
+            ->groupBy('payment_method')
+            ->pluck('count', 'payment_method');
+
+        // ================= MOST BOOKED VEHICLE =================
+        $mostBookedVehicle = Booking::selectRaw('vehicle_id, COUNT(*) as total')
+            ->whereNotNull('vehicle_id')
+            ->groupBy('vehicle_id')
+            ->orderByDesc('total')
+            ->with('vehicle')
+            ->first();
+
         $statsData = [
-            "message" => "stats to do later!"
+            'users' => [
+                'total_customers' => $totalUsers,
+                'total_admins' => $totalAdmins,
+                'new_this_month' => $newUsersThisMonth,
+            ],
+
+            'vehicles' => [
+                'total' => $totalVehicles,
+                'available' => $availableVehicles,
+                'maintenance' => $maintenanceVehicles,
+                'unavailable' => $unavailableVehicles,
+            ],
+
+            'bookings' => [
+                'total' => $totalBookings,
+                'pending' => $pendingBookings,
+                'confirmed' => $confirmedBookings,
+                'completed' => $completedBookings,
+                'canceled' => $canceledBookings,
+                'active_now' => $activeBookings,
+            ],
+
+            'revenue' => [
+                'total' => $totalRevenue,
+                'this_month' => $monthlyRevenue,
+                'today' => $todayRevenue,
+                'refunded' => $refundedAmount,
+            ],
+
+            'payment_methods' => $paymentMethodsStats,
+
+            'most_booked_vehicle' => $mostBookedVehicle?->vehicle?->name,
         ];
 
         return appResponse($request, $statsData, 200, "admin.page.dashboard_stats");

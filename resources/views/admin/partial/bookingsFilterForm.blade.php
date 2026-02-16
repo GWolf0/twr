@@ -1,0 +1,1 @@
+<!-- same as usersFilterForm but form Booking model -->
