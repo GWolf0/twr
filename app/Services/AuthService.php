@@ -47,7 +47,7 @@ class AuthService implements IAuthInterface
         return MResponse::create([
             'message' => 'User registered successfully.',
             'user'    => $user,
-            'token'   => $token
+            'token'   => $token ?? null
         ], 201);
     }
 

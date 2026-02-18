@@ -7,16 +7,19 @@
     </x-slot:header>
 
     <x-slot:content>
-        <x-ui.form action="{{ route('auth.action.login') }}" method="POST" class="space-y-4">
+        <x-ui.form action="{{ route('auth.action.login') }}" method="POST">
             <x-ui.form-group>
+                <x-ui.error key="email" />
                 <x-ui.label for="email" value="Email">Email</x-ui.label>
-                <x-ui.input type="email" id="email" name="email" placeholder="john.doe@example.com" required
-                    autofocus />
+                <x-ui.input type="email" id="email" name="email" placeholder="john.doe@example.com"
+                    value="{{ old('email') }}" required minLength=10 maxLength=64 autofocus />
             </x-ui.form-group>
 
             <x-ui.form-group>
+                <x-ui.error key="password" />
                 <x-ui.label for="password" value="Password">Password</x-ui.label>
-                <x-ui.input type="password" id="password" name="password" placeholder="••••••••" required />
+                <x-ui.input type="password" id="password" name="password" placeholder="••••••••" required minLength=8
+                    maxLength=32 />
             </x-ui.form-group>
 
             <div class="flex items-center justify-between">

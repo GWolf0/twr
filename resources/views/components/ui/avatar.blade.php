@@ -21,7 +21,7 @@
         'md' => 'rounded-md',
     ];
 
-    $base = 'inline-flex items-center justify-center overflow-hidden bg-muted text-muted-foreground font-medium';
+    $base = 'inline-flex items-center justify-center overflow-hidden bg-muted text-muted-foreground font-medium select-none';
 
     $classes = implode(' ', [$base, $sizes[$size] ?? $sizes['md'], $radius[$rounded] ?? $radius['full']]);
 

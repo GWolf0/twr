@@ -15,27 +15,30 @@
         @auth
             <x-ui.dropdown alignX="right">
                 <x-slot:trigger>
-                    <x-ui.button variant="outline" size="icon-md" class="rounded-full text-lg"
-                        title="{{ auth()->user()->name }}">
-                        {{ strtoupper(auth()->user()->name[0] ?? '') }}
-                    </x-ui.button>
+                    <x-ui.avatar name="{{ auth()->user()->name }}" />
                 </x-slot:trigger>
 
                 <x-slot:content>
-                    <x-ui.link href="{{ route('customer.page.bookings_list') }}">
-                        My Bookings
-                    </x-ui.link>
+                    <div class="flex flex-col gap-1 px-2 py-4">
+                        <x-ui.link href="{{ route('customer.page.bookings_list') }}">
+                            <x-ui.button variant="ghost" class="w-full">
+                                My Bookings
+                            </x-ui.button>
+                        </x-ui.link>
 
-                    <x-ui.link href="{{ route('customer.page.profile') }}">
-                        My Profile
-                    </x-ui.link>
+                        <x-ui.link href="{{ route('customer.page.profile') }}">
+                            <x-ui.button variant="ghost" class="w-full">
+                                My Profile
+                            </x-ui.button>
+                        </x-ui.link>
 
-                    <form action="{{ route('auth.action.logout') }}" method="POST">
-                        @csrf
-                        <x-ui.button type="submit" variant="destructive" class="w-full text-left">
-                            Logout
-                        </x-ui.button>
-                    </form>
+                        <form action="{{ route('auth.action.logout') }}" method="POST">
+                            @csrf
+                            <x-ui.button type="submit" variant="destructive" class="w-full">
+                                Logout
+                            </x-ui.button>
+                        </form>
+                    </div>
                 </x-slot:content>
             </x-ui.dropdown>
         @endauth

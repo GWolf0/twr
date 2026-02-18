@@ -14,7 +14,7 @@
     }
     /**
      * 2 Single session message
-     */ elseif (session()->has('message')) {
+     */ if (session()->has('message')) {
         $alerts->push([
             'message' => session('message'),
             'status' => session('status'),
@@ -22,7 +22,7 @@
     }
     /**
      * 3 Query parameter message (?message=...)
-     */ elseif (request()->has('message')) {
+     */ if (request()->has('message')) {
         $alerts->push([
             'message' => request()->query('message'),
             'status' => request()->query('status'),

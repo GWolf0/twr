@@ -30,15 +30,32 @@
 
 <div data-role="alert" data-autoclose="{{ $autoclose ? 'true' : 'false' }}"
     {{ $attributes->merge(['class' => $classes]) }}>
+
     <div class="flex items-start gap-3">
 
         @if ($iconClass)
             <i class="{{ $iconClass }} text-base mt-0.5"></i>
         @endif
 
-        <div class="flex-1">
-            {{ $slot ?? $message }}
+        <div class="flex-1 space-y-2">
+
+            @if ($message)
+                <div>
+                    {{ $message }}
+                </div>
+            @endif
+
+            {{-- Default slot (optional extra content) --}}
+            {{ $slot }}
+
         </div>
+
+        {{-- Action slot --}}
+        @isset($action)
+            <div class="ml-4">
+                {{ $action }}
+            </div>
+        @endisset
 
         @if ($closeBtn)
             <button type="button" data-role="alert-close"

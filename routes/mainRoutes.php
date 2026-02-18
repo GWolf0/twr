@@ -21,8 +21,8 @@ Route::name("auth.")->group(function () {
         // send email confirmation notification action
         Route::post("/auth/send-email-confirmation-notification", [AuthController::class, "sendEmailConfirmationNotification"])->name("action.send_email_confirmation_notification");
 
-        // confirm email page
-        Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'confirmEmail'])->middleware('signed')->name('action.confirm_email');
+        // confirm email action
+        Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'confirmEmail'])->middleware(['signed', 'throttle:6,1'])->name('action.confirm_email');
     });
 
     // requires guest
@@ -68,7 +68,7 @@ Route::name("common.")->group(function () {
     Route::get("/vehicles/{vehicle_id}", [CommonController::class, "vehicleDetailsPage"])->name("page.vehicle_details");
 
     // display ui
-    Route::get("/ui", fn () => view("common.page.ui"))->name("page.ui");
+    Route::get("/ui", fn() => view("common.page.ui"))->name("page.ui");
 
     // requires auth
     Route::middleware("auth")->group(function () {});
@@ -127,4 +127,3 @@ Route::name("customer.")->middleware("user.role:customer")->group(function () {
     // cancel booking
     Route::post("/customer/bookings/{booking_id}/cancel", [CustomerController::class, "cancelBooking"])->name("action.cancel_booking");
 });
-

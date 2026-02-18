@@ -10,11 +10,12 @@
     </x-slot:header>
 
     <x-slot:content>
-        <x-ui.form action="{{ route('auth.action.send_password_reset_notification') }}" method="POST" class="space-y-4">
+        <x-ui.form action="{{ route('auth.action.send_password_reset_notification') }}" method="POST">
             <x-ui.form-group>
+                <x-ui.error key="email" />
                 <x-ui.label for="email" value="Email">Email</x-ui.label>
                 <x-ui.input type="email" id="email" name="email" placeholder="john.doe@example.com" required
-                    autofocus />
+                    autofocus minLength=10 maxLength=128 />
             </x-ui.form-group>
 
             <x-ui.button type="submit" class="w-full">

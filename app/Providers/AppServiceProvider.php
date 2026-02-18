@@ -11,6 +11,9 @@ use App\Services\CRUD\SettingCRUDService;
 use App\Services\CRUD\UserCRUDService;
 use App\Services\CRUD\VehicleCRUDService;
 use App\Services\FileUploadService;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,6 +44,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        
+        // use "auth.page.reset_password" to create password reset url
+        ResetPassword::createUrlUsing(function ($notifiable, $token) {
+            return route('auth.page.reset_password', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ]);
+        });
+
+        // use "auth.page.confirm_email" to create email confirmation url
+        VerifyEmail::createUrlUsing(function ($notifiable) {
+            return URL::temporarySignedRoute(
+                'auth.action.confirm_email',
+                now()->addMinutes(60),
+                [
+                    'id' => $notifiable->getKey(),
+                    'hash' => sha1($notifiable->getEmailForVerification()),
+                ]
+            );
+        });
     }
 }

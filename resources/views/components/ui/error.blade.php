@@ -25,7 +25,7 @@
 
     // Case 3: Error array or message bag passed manually
     elseif ($key && is_array($error) && isset($error[$key])) {
-        $message = $error[$key];
+        $message = is_array($error[$key]) ? $error[$key][0] : $error[$key];
     }
 @endphp
 

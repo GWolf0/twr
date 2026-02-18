@@ -1,6 +1,7 @@
 import './bootstrap';
 
 // managers
+import './managers/formsManager';
 import './managers/alertManager';
 import './managers/dropdownManager';
 import './managers/modalManager';

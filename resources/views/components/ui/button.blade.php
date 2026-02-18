@@ -2,6 +2,8 @@
     'variant' => 'primary',
     'size' => 'md',
     'type' => 'button',
+    'href' => null,
+    'target' => 'same',
 ])
 
 @php
@@ -30,6 +32,12 @@
     $classes = $base . ' ' . ($variants[$variant] ?? $variants['primary']) . ' ' . ($sizes[$size] ?? $sizes['md']);
 @endphp
 
-<button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }}>
-    {{ $slot }}
-</button>
+@isset($href)
+    <a href="{{ $href }}" _target="{{ $target }}" class="cursor-pointer">
+    @endisset()
+    <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }}>
+        {{ $slot }}
+    </button>
+    @isset($href)
+    </a>
+@endisset()

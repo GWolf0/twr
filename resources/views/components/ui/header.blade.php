@@ -14,7 +14,7 @@
 
 <{{ $tag }}
     {{ $attributes->merge([
-        'class' => ($sizes[$size] ?? $sizes['h2']) . ' text-foreground',
+        'class' => ($sizes[$h] ?? $sizes['h2']) . ' text-foreground',
     ]) }}>
     {{ $slot }}
 

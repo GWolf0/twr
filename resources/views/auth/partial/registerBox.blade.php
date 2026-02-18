@@ -7,26 +7,33 @@
     </x-slot:header>
 
     <x-slot:content>
-        <x-ui.form action="{{ route('auth.action.register') }}" method="POST" class="space-y-4">
+        <x-ui.form action="{{ route('auth.action.register') }}" method="POST">
             <x-ui.form-group>
+                <x-ui.error key="name" />
                 <x-ui.label for="name" value="Name">Name</x-ui.label>
-                <x-ui.input type="text" id="name" name="name" placeholder="John Doe" required autofocus />
+                <x-ui.input type="text" id="name" name="name" placeholder="John Doe"
+                    value="{{ old('name') }}" required minLength=3 maxLength=32 autofocus />
             </x-ui.form-group>
 
             <x-ui.form-group>
+                <x-ui.error key="email" />
                 <x-ui.label for="email" value="Email">Email</x-ui.label>
-                <x-ui.input type="email" id="email" name="email" placeholder="john.doe@example.com" required />
+                <x-ui.input type="email" id="email" name="email" placeholder="john.doe@example.com"
+                    value="{{ old('email') }}" required minLength=10 maxLength=64 />
             </x-ui.form-group>
 
             <x-ui.form-group>
+                <x-ui.error key="password" />
                 <x-ui.label for="password" value="Password">Password</x-ui.label>
-                <x-ui.input type="password" id="password" name="password" placeholder="••••••••" required />
+                <x-ui.input type="password" id="password" name="password" placeholder="••••••••" required minLength=8
+                    maxLength=32 />
             </x-ui.form-group>
 
             <x-ui.form-group>
+                <x-ui.error key="password_confirmation" />
                 <x-ui.label for="password_confirmation" value="Confirm Password">Retype password</x-ui.label>
                 <x-ui.input type="password" id="password_confirmation" name="password_confirmation"
-                    placeholder="••••••••" required />
+                    placeholder="••••••••" required minLength=8 maxLength=32 />
             </x-ui.form-group>
 
             <x-ui.button type="submit" class="w-full">

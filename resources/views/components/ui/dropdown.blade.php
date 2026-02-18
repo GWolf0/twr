@@ -30,7 +30,7 @@
                hidden opacity-0 scale-95
                rounded-md border border-border bg-card text-card-foreground
                shadow-lg transition-all duration-150 ease-out">
-        <div class="py-1">
+        <div>
             {{ $content }}
         </div>
     </div>
