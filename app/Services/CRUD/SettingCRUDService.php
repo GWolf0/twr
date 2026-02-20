@@ -13,9 +13,9 @@ use function App\Helpers\searchFiltered;
 
 class SettingCRUDService implements ICRUDInterface
 {
-    public function getNewModelInstance(): Model
+    public function getNewModelInstance(): array
     {
-        return new Setting();
+        return [];
     }
 
     public function create(array $data, ?User $authUser): MResponse
@@ -56,7 +56,7 @@ class SettingCRUDService implements ICRUDInterface
         return MResponse::create(['message' => 'Model read successfully', 'model' => $model]);
     }
 
-    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
+    public function readMany(?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
         $models = searchFiltered(Setting::query(), $queryParams)->paginate(perPage: $perPage, page: $page);
         return MResponse::create(['message' => 'Models filtered successfully', 'models' => $models]);

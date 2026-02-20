@@ -21,9 +21,11 @@ class BookingCRUDService implements ICRUDInterface
         protected BookingService $bookingService
     ) {}
 
-    public function getNewModelInstance(): Model
+    public function getNewModelInstance(): array
     {
-        return new Booking();
+        return [
+
+        ];
     }
 
     /**
@@ -71,7 +73,7 @@ class BookingCRUDService implements ICRUDInterface
     /**
      * Read multiple bookings (filtered).
      */
-    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
+    public function readMany(?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
         if (!$authUser) {
             return MResponse::create(['message' => 'Unauthorized'], 403);

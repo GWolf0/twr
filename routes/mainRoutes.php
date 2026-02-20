@@ -78,7 +78,7 @@ Route::name("common.")->group(function () {
 });
 
 // admin (routes for admin users only)
-Route::name("admin.")->middleware("user.role:admin")->group(function () {
+Route::name("admin.")->middleware(["auth:sanctum", "user.role:admin"])->group(function () {
     // stats page
     Route::get("/dashboard/{stats?}", [AdminController::class, "stats"])->name("page.dashboard_stats")->where("stats", "stats");
 
@@ -86,7 +86,7 @@ Route::name("admin.")->middleware("user.role:admin")->group(function () {
     Route::get("/dashboard/settings", [AdminController::class, "editSettings"])->name("page.dashboard_settings");
 
     // update setting action
-    Route::patch("/admin/settings", [AdminController::class, "update_settings"])->name("action.update_settings");
+    Route::patch("/admin/settings", [AdminController::class, "updateSettings"])->name("action.update_settings");
 
     // index page (list of records)
     Route::get("/dashboard/model/{table}", [AdminController::class, "indexRecords"])->name("page.dashboard_records_index");

@@ -23,16 +23,19 @@ class Booking extends Model
         "total_amount"
     ];
 
-    protected $with = ['user', 'vehicle'];
+    // protected $with = ['user', 'vehicle'];
 
     // enums arrays
-    public static function Statuses() {
+    public static function Statuses()
+    {
         return array_column(BookingStatus::cases(), "name");
     }
-    public static function PaymentStatuses() {
+    public static function PaymentStatuses()
+    {
         return array_column(BookingPaymentStatus::cases(), "name");
     }
-    public static function PaymentMethods() {
+    public static function PaymentMethods()
+    {
         return array_column(BookingPaymentMethod::cases(), "name");
     }
 

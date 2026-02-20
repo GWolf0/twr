@@ -33,7 +33,8 @@
         },
         "files": [
             "app/Helpers/responseHelper.php",
-            "app/Helpers/searchHelper.php"
+            "app/Helpers/searchHelper.php",
+            "app/Helpers/enumHelper.php"
         ]
     },
     "autoload-dev": {

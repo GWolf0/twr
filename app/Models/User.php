@@ -15,7 +15,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
-    protected $with = ['bookings'];
+    // protected $with = ['bookings'];
 
     // enums arrays
     public static function Roles()
@@ -65,11 +65,11 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role == UserRole::admin;
+        return $this->role == UserRole::admin->name;
     }
     public function isCustomer(): bool
     {
-        return $this->role == UserRole::customer;
+        return $this->role == UserRole::customer->name;
     }
 
     // relations

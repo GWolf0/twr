@@ -10,7 +10,7 @@ users record table
 -->
 
 @php
-    $paginatedRecords = $models;
+    $paginatedRecords = $models; // Illuminate\Pagination\LengthAwarePaginator
     $columns = ['id', 'name', 'email', 'role', 'created_at', 'updated_at'];
 @endphp
 
@@ -18,29 +18,27 @@ users record table
 
     <x-slot:header>
         <div class="flex gap-2 items-center justify-between">
-            <h1>Users</h1>
+            <x-ui.header h="3">Users</x-ui.header>
             <div class="flex gap-2 items-center">
-                <x-ui.link href="{{ route('admin.page.dashboard_record_create', ['table' => 'users']) }}">
-                    <x-ui.button>
-                        <i class="bi bi-plus-lg"> User
-                    </x-ui.button>
-                </x-ui.link>
+                <x-ui.button href="{{ route('admin.page.dashboard_record_create', ['table' => 'users']) }}">
+                    <i class="bi bi-plus-lg"></i> User
+                </x-ui.button>
             </div>
         </div>
     </x-slot:header>
 
     <x-slot:content>
-        <x-ui.table caption="Users {{ $paginatedUsers->total }}">
+        <x-ui.table caption="Users {{ $paginatedRecords->count() }}">
             <x-slot:header>
                 <x-ui.table-tr>
                     @foreach ($columns as $col)
-                        <x-ui.table-th class="capitalize">{{ str_replace($col, '_', ' ') }}</x-ui.table-th>
+                        <x-ui.table-th class="capitalize">{{ str_replace('_', ' ', $col) }}</x-ui.table-th>
                     @endforeach
                     <x-ui.table-th class="capitalize">Actions</x-ui.table-th>
                 </x-ui.table-tr>
             </x-slot:header>
 
-            @foreach ($paginated->data as $record)
+            @foreach ($paginatedRecords as $record)
                 <x-ui.table-tr>
                     @foreach ($columns as $col)
                         <x-ui.table-td>{{ $record[$col] }}</x-ui.table-td>
@@ -49,7 +47,7 @@ users record table
                     <x-ui.table-td class="flex gap-2">
                         <x-ui.link
                             href="{{ route('admin.page.dashboard_record_edit', ['table' => 'users', 'id' => $record->id]) }}">
-                            <x-ui.button size="icon-md">
+                            <x-ui.button size="icon-sm" variant="outline" title="edit">
                                 <i class="bi bi-pencil-fill"></i>
                             </x-ui.button>
                         </x-ui.link>

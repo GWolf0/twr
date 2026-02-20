@@ -37,7 +37,7 @@ class MasterCRUDService implements IMasterCRUDInterface
         ], 500);
     }
 
-    public function getNewModelInstance(string|null $table): Model|null
+    public function getNewModelInstance(string|null $table): array|null
     {
         $handler = $this->resolve($table);
 
@@ -73,7 +73,7 @@ class MasterCRUDService implements IMasterCRUDInterface
     /* ---------------------------------
      * READ MANY
      * --------------------------------- */
-    public function readMany(string|null $table, string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
+    public function readMany(string|null $table, ?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
         $handler = $this->resolve($table);
 

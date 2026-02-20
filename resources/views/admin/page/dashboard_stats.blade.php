@@ -146,7 +146,7 @@ dashboard stats page
                 <x-slot name="content">
                     @if ($most_booked_vehicle)
                         <x-ui.header h="3">
-                            {{ $most_booked_vehicle }}
+                            {{ $most_booked_vehicle->name }}
                         </x-ui.header>
                     @else
                         <x-ui.text muted>No data available</x-ui.text>

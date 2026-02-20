@@ -15,7 +15,7 @@ user edit record form
 
     <x-slot:header>
         <div class="flex gap-2">
-            <h1>Edit user</h1>
+            <x-ui.header h="3">Edit user</x-ui.header>
         </div>
     </x-slot:header>
 
@@ -27,34 +27,38 @@ user edit record form
             <x-ui.form-group>
                 <x-ui.error key="name" />
                 <x-ui.label for="f_name">Name</x-ui.label>
-                <x-ui.input id="f_name" name="name" placeholder="name" required minLength="3" maxLength="64" />
+                <x-ui.input id="f_name" name="name" placeholder="name" value="{{ old('name', $record->name) }}"
+                    required minLength="3" maxLength="64" />
             </x-ui.form-group>
 
             <x-ui.form-group>
                 <x-ui.error key="email" />
                 <x-ui.label for="f_email">Email</x-ui.label>
-                <x-ui.input id="f_email" name="email" type="email" placeholder="email" required minLength="10"
-                    maxLength="128" />
+                <x-ui.input id="f_email" name="email" type="email" placeholder="email"
+                    value="{{ old('email', $record->email) }}" required minLength="10" maxLength="128" />
             </x-ui.form-group>
 
             <x-ui.form-group>
                 <x-ui.error key="password" />
                 <x-ui.label for="f_password">Password</x-ui.label>
-                <x-ui.input id="f_password" name="password" type="password" placeholder="password" required
-                    minLength="8" maxLength="32" />
+                <x-ui.input id="f_password" name="password" type="password" placeholder="password" minLength="8"
+                    maxLength="32" />
             </x-ui.form-group>
 
             <x-ui.form-group>
                 <x-ui.error key="password_confirmation" />
                 <x-ui.label for="f_password_confirmation">Password Again</x-ui.label>
                 <x-ui.input id="f_password_confirmation" name="password_confirmation" type="password"
-                    placeholder="retype password" required minLength="8" maxLength="32" />
+                    placeholder="retype password" minLength="8" maxLength="32" />
             </x-ui.form-group>
 
+            @php
+                $roleValue = old('role', $record->role);
+            @endphp
             <x-ui.form-group>
                 <x-ui.error key="role" />
                 <x-ui.label for="f_role">Role</x-ui.label>
-                <x-ui.select id="f_role" name="role" :options="$rolesOptions" />
+                <x-ui.select id="f_role" name="role" :options="$rolesOptions" :initialValue="$roleValue" />
             </x-ui.form-group>
 
             <x-ui.form-actions>

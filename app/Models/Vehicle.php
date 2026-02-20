@@ -14,7 +14,7 @@ class Vehicle extends Model
         "name", "type", "media", "price_per_hour", "availability"
     ];
 
-    protected $with = ['bookings'];
+    // protected $with = ['bookings'];
 
     // enums arrays
     public static function Availabilities() {

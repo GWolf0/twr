@@ -23,8 +23,9 @@
         <aside class="w-64 bg-card border-r border-border hidden md:flex flex-col">
 
             {{-- Logo / Title --}}
-            <div class="h-16 flex items-center px-6 border-b border-border">
-                <span class="text-lg font-semibold text-primary">
+            <div class="h-16 flex items-center gap-3 px-6 border-b border-border">
+                <x-layout.logo size="sm" />
+                <span class="text-xl font-semibold text-primary">
                     {{ config('app.name') }} Admin
                 </span>
             </div>
@@ -98,7 +99,7 @@
                     </div>
 
                     {{-- Logout --}}
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('auth.action.logout') }}">
                         @csrf
                         <button class="px-3 py-1.5 rounded-lg bg-secondary hover:bg-muted transition text-foreground">
                             Logout

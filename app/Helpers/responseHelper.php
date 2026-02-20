@@ -58,9 +58,9 @@ function appResponse(
         return response()->view($page, $payload, $status);
     } else if ($responseType == "redirect") {
         if ($status < 400) {
-            return redirect()->route($page, $pageParams)->with("message", $payload["message"])->with("status", $status);
+            return redirect()->route($page, $pageParams)->with("message", $payload["message"] ?? null)->with("status", $status);
         } else {
-            return redirect()->back()->withErrors($data)->with("message", $payload["message"])->with("status", $status)->withInput();
+            return redirect()->back()->withErrors($data)->with("message", $payload["message"] ?? null)->with("status", $status)->withInput();
         }
     }
 

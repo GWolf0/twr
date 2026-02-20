@@ -67,7 +67,7 @@ class MediaCRUDService implements ICRUDInterface
         return MResponse::create(['message' => 'Model read successfully', 'model' => $model]);
     }
 
-    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
+    public function readMany(?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
         // if (!$authUser) {
         //     return MResponse::create(['message' => 'Unauthorized operation!'], 403);

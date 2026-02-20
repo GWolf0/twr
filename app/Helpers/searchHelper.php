@@ -20,8 +20,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
  * - ?status=active,pending   → WHERE status IN (...)
  * - ?s=created_at_desc   → Sort by created_at DESC
  */
-function searchFiltered(Builder $builder, string|array $queryParams, array $with = [], ?callable $queryCallback = null): Builder
+function searchFiltered(Builder $builder, string|array|null $queryParams, array $with = [], ?callable $queryCallback = null): Builder
 {
+    if (!$queryParams) return $builder; // no query params
+
     if (is_string($queryParams)) {
         parse_str($queryParams, $queryParams);
     }

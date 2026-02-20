@@ -18,14 +18,14 @@ use function App\Helpers\searchFiltered;
 class UserCRUDService implements ICRUDInterface
 {
 
-    public function getNewModelInstance(): Model
+    public function getNewModelInstance(): array
     {
-        return new Model([
+        return [
             "name" => "",
             "email" => "",
             "password" => "",
             "role" => EnumsUserRole::customer->name
-        ]);
+        ];
     }
 
     /* ---------------------------------
@@ -89,7 +89,7 @@ class UserCRUDService implements ICRUDInterface
     /* ---------------------------------
      * READ MANY
      * --------------------------------- */
-    public function readMany(string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
+    public function readMany(?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
     {
         if (!$authUser) {
             return MResponse::create([
@@ -140,7 +140,7 @@ class UserCRUDService implements ICRUDInterface
                 'email',
                 Rule::unique('users', 'email')->ignore($id),
             ];
-            $rules['password'] = ['sometimes', 'string', 'min:8', 'confirmed'];
+            $rules['password'] = ['nullable', 'string', 'min:8', 'confirmed'];
             $rules['role'] = ['sometimes', Rule::in(User::Roles())];
         }
 
@@ -151,7 +151,11 @@ class UserCRUDService implements ICRUDInterface
 
         $validated = $validator->validate();
 
-        if (isset($validated['password'])) {
+        $validated = $validator->validate();
+
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        } else {
             $validated['password'] = Hash::make($validated['password']);
         }
 

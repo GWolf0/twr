@@ -15,13 +15,14 @@ dashboard seetinfs page
 
         <x-slot:header>
             <div class="flex gap-2">
-                <h1>Settings</h1>
+                <x-ui.header h="3">Settings</x-ui.header>
+                <p>{{ request()->user()->name }}</p>
             </div>
         </x-slot:header>
 
         <x-slot:content>
 
-            <x-ui.form method="PATCH" action="{{ route('admin.action.action.update_settings') }}">
+            <x-ui.form method="PATCH" action="{{ route('admin.action.update_settings') }}">
 
                 <x-ui.form-group>
                     <x-ui.error key="business_name" />
