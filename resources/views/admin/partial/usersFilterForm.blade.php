@@ -18,6 +18,7 @@ users filter form
                 'name' => 'name',
                 'label' => 'Name',
                 'type' => 'input:text',
+                'op' => 'l',
                 'attrs' => 'minLength=3 maxLength=64',
             ],
             [

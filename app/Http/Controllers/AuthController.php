@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\AuthService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use function App\Helpers\appResponse;
 
@@ -34,8 +35,9 @@ class AuthController extends Controller
     public function login(AuthService $authService, Request $request): Response
     {
         $mResponse = $authService->login($request);
+        $redirectPage = $request->user()?->isAdmin() ? "admin.page.dashboard_stats" : "common.page.home";
 
-        return appResponse($request, $mResponse->data, $mResponse->status, ["redirect", "common.page.home"]);
+        return appResponse($request, $mResponse->data, $mResponse->status, ["redirect", $redirectPage]);
     }
 
     // /auth/logout, METHOD=POST

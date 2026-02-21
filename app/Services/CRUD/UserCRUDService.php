@@ -104,7 +104,15 @@ class UserCRUDService implements ICRUDInterface
             $authUser->isAdmin()
                 ? null
                 : fn(Builder $b) => $b->where('id', $authUser->id)
-        )->paginate(perPage: $perPage, page: $page);
+        )->paginate(perPage: 10, page: $page);
+        // $models = searchFiltered(
+        //     User::query(),
+        //     "name=l_Elw",
+        //     [],
+        //     $authUser->isAdmin()
+        //         ? null
+        //         : fn(Builder $b) => $b->where('id', $authUser->id)
+        // )->paginate(perPage: $perPage, page: $page);
 
         return MResponse::create([
             'message' => 'Models filtered successfully',

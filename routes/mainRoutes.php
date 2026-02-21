@@ -104,7 +104,7 @@ Route::name("admin.")->middleware(["auth:sanctum", "user.role:admin"])->group(fu
     Route::patch("/admin/model/{table}/{id}", [AdminController::class, "updateRecord"])->name("action.update_record");
 
     // delete record action
-    Route::delete("/admin/model/{table}/{id}", [AdminController::class, "deleteRecord"])->name("action.delete_record");
+    Route::delete("/admin/model/{table}/{id}", [AdminController::class, "deleteRecords"])->name("action.delete_record");
 });
 
 // customer (routes for customer users only)

@@ -15,6 +15,21 @@ dashboard records index page
 @section('content')
     @switch($table)
         @case('users')
+            @include('admin.partial.usersFilterForm')
+        @break
+
+        @case(2)
+            @include('admin.partial.usersFilterForm')
+        @break
+
+        @default
+            @include('admin.partial.usersFilterForm')
+    @endswitch
+
+    <div class="my-2"></div>
+
+    @switch($table)
+        @case('users')
             @include('admin.partial.usersRecordsTable')
         @break
 

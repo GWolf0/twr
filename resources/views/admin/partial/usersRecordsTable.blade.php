@@ -51,6 +51,15 @@ users record table
                                 <i class="bi bi-pencil-fill"></i>
                             </x-ui.button>
                         </x-ui.link>
+
+                        <form action="{{ route('admin.action.delete_record', ['users', $record->id]) }}" method="POST"
+                            data-confirm data-loading="..">
+                            @csrf
+                            @method('delete')
+                            <x-ui.button type="submit" size="icon-sm" variant="destructive" title="remove">
+                                <i class="bi bi-trash"></i>
+                            </x-ui.button>
+                        </form>
                     </x-ui.table-td>
                 </x-ui.table-tr>
             @endforeach
@@ -60,7 +69,8 @@ users record table
 
     <x-slot:footer>
         <div class="flex items-center justify-center">
-            <x-ui.pagination />
+            <x-ui.pagination lastPage="{{ $paginatedRecords->lastPage() }}"
+                currentPage="{{ $paginatedRecords->currentPage() }}" />
         </div>
     </x-slot:footer>
 

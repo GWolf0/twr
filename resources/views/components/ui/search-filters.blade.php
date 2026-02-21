@@ -26,6 +26,7 @@
 
     $filterFieldNames = collect($items)->pluck('name')->toArray();
 
+    // extracting op and value from query (not to confuse with op defined in the item itself)
     function parseQueryValue($name, $op = null)
     {
         $value = request()->query($name);
@@ -43,7 +44,6 @@
 @endphp
 
 <x-ui.paper>
-
     <form method="GET" action="{{ url()->current() }}" id="searchFiltersForm">
 
         {{-- Preserve non-filter params except page --}}
@@ -65,31 +65,37 @@
 
                 <div class="flex-1">
                     <input type="{{ $type }}" name="{{ $mainItem['name'] }}" value="{{ $value }}"
-                        {!! $mainItem['attrs'] ?? '' !!}
+                        {!! $mainItem['attrs'] ?? '' !!} data-op="{{ $mainItem['op'] ?? '' }}"
                         class="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none"
                         placeholder="Search...">
                 </div>
             @endif
 
             {{-- Search Button --}}
-            <button type="submit"
+            <x-ui.button type="submit" size="icon-md" title="search">
+                <i class="bi bi-search"></i>
+            </x-ui.button>
+            {{-- <button type="submit"
                 class="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition">
                 Search
-            </button>
+            </button> --}}
 
             {{-- Toggle Filters --}}
             @if (count($filterItems))
-                <button type="button" id="toggleFiltersBtn"
+                {{-- <button type="button" id="toggleFiltersBtn"
                     class="border border-border bg-secondary text-secondary-foreground px-4 py-2 rounded-md text-sm hover:bg-muted transition">
                     Filters
-                </button>
+                </button> --}}
+                <x-ui.button id="toggleFiltersBtn" variant="outline" size="icon-md" title="filters">
+                    <i class="bi bi-funnel"></i>
+                </x-ui.button>
             @endif
 
         </div>
 
         {{-- Filters Panel --}}
         @if (count($filterItems))
-            <div id="filtersPanel" class="hidden mt-6 space-y-4">
+            <div id="filtersPanel" class="{{ count(request()->query()) < 2 ? 'hidden' : '' }} mt-6 space-y-4">
 
                 @for ($i = 0; $i < count($filterItems); $i++)
                     @php
@@ -136,11 +142,12 @@
                             @elseif($baseType === 'checkbox')
                                 <label class="inline-flex items-center gap-2 text-sm text-foreground">
                                     <input type="checkbox" name="{{ $item['name'] }}" value="1"
+                                        data-op="{{ $item['op'] ?? '' }}"
                                         {{ request()->query($item['name']) ? 'checked' : '' }} class="accent-primary">
                                     {{ ucfirst($item['name']) }}
                                 </label>
                             @elseif($baseType === 'select')
-                                <select name="{{ $item['name'] }}"
+                                <select name="{{ $item['name'] }}" data-op="{{ $item['op'] ?? '' }}"
                                     class="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none">
                                     <option value="">Select {{ ucfirst($item['name']) }}</option>
                                     @foreach ($item['options'] ?? [] as $val => $label)
@@ -173,7 +180,6 @@
 @if (count($filterItems))
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-
             const toggleBtn = document.getElementById("toggleFiltersBtn");
             const panel = document.getElementById("filtersPanel");
 
@@ -186,13 +192,19 @@
             const form = document.getElementById("searchFiltersForm");
 
             form.addEventListener("submit", function() {
-
                 const inputs = form.querySelectorAll("[data-op]");
 
                 inputs.forEach(input => {
+                    // transform each input so that it combines with its op before submiting
                     const op = input.dataset.op;
                     if (op && input.value) {
                         input.value = op + "_" + input.value;
+                    }
+
+                    // disable empty fields to prevent sending them as filters
+                    const value = input.value;
+                    if (value === null || value.trim() === '') {
+                        input.disabled = true;
                     }
                 });
 

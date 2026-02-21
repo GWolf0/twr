@@ -28,8 +28,8 @@
         @if ($currentPage > 1)
             <li>
                 <a href="{{ $buildUrl($currentPage - 1) }}"
-                    class="px-3 py-2 text-sm rounded-md border bg-background hover:bg-muted transition">
-                    Previous
+                    class="px-3 py-2 text-sm rounded-md border border-border bg-background hover:bg-muted transition">
+                    <i class="bi bi-caret-left"></i>
                 </a>
             </li>
         @endif
@@ -38,7 +38,7 @@
         @if ($start > 1)
             <li>
                 <a href="{{ $buildUrl(1) }}"
-                    class="px-3 py-2 text-sm rounded-md border bg-background hover:bg-muted transition">
+                    class="px-3 py-2 text-sm rounded-md border border-border bg-background hover:bg-muted transition">
                     1
                 </a>
             </li>
@@ -53,7 +53,7 @@
             <li>
                 <a href="{{ $buildUrl($i) }}"
                     class="
-                        px-3 py-2 text-sm rounded-md border transition
+                        px-3 py-2 text-sm rounded-md border border-border transition
                         {{ $i == $currentPage ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted' }}
                    ">
                     {{ $i }}
@@ -69,7 +69,7 @@
 
             <li>
                 <a href="{{ $buildUrl($lastPage) }}"
-                    class="px-3 py-2 text-sm rounded-md border bg-background hover:bg-muted transition">
+                    class="px-3 py-2 text-sm rounded-md border border-border bg-background hover:bg-muted transition">
                     {{ $lastPage }}
                 </a>
             </li>
@@ -79,8 +79,8 @@
         @if ($currentPage < $lastPage)
             <li>
                 <a href="{{ $buildUrl($currentPage + 1) }}"
-                    class="px-3 py-2 text-sm rounded-md border bg-background hover:bg-muted transition">
-                    Next
+                    class="px-3 py-2 text-sm rounded-md border border-border bg-background hover:bg-muted transition">
+                    <i class="bi bi-caret-right"></i>
                 </a>
             </li>
         @endif
