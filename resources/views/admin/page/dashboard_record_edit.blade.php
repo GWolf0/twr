@@ -15,16 +15,22 @@ dashboard record edit page
 @endphp
 
 @section('content')
-    @switch($table)
-        @case('users')
-            @include('admin.partial.userEditRecordForm')
-        @break
+    @php
+        $formPartial = match ($table) {
+            'users' => 'admin.partial.userEditRecordForm',
+            'vehicles' => 'admin.partial.vehicleEditRecordForm',
+            'bookings' => 'admin.partial.bookingEditRecordForm',
+            default => null,
+        };
+    @endphp
 
-        @case(2)
-            @include('admin.partial.userEditRecordForm')
-        @break
-
-        @default
-            @include('admin.partial.userEditRecordForm')
-    @endswitch
+    @if ($formPartial)
+        @include($formPartial)
+    @else
+        <x-ui.card>
+            <x-slot:content>
+                <x-ui.text class="text-destructive">Unknown table: {{ $table }}</x-ui.text>
+            </x-slot:content>
+        </x-ui.card>
+    @endif
 @endsection()

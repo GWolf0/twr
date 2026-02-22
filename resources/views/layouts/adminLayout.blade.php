@@ -41,25 +41,25 @@
 
                 <a href="{{ route('admin.page.dashboard_settings') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
-                    <i class="bi bi-speedometer2"></i>
+                    <i class="bi bi-gear-wide"></i>
                     <span>Setings</span>
                 </a>
 
                 <a href="{{ route('admin.page.dashboard_records_index', ['table' => 'users']) }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
-                    <i class="bi bi-speedometer2"></i>
+                    <i class="bi bi-people"></i>
                     <span>Users</span>
                 </a>
 
                 <a href="{{ route('admin.page.dashboard_records_index', ['table' => 'vehicles']) }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
-                    <i class="bi bi-speedometer2"></i>
+                    <i class="bi bi-circle"></i>
                     <span>Vehicles</span>
                 </a>
 
                 <a href="{{ route('admin.page.dashboard_records_index', ['table' => 'bookings']) }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
-                    <i class="bi bi-speedometer2"></i>
+                    <i class="bi bi-ticket-detailed"></i>
                     <span>Bookings</span>
                 </a>
 

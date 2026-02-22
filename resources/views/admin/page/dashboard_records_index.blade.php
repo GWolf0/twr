@@ -13,31 +13,35 @@ dashboard records index page
 @endphp
 
 @section('content')
-    @switch($table)
-        @case('users')
-            @include('admin.partial.usersFilterForm')
-        @break
+    @php
+        $filterPartial = match ($table) {
+            'users' => 'admin.partial.usersFilterForm',
+            'vehicles' => 'admin.partial.vehicleFilterForm',
+            'bookings' => 'admin.partial.bookingsFilterForm',
+            default => null,
+        };
 
-        @case(2)
-            @include('admin.partial.usersFilterForm')
-        @break
+        $tablePartial = match ($table) {
+            'users' => 'admin.partial.usersRecordsTable',
+            'vehicles' => 'admin.partial.vehiclesRecordsTable',
+            'bookings' => 'admin.partial.bookingsRecordsTable',
+            default => null,
+        };
+    @endphp
 
-        @default
-            @include('admin.partial.usersFilterForm')
-    @endswitch
+    @if ($filterPartial)
+        @include($filterPartial)
+    @endif
 
-    <div class="my-2"></div>
+    <div class="my-4"></div>
 
-    @switch($table)
-        @case('users')
-            @include('admin.partial.usersRecordsTable')
-        @break
-
-        @case(2)
-            @include('admin.partial.usersRecordsTable')
-        @break
-
-        @default
-            @include('admin.partial.usersRecordsTable')
-    @endswitch
+    @if ($tablePartial)
+        @include($tablePartial)
+    @else
+        <x-ui.card>
+            <x-slot:content>
+                <x-ui.text class="text-destructive">Unknown table: {{ $table }}</x-ui.text>
+            </x-slot:content>
+        </x-ui.card>
+    @endif
 @endsection()

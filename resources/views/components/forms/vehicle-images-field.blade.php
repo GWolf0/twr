@@ -1,64 +1,133 @@
-<!--
-vehicle-images-field ui:
-- displays images of a particular vehicle in a grid (maximum = 7 images)
-- allows removing images attached to the particular vehicle (add button to trigger that)
-- triggers file upload manager to upload/select images to add as images for the vehicle
--->
+{{--
+|--------------------------------------------------------------------------
+| Vehicle Images Field Component
+|--------------------------------------------------------------------------
+| Usage:
+| <x-vehicle-images-field :media="$vehicle->media ?? ''" />
+|
+| Description:
+| - Displays vehicle images in a responsive grid
+| - Allows removing images
+| - Opens FileUploadManager to select/upload images
+| - Stores selected image URLs as CSV in hidden "media" input
+| - Max allowed images: 7
+|
+| Requirements:
+| - FileUploadManager.js must be loaded globally
+| - FileUpload modal must exist in layout
+|--------------------------------------------------------------------------
+--}}
 
 @props([
-    'media' => '', // media are images (urls of images file) passed as csv
+    'media' => '',
 ])
 
 @php
-    $images = explode(',', $media);
-    $imagesCount = count($images);
+    $oldMedia = old('media', $media);
+    $images = array_filter(explode(',', $oldMedia));
 @endphp
 
 <x-ui.form-group>
-    <x-ui.error key="images" />
+    <x-ui.error key="media" />
     <x-ui.label>Images</x-ui.label>
-    <input type="hidden" name="media" value="{{ $media }}" />
 
-    @if ($imagesCount < 1)
-        <x-ui.text muted>No images assigned<x-ui.text>
-    @endif
+    <input type="hidden" name="media" id="vehicle-media-input" value="{{ implode(',', $images) }}" />
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {{-- // button to triggen file upload manager --}}
-        <div class="aspect-square rounded-md bg-card border border-border flex items-center justify-center text-card-foreground text-2xl transition hover:opacity-70 cursor-pointer"
-            data-role="button" onclick="onPlusImage">
-            <i class="bi bi-plus-lg"></i>
-        </div>
-
-        {{-- // vehicle's images cards --}}
-        @foreach ($images as $i => $image)
-            <div class="relative aspect-square rounded-md overflow-hidden bg-card border border-border">
-                {{-- // remove btn --}}
-                <x-ui.button size="icon-sm" variant="destructive" class="absolure right-1 top-1"
-                    onclick="onRemoveImage({{ $i }})">
-                    <i class="bi bi-trash"></i>
-                </x-ui.button>
-
-                <div class="bg-black opacity-5 hover:opacity-10">
-                    <img class="aspect-square object-contain" src="{{ $image }}" />
-                </div>
-            </div>
-        @endforeach
+    <div id="vehicle-images-wrapper" class="grid grid-cols-2 md:grid-cols-4 gap-3">
     </div>
+
+    <x-ui.text muted class="mt-2">
+        Maximum 7 images allowed.
+    </x-ui.text>
 </x-ui.form-group>
 
-{{-- // script --}}
 <script>
-    // on received selected images callback
-    function onReceivedImages(images) {
+    document.addEventListener("DOMContentLoaded", function() {
 
-    }
+        const MAX_IMAGES = 7;
 
-    function onPlusImage() {
-        window.openFileUploadModal(onReceivedImages);
-    }
+        let images = @json(array_values($images));
 
-    function onRemoveImage(imageIdx) {
+        const wrapper = document.getElementById("vehicle-images-wrapper");
+        const hiddenInput = document.getElementById("vehicle-media-input");
 
-    }
+        /* ----------------------------------------
+           RENDER GRID
+        ---------------------------------------- */
+        function render() {
+            wrapper.innerHTML = "";
+
+            // PLUS BUTTON (if limit not reached)
+            if (images.length < MAX_IMAGES) {
+                const plusBtn = document.createElement("div");
+                plusBtn.className =
+                    "aspect-square rounded-md bg-card border border-border flex items-center justify-center text-2xl cursor-pointer transition hover:opacity-70";
+
+                plusBtn.innerHTML = `<i class="bi bi-plus-lg"></i>`;
+                plusBtn.addEventListener("click", openFileManager);
+
+                wrapper.appendChild(plusBtn);
+            }
+
+            // IMAGE CARDS
+            images.forEach((url, index) => {
+                const card = document.createElement("div");
+                card.className =
+                    "relative aspect-square rounded-md overflow-hidden bg-card border border-border";
+
+                card.innerHTML = `
+                <img src="${url}"
+                     class="w-full h-full object-contain bg-black/5" />
+
+                <button type="button"
+                        class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 text-xs hover:opacity-80">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+
+                card.querySelector("button").addEventListener("click", () => {
+                    removeImage(index);
+                });
+
+                wrapper.appendChild(card);
+            });
+
+            syncInput();
+        }
+
+        /* ----------------------------------------
+           OPEN FILE MANAGER
+        ---------------------------------------- */
+        function openFileManager() {
+            window.openFileUploadModal(function(selectedFiles) {
+
+                selectedFiles.forEach(file => {
+                    if (images.length >= MAX_IMAGES) return;
+
+                    if (!images.includes(file.url)) {
+                        images.push(file.url);
+                    }
+                });
+
+                render();
+            });
+        }
+
+        /* ----------------------------------------
+           REMOVE IMAGE
+        ---------------------------------------- */
+        function removeImage(index) {
+            images.splice(index, 1);
+            render();
+        }
+
+        /* ----------------------------------------
+           SYNC HIDDEN INPUT
+        ---------------------------------------- */
+        function syncInput() {
+            hiddenInput.value = images.join(",");
+        }
+
+        render();
+    });
 </script>

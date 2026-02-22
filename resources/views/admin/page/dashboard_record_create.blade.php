@@ -14,16 +14,22 @@ dashboard record create page
 @endphp
 
 @section('content')
-    @switch($table)
-        @case('users')
-            @include('admin.partial.userNewRecordForm')
-        @break
+    @php
+        $formPartial = match ($table) {
+            'users' => 'admin.partial.userNewRecordForm',
+            'vehicles' => 'admin.partial.vehicleNewRecordForm',
+            'bookings' => 'admin.partial.bookingNewRecordForm',
+            default => null,
+        };
+    @endphp
 
-        @case(2)
-            @include('admin.partial.userNewRecordForm')
-        @break
-
-        @default
-            @include('admin.partial.userNewRecordForm')
-    @endswitch
+    @if ($formPartial)
+        @include($formPartial)
+    @else
+        <x-ui.card>
+            <x-slot:content>
+                <x-ui.text class="text-destructive">Unknown table: {{ $table }}</x-ui.text>
+            </x-slot:content>
+        </x-ui.card>
+    @endif
 @endsection()
