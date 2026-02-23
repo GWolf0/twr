@@ -110,6 +110,9 @@
                 });
 
                 render();
+            }, {
+                accept: "images/*",
+                multiple: true
             });
         }
 

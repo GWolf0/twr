@@ -14,7 +14,6 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id();
-            // $table->enum('type', MediaTypeArray);
             $table->string('type');
             $table->string('url');
             $table->integer('size');

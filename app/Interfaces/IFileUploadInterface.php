@@ -9,6 +9,10 @@ use Illuminate\Http\UploadedFile;
 
 interface IFileUploadInterface
 {
+    /**
+     * return an array defining disk to file validation rules
+     */
+    public function getDiskValidations(): array;
 
     /**
      * Upload a single file.

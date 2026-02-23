@@ -14,6 +14,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Validator;
 
+use function Pest\Laravel\session;
+
 class AuthService implements IAuthInterface
 {
     public function register(Request $request): MResponse
@@ -40,9 +42,9 @@ class AuthService implements IAuthInterface
 
         Auth::login($user);
 
-        if ($request->expectsJson()) {
-            $token = $user->createToken('auth_token')->plainTextToken;
-        }
+        if ($request->expectsJson()) {}
+        $response['token'] = $user->createToken('auth_token')->plainTextToken;
+        $request->session()->put('api_token', $response["token"]);
 
         return MResponse::create([
             'message' => 'User registered successfully.',
@@ -79,9 +81,9 @@ class AuthService implements IAuthInterface
         ];
 
         // Stateless (API / separated frontend)
-        if ($request->expectsJson()) {
-            $response['token'] = $user->createToken('auth_token')->plainTextToken;
-        }
+        if ($request->expectsJson()) {}
+        $response['token'] = $user->createToken('auth_token')->plainTextToken;
+        $request->session()->put('api_token', $response["token"]);
 
         return MResponse::create($response);
     }
@@ -91,7 +93,10 @@ class AuthService implements IAuthInterface
         $user = $request->user();
 
         // Token logout (stateless)
-        if ($request->expectsJson() && $user?->currentAccessToken()) {
+        // if ($request->expectsJson() && $user?->currentAccessToken()) {
+        //     $user->currentAccessToken()->delete();
+        // }
+        if ($user?->currentAccessToken()) {
             $user->currentAccessToken()->delete();
         }
 

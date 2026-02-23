@@ -6,11 +6,10 @@
     use App\Misc\Enums\BookingPaymentMethod;
     use function App\Helpers\enumOptions;
 
-    $users = User::all();
-    $vehicles = Vehicle::all();
-
-    $userOptions = $users->map(fn($u) => ['label' => $u->name, 'value' => $u->id])->toArray();
-    $vehicleOptions = $vehicles->map(fn($v) => ['label' => $v->name . ' ($' . $v->price_per_hour . '/h)', 'value' => $v->id])->toArray();
+    $userOptions = User::select('id', 'name')->pluck('id', 'name')->toArray();
+    $vehicleOptions = Vehicle::select('id', DB::raw("CONCAT(name, ' ($', price_per_hour, '/h)') as label"))
+        ->pluck('id', 'label')
+        ->toArray();
 
     $statusOptions = enumOptions(BookingStatus::class);
     $paymentStatusOptions = enumOptions(BookingPaymentStatus::class);

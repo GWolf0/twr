@@ -8,11 +8,10 @@
 
     $record = $model;
 
-    $users = User::all();
-    $vehicles = Vehicle::all();
-
-    $userOptions = $users->map(fn($u) => ['label' => $u->name, 'value' => $u->id])->toArray();
-    $vehicleOptions = $vehicles->map(fn($v) => ['label' => $v->name . ' ($' . $v->price_per_hour . '/h)', 'value' => $v->id])->toArray();
+    $userOptions = User::select('id', 'name')->pluck('id', 'name')->toArray();
+    $vehicleOptions = Vehicle::select('id', DB::raw("CONCAT(name, ' ($', price_per_hour, '/h)') as label"))
+        ->pluck('id', 'label')
+        ->toArray();
 
     $statusOptions = enumOptions(BookingStatus::class);
     $paymentStatusOptions = enumOptions(BookingPaymentStatus::class);
@@ -104,7 +103,7 @@
             <div class="mt-8 border-t pt-4">
                 <x-ui.header h="4" class="mb-4">Admin Notice</x-ui.header>
                 <x-ui.text muted>
-                    Note: Direct updates to bookings may be restricted by business logic. 
+                    Note: Direct updates to bookings may be restricted by business logic.
                     Ensure all status changes comply with the system's workflow.
                 </x-ui.text>
             </div>

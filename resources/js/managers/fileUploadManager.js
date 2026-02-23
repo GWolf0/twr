@@ -15,6 +15,7 @@ const FileUploadManager = (function () {
     let files = [];              // All user files
     let selected = new Set();    // Selected file IDs
     let onSelectCallback = null; // Optional callback when choosing files
+    let options = { accept: "file", multiple: true };
 
     const gridEl = () => document.getElementById("fum-files-grid");
     const fileInputEl = () => document.getElementById("fum-file-input");
@@ -33,7 +34,14 @@ const FileUploadManager = (function () {
        FETCH FILES
     --------------------------- */
     async function fetchFiles() {
-        const res = await fetch("/api/v1/file-upload");
+        const res = await fetch("/api/v1/file-upload", {
+            headers: {
+                "ACCEPT": "application/json",
+                "AUTHORIZATION": "Bearer " + document
+                    .querySelector('meta[name="api-token"]')
+                    .getAttribute("content"),
+            }
+        });
         const data = await res.json();
 
         files = data.files || [];
@@ -101,15 +109,28 @@ const FileUploadManager = (function () {
             formData.append("files[]", file);
         }
 
-        await fetch("/api/v1/file-upload/", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRF-TOKEN": document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content"),
-            },
-        });
+        try {
+            const res = await fetch("/api/v1/file-upload/many", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "ACCEPT": "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                    "AUTHORIZATION": "Bearer " + document
+                        .querySelector('meta[name="api-token"]')
+                        .getAttribute("content"),
+                },
+            });
+            if (!res.ok) {
+                alert(`[FILE_UPLOAD_MANAGER]: error uploading file(s)!`);
+            }
+            const json = await res.json();
+            console.log("json", json);
+        } catch (e) {
+            console.warn("[FILE_UPLOAD_MANAGER]: " + e);
+        }
 
         fileInputEl().value = "";
         fetchFiles();
@@ -126,8 +147,12 @@ const FileUploadManager = (function () {
         await fetch(`/api/v1/file-upload/${ids.join(",")}`, {
             method: "DELETE",
             headers: {
+                "ACCEPT": "application/json",
                 "X-CSRF-TOKEN": document
                     .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
+                "AUTHORIZATION": "Bearer " + document
+                    .querySelector('meta[name="api-token"]')
                     .getAttribute("content"),
             },
         });
@@ -177,8 +202,11 @@ const FileUploadManager = (function () {
     /* --------------------------
        OPEN MODAL
     --------------------------- */
-    function open(callback = null) {
+    function open(callback = null, _options = { accept: "file", multiple: true }) {
         onSelectCallback = callback;
+        options = _options;
+        document.getElementById("fum-file-input").accept = _options.accept;
+        document.getElementById("fum-file-input").multiple = _options.multiple;
         selected.clear();
         fetchFiles();
         openModal(FILE_UPLOAD_MODAL_ID);

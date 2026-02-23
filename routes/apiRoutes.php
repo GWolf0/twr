@@ -35,10 +35,10 @@ Route::prefix("v1")->name("api")->group(function () {
     // file upload api routes
     Route::name("file_upload.")->prefix("/file-upload")->middleware(["auth:sanctum", "user.role:admin"])->group(function () {
         // get uploaded files details
-        Route::get("", [FileUploadController::class, "getUploadedFiles"])->name("index");
+        Route::get("/", [FileUploadController::class, "getUploadedFiles"])->name("index");
 
         // upload file
-        Route::post("", [FileUploadController::class, "uploadFile"])->name("upload_single");
+        Route::post("/", [FileUploadController::class, "uploadFile"])->name("upload_single");
 
         // upload files
         Route::post("/many", [FileUploadController::class, "uploadFiles"])->name("upload_many");
