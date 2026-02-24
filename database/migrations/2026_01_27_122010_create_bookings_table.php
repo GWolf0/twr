@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('payment_status', Booking::PaymentStatuses());
             $table->enum('payment_method', Booking::PaymentMethods());
             $table->decimal('total_amount', 8, 2);
+            $table->boolean('deposit_received')->nullable()->default(false);
             $table->timestamps();
         });
     }

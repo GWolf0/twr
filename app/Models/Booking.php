@@ -20,7 +20,8 @@ class Booking extends Model
         "status",
         "payment_status",
         "payment_method",
-        "total_amount"
+        "total_amount",
+        "deposit_received"
     ];
 
     // protected $with = ['user', 'vehicle'];

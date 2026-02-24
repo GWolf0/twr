@@ -1,6 +1,7 @@
 <!-- Check comment at the bottom for info about this component -->
 
 @props([
+    'action' => null,
     'desc' => [
         'items' => [],
         'mainItem' => null,
@@ -10,6 +11,7 @@
 @php
     use Illuminate\Support\Str;
 
+    $action = $action ?? url()->current();
     $items = $desc['items'] ?? [];
     $mainItemName = $desc['mainItem'] ?? null;
 
@@ -44,7 +46,7 @@
 @endphp
 
 <x-ui.paper>
-    <form method="GET" action="{{ url()->current() }}" id="searchFiltersForm">
+    <form method="GET" action="{{ $action }}" id="searchFiltersForm">
 
         {{-- Preserve non-filter params except page --}}
         @foreach (request()->query() as $key => $value)

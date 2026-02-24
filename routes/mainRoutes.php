@@ -58,23 +58,17 @@ Route::name("common.")->group(function () {
     // home page
     Route::get("/", [CommonController::class, "homePage"])->name("page.home");
 
-    // email confirmed page
-    Route::get("/email-confirmed", [CommonController::class, "emailConfirmedPage"])->name("page.email_confirmed");
-
     // search page
     Route::get("/search", [CommonController::class, "searchPage"])->name("page.search");
 
     // vehicle details
     Route::get("/vehicles/{vehicle_id}", [CommonController::class, "vehicleDetailsPage"])->name("page.vehicle_details");
 
+    // email confirmed page
+    Route::get("/email-confirmed", [CommonController::class, "emailConfirmedPage"])->name("page.email_confirmed");
+
     // display ui
     Route::get("/ui", fn() => view("common.page.ui"))->name("page.ui");
-
-    // requires auth
-    Route::middleware("auth")->group(function () {});
-
-    // requires guest
-    Route::middleware("guest")->group(function () {});
 });
 
 // admin (routes for admin users only)

@@ -1,0 +1,4 @@
+- Refactor file uploading to support disk in tandem with Media model
+- Better upload manager ui
+- Special UI component for handling pagninated fk values options
+- Integrate the "deposit_received" field to the bookings

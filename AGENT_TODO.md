@@ -1,7 +1,8 @@
 You are in a laravel app project folder
 I am using nonly blade (no inertia)
-I want you to:
-- check the pages in "/views/admin/page"
-- check the partials of the admin pages in "/views/admin/partial", only check the partials related to the users table ("usersRecordsTable", "usersFilterForm", "userNewRecordForm", "userEditRecordForm")
-- the partials related to "vehicles" and "bookings" are not implemented, based on how I previously implemented the "users" related partials you checked earlier, implement first the partials related to "vehicles", for the "media" column of the "vehicles" table use the component "/views/components/forms/vehicle-images-field.blade.php" for the creating and editing form, then implement the "bookings" partials as well
-- now that all partials related to the admin user pages are implemented, update the pages in "/views/admin/page" to render the adequate partial based on the requested table
+I want you to implement the pages and partials located in "/views/common", as well as two components "/components/ui/carousel" and "/components/vehicle/card".
+For that , you need to first know all the available ui components you can use for consistent UI, check them in "/components/ui/".
+You also need to check the controller responsible for passing data and rendering view for the pages we want to implement, the controller is "CommonController.php".
+You also can check the routes in "/routes/mainRoutes" especially the routes under the name "common.".
+Once that done, you will print what you have understood from these requirements, then write how you will approach the implementation of first, the two aforementionned components "carousel" and "vehicle card", then the partials and pages of the common domain.
+Then start implmenting them.

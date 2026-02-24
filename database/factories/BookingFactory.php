@@ -28,6 +28,7 @@ class BookingFactory extends Factory
             'payment_status' => $this->faker->randomElement(Booking::PaymentStatuses()),
             'payment_method' => $this->faker->randomElement(Booking::PaymentMethods()),
             'total_amount' => $this->faker->randomFloat(2, 50, 1000),
+            'deposit_received' => $this->faker->boolean(80),
         ];
     }
 }

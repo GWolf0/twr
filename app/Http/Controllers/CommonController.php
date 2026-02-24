@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CRUD\VehicleCRUDService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,23 +25,23 @@ class CommonController extends Controller
      * Search page (vehicles search)
      * GET /search?q=...
      */
-    // public function searchPage(VehicleCRUDService $vehicleCRUDService, Request $request): RedirectResponse | JsonResponse
-    // {
-    //     $page = $request->query("page", 1);
-    //     $perPage = $request->query("per_page", 30);
-    //     $mResponse = $vehicleCRUDService->readMany($request->getQueryString(), $request->user(), $page, $perPage);
+    public function searchPage(VehicleCRUDService $vehicleCRUDService, Request $request): Response
+    {
+        $page = $request->query("page", 1);
+        $perPage = $request->query("per_page", 30);
+        $mResponse = $vehicleCRUDService->readMany($request->getQueryString(), $request->user(), $page, $perPage);
 
-    //     return appResponse($request, $mResponse->data, $mResponse->status, "common.page.search");
-    // }
+        return appResponse($request, $mResponse->data, $mResponse->status, ["view", "common.page.search"]);
+    }
 
-    // /**
-    //  * Vehicle details/listing page
-    //  * GET /vehicles/{vehicle_id}
-    //  */
-    // public function vehicleDetailsPage(VehicleCRUDService $vehicleCRUDService, Request $request, string $vehicle_id): RedirectResponse | JsonResponse
-    // {
-    //     $mResponse = $vehicleCRUDService->read($vehicle_id, $request->user());
+    /**
+     * Vehicle details/listing page
+     * GET /vehicles/{vehicle_id}
+     */
+    public function vehicleDetailsPage(VehicleCRUDService $vehicleCRUDService, Request $request, string $vehicle_id): Response
+    {
+        $mResponse = $vehicleCRUDService->read($vehicle_id, $request->user());
 
-    //     return appResponse($request, $mResponse->data, $mResponse->status, "common.page.vehicle_details");
-    // }
+        return appResponse($request, $mResponse->data, $mResponse->status, ["view", "common.page.vehicle_details"]);
+    }
 }
