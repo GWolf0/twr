@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('payment_method', Booking::PaymentMethods());
             $table->decimal('total_amount', 8, 2);
             $table->boolean('deposit_received')->nullable()->default(false);
+            $table->string('stripe_session_id')->nullable();
             $table->timestamps();
         });
     }

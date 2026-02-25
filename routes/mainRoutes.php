@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 // auth (authentication reltated routes)
@@ -120,4 +121,11 @@ Route::name("customer.")->middleware("user.role:customer")->group(function () {
 
     // cancel booking
     Route::post("/customer/bookings/{booking_id}/cancel", [CustomerController::class, "cancelBooking"])->name("action.cancel_booking");
+});
+
+// payment routes
+Route::name("payment.")->middleware("user.role:customer")->group(function () {
+    Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name("action.payment_webhook");
+    Route::get('/payment/start/{booking}', [PaymentController::class, 'start'])->name("action.start_payment");
+    Route::get('/payment/success', [PaymentController::class, 'successPage'])->name("page.success_page");
 });

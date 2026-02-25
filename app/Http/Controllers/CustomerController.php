@@ -33,7 +33,7 @@ class CustomerController extends Controller
             "vehicle" => $vehicle
         ];
 
-        return appResponse($request, $data, 200, "customer.page.book_vehicle");
+        return appResponse($request, $data, 200, ["view", "customer.page.book_vehicle"]);
     }
 
     /**
@@ -46,16 +46,13 @@ class CustomerController extends Controller
 
         // get list of bookings
         $bookingsResponse = $bookingCRUDService->readMany("user_id=" . $authUser?->id, $authUser);
-        if (!$bookingsResponse->success()) {
-            return appResponse($request, $bookingsResponse->data, $bookingsResponse->status);
-        }
 
         // make data
         $data = [
             "bookings" => $bookingsResponse["models"]
         ];
 
-        return appResponse($request, $data, 200, "customer.page.bookings_list");
+        return appResponse($request, $data, 200, ["view", "customer.page.bookings_list"]);
     }
 
     /**
@@ -77,7 +74,7 @@ class CustomerController extends Controller
             "booking" => $bookingResponse["model"]
         ];
 
-        return appResponse($request, $data, 200, "customer.page.booking_details");
+        return appResponse($request, $data, 200, ["view", "customer.page.booking_details"]);
     }
 
     /**
@@ -93,7 +90,7 @@ class CustomerController extends Controller
             "profile" => $authUser,
         ];
 
-        return appResponse($request, $data, 200, "customer.page.profile");
+        return appResponse($request, $data, 200, ["view", "customer.page.profile"]);
     }
 
     /**
@@ -117,6 +114,6 @@ class CustomerController extends Controller
         $authUser = $request->user();
         $bookingsResponse = $bookingService->cancel(array_merge($request->all(), $request->route()->parameters()), $authUser);
 
-        return appResponse($request, $bookingsResponse->data, $bookingsResponse->status);
+        return appResponse($request, $bookingsResponse->data, $bookingsResponse->status, ["redirect", "customer.page.bookings_list"]);
     }
 }
