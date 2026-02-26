@@ -5,14 +5,14 @@
 @section('content')
 
     <div class="space-y-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="flex flex-col justify-between gap-6">
+            <div class="w-full">
+                @include('common.partial.vehiclesSearchFilterBox')
+            </div>
+
             <div class="space-y-1">
                 <x-ui.header h="1">Find Your Ride</x-ui.header>
                 <x-ui.text muted>Showing {{ $models->total() }} vehicles found</x-ui.text>
-            </div>
-
-            <div class="w-full md:w-auto flex-1 max-w-2xl">
-                @include('common.partial.vehiclesSearchFilterBox')
             </div>
         </div>
 

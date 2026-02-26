@@ -1,33 +1,31 @@
 @extends('layouts.mainLayout')
 
 @section('content')
-    <x-ui.paper class="max-w-3xl mx-auto">
+    <x-ui.card>
+        <x-slot name="header">
+            <h2 class="text-xl font-semibold">
+                Book Vehicle | {{ $vehicle->name }}
+            </h2>
+        </x-slot>
 
-        <x-ui.card>
-            <x-slot name="header">
-                <h2 class="text-xl font-semibold">
-                    Book Vehicle — {{ $vehicle->name }}
-                </h2>
-            </x-slot>
+        <x-slot name="content">
 
-            <x-slot name="content">
+            {{-- Step Indicator --}}
+            <div class="flex items-center justify-between mb-6 text-sm font-medium">
+                <div id="step-indicator-1" class="text-primary">1. Details</div>
+                <div class="text-muted-foreground">—</div>
+                <div id="step-indicator-2" class="text-muted-foreground">2. Summary</div>
+                <div class="text-muted-foreground">—</div>
+                <div id="step-indicator-3" class="text-muted-foreground">3. Confirmation</div>
+            </div>
 
-                {{-- Step Indicator --}}
-                <div class="flex items-center justify-between mb-6 text-sm font-medium">
-                    <div id="step-indicator-1" class="text-primary">1. Details</div>
-                    <div class="text-muted-foreground">—</div>
-                    <div id="step-indicator-2" class="text-muted-foreground">2. Summary</div>
-                    <div class="text-muted-foreground">—</div>
-                    <div id="step-indicator-3" class="text-muted-foreground">3. Confirmation</div>
-                </div>
+            {{-- Alerts --}}
+            <div id="availability-alert" class="mb-4 hidden"></div>
+            <div id="general-alert" class="mb-4 hidden"></div>
 
-                {{-- Alerts --}}
-                <div id="availability-alert" class="mb-4 hidden"></div>
-                <div id="general-alert" class="mb-4 hidden"></div>
-
-                {{-- STEP 1 --}}
-                <div id="step-1">
-
+            {{-- STEP 1 --}}
+            <section id="step-1">
+                <div class="flex flex-col gap-2">
                     <x-ui.form-group>
                         <x-ui.label>Start Date</x-ui.label>
                         <x-ui.input type="datetime-local" id="start_date" />
@@ -40,54 +38,59 @@
 
                     <x-ui.form-group>
                         <x-ui.label>Payment Method</x-ui.label>
-                        <select id="payment_method" class="w-full border border-border rounded-md p-2 bg-input">
-                            <option value="cash">Cash (Pay at agency)</option>
-                            <option value="credit_card">Credit Card</option>
-                        </select>
+                        @php
+                            $paymentMethodsOptions = [
+                                'Cash (Pay at agency)' => 'cash',
+                                'Credit Card' => 'credit_card',
+                            ];
+                        @endphp
+                        <x-ui.select id="payment_method" :options="$paymentMethodsOptions" />
                     </x-ui.form-group>
-
-                    <div class="mt-6 text-right">
-                        <x-ui.button variant="primary" id="to-step-2">
-                            Continue
-                        </x-ui.button>
-                    </div>
                 </div>
 
-                {{-- STEP 2 --}}
-                <div id="step-2" class="hidden">
-
-                    <div id="summary-box" class="space-y-2 text-sm"></div>
-
-                    <div class="mt-6 flex justify-between">
-                        <x-ui.button variant="ghost" id="back-to-step-1">
-                            Back
-                        </x-ui.button>
-
-                        <x-ui.button variant="primary" id="confirm-booking">
-                            Confirm Booking
-                        </x-ui.button>
-                    </div>
+                <div class="mt-6 text-right">
+                    <x-ui.button variant="primary" id="to-step-2">
+                        Continue
+                    </x-ui.button>
                 </div>
+            </section>
 
-                {{-- STEP 3 --}}
-                <div id="step-3" class="hidden text-center space-y-4">
-                    <x-ui.alert message="Booking created successfully!" severity="info" />
-                    <a href="{{ route('customer.page.bookings') }}">
-                        <x-ui.button variant="primary">
-                            Go to My Bookings
-                        </x-ui.button>
-                    </a>
+            {{-- STEP 2 --}}
+            <section id="step-2" class="hidden">
+
+                <div id="summary-box" class="space-y-2 text-sm"></div>
+
+                <div class="mt-6 flex justify-between">
+                    <x-ui.button variant="outline" id="back-to-step-1">
+                        Back
+                    </x-ui.button>
+
+                    <x-ui.button variant="primary" id="confirm-booking">
+                        Confirm Booking
+                    </x-ui.button>
                 </div>
+            </section>
 
-            </x-slot>
-        </x-ui.card>
+            {{-- STEP 3 --}}
+            <section id="step-3" class="hidden text-center space-y-4">
+                <x-ui.alert message="Booking created successfully!" severity="info" />
+                <a href="{{ route('customer.page.bookings_list') }}">
+                    <x-ui.button variant="primary">
+                        Go to My Bookings
+                    </x-ui.button>
+                </a>
+            </section>
 
-    </x-ui.paper>
+        </x-slot>
+    </x-ui.card>
+@endsection
 
+@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
             const vehicleId = {{ $vehicle->id }};
+            const userId = {{ auth()->id() }};
 
             const step1 = document.getElementById('step-1');
             const step2 = document.getElementById('step-2');
@@ -116,16 +119,22 @@
             }
 
             async function checkAvailability() {
+                console.log("checkAvailability", startInput.value, endInput.value);
                 if (!startInput.value || !endInput.value) return;
 
-                const response = await fetch('/api/bookings/can-book', {
+                const response = await fetch('/api/v1/booking/can-book', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        "ACCEPT": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            "content"),
+                        "AUTHORIZATION": "Bearer " + document.querySelector('meta[name="api-token"]')
+                            .getAttribute("content"),
                     },
                     body: JSON.stringify({
                         vehicle_id: vehicleId,
+                        user_id: userId,
                         start_date: startInput.value,
                         end_date: endInput.value
                     })
@@ -135,7 +144,7 @@
 
                 if (data.success) {
                     availabilityValid = true;
-                    showAlert(availabilityAlert, "Vehicle available ✔", "info");
+                    showAlert(availabilityAlert, "Vehicle available", "info");
                 } else {
                     availabilityValid = false;
                     showAlert(availabilityAlert, data.message || "Not available", "error");
@@ -152,11 +161,17 @@
                     return;
                 }
 
-                const response = await fetch('/api/bookings/calculate', {
+                const response = await fetch('/api/v1/booking/calculate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        "ACCEPT": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute(
+                                "content"),
+                        "AUTHORIZATION": "Bearer " + document.querySelector(
+                                'meta[name="api-token"]')
+                            .getAttribute("content"),
                     },
                     body: JSON.stringify({
                         vehicle_id: vehicleId,
@@ -191,15 +206,24 @@
 
             document.getElementById('confirm-booking')
                 .addEventListener('click', async function() {
+                    document.getElementById('confirm-booking').disabled = true;
+                    document.getElementById('confirm-booking').innerHTML = "Booking..";
 
-                    const response = await fetch('/api/bookings', {
+                    const response = await fetch('/api/v1/booking', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            "ACCEPT": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute(
+                                    "content"),
+                            "AUTHORIZATION": "Bearer " + document.querySelector(
+                                    'meta[name="api-token"]')
+                                .getAttribute("content"),
                         },
                         body: JSON.stringify({
                             vehicle_id: vehicleId,
+                            user_id: userId,
                             start_date: startInput.value,
                             end_date: endInput.value,
                             payment_method: paymentInput.value
@@ -209,6 +233,7 @@
                     const data = await response.json();
 
                     if (!response.ok) {
+                        console.log(data);
                         showAlert(generalAlert, data.message || "Error creating booking", "error");
                         return;
                     }
@@ -227,4 +252,4 @@
 
         });
     </script>
-@endsection
+@endpush

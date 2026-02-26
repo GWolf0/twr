@@ -56,7 +56,7 @@
         @endforeach
 
         {{-- Top Row --}}
-        <div class="flex flex-col md:flex-row md:items-center gap-3">
+        <div class="flex flex-row gap-2 md:gap-3">
 
             {{-- Main Search --}}
             @if ($mainItem)
@@ -74,20 +74,12 @@
             @endif
 
             {{-- Search Button --}}
-            <x-ui.button type="submit" size="icon-md" title="search">
+            <x-ui.button type="submit" size="icon-md" title="search" data-loading="...">
                 <i class="bi bi-search"></i>
             </x-ui.button>
-            {{-- <button type="submit"
-                class="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition">
-                Search
-            </button> --}}
 
             {{-- Toggle Filters --}}
             @if (count($filterItems))
-                {{-- <button type="button" id="toggleFiltersBtn"
-                    class="border border-border bg-secondary text-secondary-foreground px-4 py-2 rounded-md text-sm hover:bg-muted transition">
-                    Filters
-                </button> --}}
                 <x-ui.button id="toggleFiltersBtn" variant="outline" size="icon-md" title="filters">
                     <i class="bi bi-funnel"></i>
                 </x-ui.button>
@@ -151,7 +143,12 @@
                             @elseif($baseType === 'select')
                                 <select name="{{ $item['name'] }}" data-op="{{ $item['op'] ?? '' }}"
                                     class="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none">
-                                    <option value="">Select {{ ucfirst($item['name']) }}</option>
+                                    @if ($item['name'] == 's')
+                                        <!-- if name of item is 's' then assume is a sorting param -->
+                                        <option value="">Sort by</option>
+                                    @else
+                                        <option value="">Select {{ ucfirst($item['name']) }}</option>
+                                    @endif
                                     @foreach ($item['options'] ?? [] as $val => $label)
                                         <option value="{{ $val }}"
                                             {{ request()->query($item['name']) == $val ? 'selected' : '' }}>

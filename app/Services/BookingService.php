@@ -13,7 +13,9 @@ use App\Types\DOE;
 use App\Misc\Enums\VehicleAvailability as EnumsVehicleAvailability;
 use App\Types\MResponse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class BookingService implements IBookingInterface
 {
@@ -43,17 +45,15 @@ class BookingService implements IBookingInterface
         $to = Carbon::parse($validated["end_date"]);
 
         if (!$authUser || (!$authUser->isAdmin() && $authUser->id != $user->id)) {
-            return MResponse::create([
-                "message" => 'Unauthorized'
-            ], 403);
+            return MResponse::create(["message" => 'Unauthorized'], 403);
         }
 
         $errorMsg = "";
-        if ($vehicle->status !== EnumsVehicleAvailability::available->name) {
-            $errorMsg =  'Vehicle not available';
+        if ($vehicle->availability !== EnumsVehicleAvailability::available->name) {
+            $errorMsg =  'Vehicle not available ';
         }
 
-        if ($from->gte($to)) {
+        if ($from->gte($to) || Carbon::now()->greaterThan($from) || Carbon::now()->greaterThan($to)) {
             $errorMsg = 'Invalid booking period';
         }
 
@@ -125,7 +125,7 @@ class BookingService implements IBookingInterface
             "user" => ["required_without:user_id"],
             "start_date" => ["required", "date"],
             "end_date" => ["required", "date", "after:start_date"],
-            "payment_method" => ["nullable", "string"],
+            "payment_method" => ["required", "string", Rule::in(Booking::PaymentMethods())],
         ]);
 
         if ($validator->fails()) {
@@ -144,7 +144,11 @@ class BookingService implements IBookingInterface
 
         $from = Carbon::parse($validated["start_date"]);
         $to = Carbon::parse($validated["end_date"]);
-        $amount = $this->calculateAmount(array_merge([$validated, ["vehicle" => $vehicle]]), $authUser)->data["amount"];
+        $amountResponse = $this->calculateAmount(array_merge($validated, ["vehicle" => $vehicle]), $authUser);
+        if ($amountResponse->failed()) {
+            return MResponse::create($amountResponse->data, $amountResponse->status);
+        }
+        $amount = $amountResponse->data["amount"];
 
         $booking = Booking::create([
             "vehicle_id" => $vehicle->id,
@@ -153,7 +157,7 @@ class BookingService implements IBookingInterface
             "end_date" => $to,
             "status" => BookingStatus::pending->name,
             "payment_status" => BookingPaymentStatus::unpaid->name,
-            "payment_method" => $validated["payment_method"] ?? BookingPaymentMethod::cash->name,
+            "payment_method" => $validated["payment_method"],
             "total_amount" => $amount,
         ]);
 

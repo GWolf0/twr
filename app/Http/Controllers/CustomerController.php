@@ -9,6 +9,7 @@ use App\Services\CRUD\VehicleCRUDService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use function App\Helpers\appResponse;
 
@@ -19,7 +20,7 @@ class CustomerController extends Controller
      * book vehicle page
      * GET /bookings/vehicles/{vehicle_id}
      */
-    public function bookVehiclePage(VehicleCRUDService $vehicleCRUDService, Request $request, string $vehicle_id): RedirectResponse | JsonResponse
+    public function bookVehiclePage(VehicleCRUDService $vehicleCRUDService, Request $request, string $vehicle_id): Response
     {
         // get vehicle to book
         $vehicleResponse = $vehicleCRUDService->read($vehicle_id, $request->user());
@@ -40,7 +41,7 @@ class CustomerController extends Controller
      * bookings list page
      * GET /bookings
      */
-    public function bookingsListPage(BookingCRUDService $bookingCRUDService, Request $request): RedirectResponse | JsonResponse
+    public function bookingsListPage(BookingCRUDService $bookingCRUDService, Request $request): Response
     {
         $authUser = $request->user();
 
@@ -49,7 +50,7 @@ class CustomerController extends Controller
 
         // make data
         $data = [
-            "bookings" => $bookingsResponse["models"]
+            "bookings" => $bookingsResponse->data["models"]
         ];
 
         return appResponse($request, $data, 200, ["view", "customer.page.bookings_list"]);
@@ -59,7 +60,7 @@ class CustomerController extends Controller
      * booking details page
      * GET /bookings/{booking_id}
      */
-    public function bookingDetailsPage(BookingCRUDService $bookingCRUDService, Request $request, string $booking_id): RedirectResponse | JsonResponse
+    public function bookingDetailsPage(BookingCRUDService $bookingCRUDService, Request $request, string $booking_id): Response
     {
         $authUser = $request->user();
 
@@ -81,7 +82,7 @@ class CustomerController extends Controller
      * profile page
      * GET /profile
      */
-    public function profilePage(Request $request): RedirectResponse | JsonResponse
+    public function profilePage(Request $request): Response
     {
         $authUser = $request->user();
 
@@ -97,7 +98,7 @@ class CustomerController extends Controller
      * perform booking
      * POST /customer/bookings
      */
-    public function book(BookingService $bookingService, Request $request): RedirectResponse | JsonResponse
+    public function book(BookingService $bookingService, Request $request): Response
     {
         $authUser = $request->user();
         $bookingsResponse = $bookingService->createBooking($request->all(), $authUser);
@@ -109,7 +110,7 @@ class CustomerController extends Controller
      * cancel booking
      * POST /customer/bookings/{booking_id}/cancel
      */
-    public function cancelBooking(BookingService $bookingService, Request $request, string $booking_id): RedirectResponse | JsonResponse
+    public function cancelBooking(BookingService $bookingService, Request $request, string $booking_id): Response
     {
         $authUser = $request->user();
         $bookingsResponse = $bookingService->cancel(array_merge($request->all(), $request->route()->parameters()), $authUser);

@@ -88,18 +88,29 @@
 
                 <div class="pt-6">
                     @if ($model->availability === \App\Misc\Enums\VehicleAvailability::available->name)
-                        <x-ui.button variant="primary" size="lg" class="w-full text-lg h-14 shadow-lg shadow-primary/20"
-                            :href="route('customer.page.book_vehicle', ['vehicle_id' => $model->id])">
-                            Book This Vehicle
-                        </x-ui.button>
-                    @else
-                        <x-ui.button variant="secondary" size="lg" class="w-full text-lg h-14" disabled>
-                            Currently Unavailable
-                        </x-ui.button>
+                        <x-ui.button variant="primary" size="lg"
+                            class="w-full text-lg h-14 shadow-lg shadow-primary/20" :href="route('customer.page.book_vehicle', ['vehicle_id' => $model->id])" 
+                            :disabled="!auth()->check()"
+                        >
+                    Book This Vehicle
+                    </x-ui.button>
+                @else
+                    <x-ui.button variant="secondary" size="lg" class="w-full text-lg h-14" disabled>
+                        Currently Unavailable
+                    </x-ui.button>
                     @endif
                     <x-ui.text size="sm" muted class="text-center mt-4">
                         <i class="bi bi-info-circle mr-1"></i>
-                        You'll be redirected to the booking page to choose your dates.
+                        @auth
+                            You'll be redirected to the booking page to choose your dates.
+                        @endauth
+                        @guest
+                            Please
+                            <x-ui.link href="{{ route('auth.page.login') }}" target="_blank ">
+                                login/register
+                            </x-ui.link>
+                            to be able to book this vehicle.
+                        @endguest
                     </x-ui.text>
                 </div>
             </div>

@@ -8,6 +8,7 @@
         {{-- Hero Section --}}
         <section class="text-center space-y-8 py-12">
             <div class="space-y-4">
+                <p class="text-5xl font-medium text-center mb-10 text-shadow-lg">{{ config('app.name') }}</p>
                 <x-ui.header h="1">Rent Your Dream Two-Wheeler Today</x-ui.header>
                 <x-ui.text size="lg" muted class="max-w-2xl mx-auto">
                     From agile scooters to powerful motorcycles and eco-friendly bicycles. Find the perfect ride for your
@@ -71,11 +72,13 @@
                     $faqs = [
                         [
                             'q' => 'What do I need to rent a vehicle?',
-                            'a' => 'You need a valid ID, a driver\'s license (for motorcycles/scooters), and a credit card for the security deposit.',
+                            'a' =>
+                                'You need a valid ID, a driver\'s license (for motorcycles/scooters), and a credit card for the security deposit.',
                         ],
                         [
                             'q' => 'Is insurance included?',
-                            'a' => 'Basic insurance is included in all rentals. You can also opt for premium coverage during booking.',
+                            'a' =>
+                                'Basic insurance is included in all rentals. You can also opt for premium coverage during booking.',
                         ],
                         [
                             'q' => 'Can I cancel my booking?',

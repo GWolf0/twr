@@ -1,6 +1,4 @@
-@props([
-    'vehicle',
-])
+@props(['vehicle'])
 
 @php
     $images = array_filter(explode(',', $vehicle->media ?? ''));
@@ -24,9 +22,11 @@
             </x-ui.badge>
         </div>
     </div>
-    <div class="p-4 flex-grow flex flex-col space-y-2">
+    <div class="p-4 grow flex flex-col space-y-2">
         <div>
-            <x-ui.header h="3">{{ $vehicle->name }}</x-ui.header>
+            <a href="{{ route('common.page.vehicle_details', ['vehicle_id' => $vehicle->id]) }}" target="_blank">
+                <x-ui.header h="3">{{ $vehicle->name }}</x-ui.header>
+            </a>
             <x-ui.text size="sm" muted>{{ $vehicle->type }}</x-ui.text>
         </div>
 
@@ -37,8 +37,7 @@
                     <span class="text-xs font-normal text-muted-foreground">/ hr</span>
                 </x-ui.text>
             </div>
-            <x-ui.button variant="primary" size="sm"
-                :href="route('common.page.vehicle_details', ['vehicle_id' => $vehicle->id])">
+            <x-ui.button variant="primary" size="sm" :href="route('common.page.vehicle_details', ['vehicle_id' => $vehicle->id])" target="_blank">
                 Details
             </x-ui.button>
         </div>

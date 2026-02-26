@@ -38,17 +38,23 @@
                 @foreach ($bookings as $booking)
                     <x-ui.table-tr>
                         <x-ui.table-td class="font-medium">#{{ $booking->id }}</x-ui.table-td>
-                        <x-ui.table-td>{{ $booking->vehicle?->name ?? 'N/A' }}</x-ui.table-td>
+                        <x-ui.table-td>
+                            <x-ui.link
+                                href="{{ route('common.page.vehicle_details', ['vehicle_id' => $booking->vehicle?->id]) }}"
+                                target="_blank">
+                                {{ $booking->vehicle?->name ?? 'N/A' }}
+                            </x-ui.link>
+                        </x-ui.table-td>
                         <x-ui.table-td>{{ \Illuminate\Support\Carbon::parse($booking->start_date)->format('M d, Y H:i') }}</x-ui.table-td>
                         <x-ui.table-td>{{ \Illuminate\Support\Carbon::parse($booking->end_date)->format('M d, Y H:i') }}</x-ui.table-td>
                         <x-ui.table-td>
                             @php
-                                $statusVariant = match($booking->status) {
+                                $statusVariant = match ($booking->status) {
                                     'pending' => 'warning',
                                     'confirmed' => 'success',
                                     'canceled' => 'destructive',
                                     'completed' => 'secondary',
-                                    default => 'default'
+                                    default => 'default',
                                 };
                             @endphp
                             <x-ui.badge :variant="$statusVariant" class="capitalize">
@@ -57,11 +63,11 @@
                         </x-ui.table-td>
                         <x-ui.table-td>
                             @php
-                                $paymentVariant = match($booking->payment_status) {
+                                $paymentVariant = match ($booking->payment_status) {
                                     'unpaid' => 'destructive',
                                     'paid' => 'success',
                                     'refunded' => 'warning',
-                                    default => 'outline'
+                                    default => 'outline',
                                 };
                             @endphp
                             <x-ui.badge :variant="$paymentVariant" class="capitalize">
@@ -73,12 +79,15 @@
                         </x-ui.table-td>
                         <x-ui.table-td class="text-right">
                             <div class="flex justify-end gap-2">
-                                <x-ui.button variant="outline" size="sm" as="a" href="{{ route('customer.page.booking_details', $booking->id) }}">
+                                <x-ui.button variant="outline" size="sm" as="a"
+                                    href="{{ route('customer.page.booking_details', $booking->id) }}">
                                     Details
                                 </x-ui.button>
-                                
-                                @if(!in_array($booking->status, ['canceled', 'completed']))
-                                    <form action="{{ route('customer.action.cancel_booking', $booking->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this booking?')">
+
+                                @if (!in_array($booking->status, ['canceled', 'completed']))
+                                    <form action="{{ route('customer.action.cancel_booking', $booking->id) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to cancel this booking?')">
                                         @csrf
                                         <x-ui.button variant="destructive" size="sm" type="submit">
                                             Cancel
@@ -92,11 +101,7 @@
             </x-ui.table>
 
             <div class="mt-4">
-                <x-ui.pagination 
-                    :currentPage="$bookings->currentPage()" 
-                    :lastPage="$bookings->lastPage()" 
-                    :query="request()->query()" 
-                />
+                <x-ui.pagination :currentPage="$bookings->currentPage()" :lastPage="$bookings->lastPage()" :query="request()->query()" />
             </div>
         @endif
     </div>

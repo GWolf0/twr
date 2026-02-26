@@ -24,6 +24,16 @@ class BookingController extends Controller
     }
 
     /**
+     * POST /api/booking/calculate
+     */
+    public function calculate(BookingService $bookingService, Request $request): JsonResponse
+    {
+        $mResponse = $bookingService->calculateAmount($request->all(), $request->user());
+
+        return response()->json($mResponse->data, $mResponse->status);
+    }
+
+    /**
      * POST /api/booking
      */
     public function create(BookingService $bookingService, Request $request): JsonResponse

@@ -59,10 +59,13 @@ Route::prefix("v1")->name("api")->group(function () {
     // booking api routes
     Route::name("booking.")->prefix("/booking")->middleware(["auth:sanctum"])->group(function () {
         // can book
-        Route::get("/can-book", [BookingController::class, "canBook"])->name("can_book");
+        Route::post("/can-book", [BookingController::class, "canBook"])->name("can_book");
+
+        // calculate amout
+        Route::post("/calculate", [BookingController::class, "calculate"])->name("calculate");
 
         // create
-        Route::post("", [BookingController::class, "create"])->middleware("user.role:customer")->name("create");
+        Route::post("/", [BookingController::class, "create"])->middleware("user.role:customer")->name("create");
 
         // confirm
         Route::post("/{booking_id}/confirm", [BookingController::class, "confirm"])->middleware("user.role:admin")->name("confirm");

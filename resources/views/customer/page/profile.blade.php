@@ -74,7 +74,8 @@
             </x-slot:footer>
         </x-ui.card>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Password updating & Notification preferences (Not Implemented in MVP) -->
+        {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <x-ui.paper class="space-y-4">
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-primary/10 text-primary rounded-lg">
@@ -100,6 +101,6 @@
                     Notification Preferences &rarr;
                 </x-ui.button>
             </x-ui.paper>
-        </div>
+        </div> --}}
     </div>
 @endsection

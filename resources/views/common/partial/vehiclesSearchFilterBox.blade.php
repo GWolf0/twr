@@ -1,10 +1,11 @@
 @php
     $filterConfig = [
-        'mainItem' => 'q',
+        'mainItem' => 'name',
         'items' => [
             [
-                'name' => 'q',
+                'name' => 'name',
                 'type' => 'input:text',
+                'op' => 'l',
                 'attrs' => 'placeholder="Search vehicles (e.g. Honda, Scooter)..."',
             ],
             [
@@ -22,7 +23,7 @@
                 'type' => 'input:number',
                 'op' => 'lt',
                 'attrs' => 'placeholder="Max $/hr"',
-                'inline' => true,
+                // 'inline' => true,
             ],
             [
                 'name' => 'availability',
@@ -31,6 +32,14 @@
                     'available' => 'Available',
                     'unavailable' => 'Unavailable',
                     'maintenance' => 'Maintenance',
+                ],
+            ],
+            [
+                'name' => 's',
+                'type' => 'select',
+                'options' => [
+                    'price_per_hour_asc' => 'Sort: Price low to high',
+                    'price_per_hour_desc' => 'Sort: Price high to low',
                 ],
             ],
         ],

@@ -230,7 +230,7 @@ const FileUploadManager = (function () {
  * Init on load
  */
 document.addEventListener("DOMContentLoaded", () => {
-    FileUploadManager.init();
+    if (document.getElementById("fum-file-input")) FileUploadManager.init();
 });
 
 /* --------------------------
