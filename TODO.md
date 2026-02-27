@@ -1,4 +1,9 @@
-- Refactor file uploading to support disk in tandem with Media model
+- Add localization
+- Test docker setup
+- Update readme
+- Refactor file uploading to support disk in accordance with Media model
 - Better upload manager ui
-- Special UI component for handling pagninated fk values options
-- Integrate the "deposit_received" field to the bookings
+- Special UI component for handling pagninated foreignkey values options
+- Integrate the "deposit_received" field to the bookings logic
+- Intergrate and test stripe
+- Implement feature tests for controllers
