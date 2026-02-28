@@ -8,7 +8,7 @@
     <div class="flex items-center gap-3">
         @guest
             <x-ui.button href="{{ route('auth.page.login') }}">
-                Login
+                {{ __('common.login') }}
             </x-ui.button>
         @endguest
 
@@ -22,20 +22,20 @@
                     <div class="flex flex-col gap-1 px-2 py-4">
                         <x-ui.link href="{{ route('customer.page.bookings_list') }}">
                             <x-ui.button variant="ghost" class="w-full">
-                                My Bookings
+                                {{ __('common.my_bookings') }}
                             </x-ui.button>
                         </x-ui.link>
 
                         <x-ui.link href="{{ route('customer.page.profile') }}">
                             <x-ui.button variant="ghost" class="w-full">
-                                My Profile
+                                {{ __('common.my_profile') }}
                             </x-ui.button>
                         </x-ui.link>
 
                         <form action="{{ route('auth.action.logout') }}" method="POST">
                             @csrf
                             <x-ui.button type="submit" variant="destructive" class="w-full">
-                                Logout
+                                {{ __('common.logout') }}
                             </x-ui.button>
                         </form>
                     </div>

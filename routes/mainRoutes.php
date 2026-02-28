@@ -10,6 +10,7 @@ use App\Http\Controllers\CommonController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PaymentController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // auth (authentication reltated routes)
@@ -69,7 +70,16 @@ Route::name("common.")->group(function () {
     Route::get("/email-confirmed", [CommonController::class, "emailConfirmedPage"])->name("page.email_confirmed");
 
     // display ui
-    Route::get("/ui", fn() => view("common.page.ui"))->name("page.ui");
+    // Route::get("/ui", fn() => view("common.page.ui"))->name("page.ui");
+
+    // lang switch
+    Route::get('/lang', function (Request $request) {
+        $locale = $request->query('locale', 'en');
+        if (in_array($locale, ['en', 'ja'])) {
+            session(['locale' => $locale]);
+        }
+        return back();
+    })->name("action.lang_switch");
 });
 
 // admin (routes for admin users only)

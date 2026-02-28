@@ -11,8 +11,8 @@
             </div>
 
             <div class="space-y-1">
-                <x-ui.header h="1">Find Your Ride</x-ui.header>
-                <x-ui.text muted>Showing {{ $models->total() }} vehicles found</x-ui.text>
+                <x-ui.header h="1">{{ __('copywrite.search_title') }}</x-ui.header>
+                <x-ui.text muted>{{ __('copywrite.search_sub', ['total' => $models->total()]) }}</x-ui.text>
             </div>
         </div>
 
@@ -24,11 +24,11 @@
                         <i class="bi bi-search text-3xl"></i>
                     </div>
                     <div class="space-y-2">
-                        <x-ui.header h="3">No vehicles found</x-ui.header>
-                        <x-ui.text muted>Try adjusting your filters or search terms.</x-ui.text>
+                        <x-ui.header h="3">{{ __('copywrite.search_no_vehicles_found') }}</x-ui.header>
+                        <x-ui.text muted>{{ __('copywrite.search_no_vehicles_found_sub') }}</x-ui.text>
                     </div>
                     <x-ui.button variant="outline" :href="route('common.page.search')">
-                        Clear All Filters
+                        {{ __('copywrite.search_clear_all_filters') }}
                     </x-ui.button>
                 </div>
             @else

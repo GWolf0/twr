@@ -9,7 +9,7 @@
         <div class="flex items-center gap-2">
             <x-ui.button variant="ghost" size="sm" :href="route('common.page.search')">
                 <i class="bi bi-arrow-left mr-2"></i>
-                Back to search
+                {{ __('copywrite.vehicles_details_back_to_search') }}
             </x-ui.button>
         </div>
 
@@ -38,7 +38,7 @@
                         @endphp
                         <div class="flex items-start">
                             <x-ui.badge :variant="$badgeVariant" size="lg" class="px-4 py-2">
-                                {{ ucfirst($model->availability) }}
+                                {{ ucfirst(__('enums.vehicle_availability.' . $model->availability)) }}
                             </x-ui.badge>
                         </div>
                     </div>
@@ -47,14 +47,14 @@
                         <x-ui.text size="lg" class="text-3xl font-bold text-primary">
                             ${{ number_format($model->price_per_hour, 2) }}
                         </x-ui.text>
-                        <x-ui.text muted>/ hour</x-ui.text>
+                        <x-ui.text muted>/ {{ __('common.hour') }}</x-ui.text>
                     </div>
                 </div>
 
                 <x-ui.separator />
 
                 <div class="space-y-4">
-                    <x-ui.header h="3">About this vehicle</x-ui.header>
+                    <x-ui.header h="3">{{ __('copywrite.vehicles_details_about_this_vehicle') }}</x-ui.header>
                     <x-ui.text muted class="leading-relaxed">
                         Experience the road like never before with the {{ $model->name }}. Perfect for city commuting and
                         weekend escapes.
@@ -89,27 +89,25 @@
                 <div class="pt-6">
                     @if ($model->availability === \App\Misc\Enums\VehicleAvailability::available->name)
                         <x-ui.button variant="primary" size="lg"
-                            class="w-full text-lg h-14 shadow-lg shadow-primary/20" :href="route('customer.page.book_vehicle', ['vehicle_id' => $model->id])" 
-                            :disabled="!auth()->check()"
-                        >
-                    Book This Vehicle
-                    </x-ui.button>
-                @else
-                    <x-ui.button variant="secondary" size="lg" class="w-full text-lg h-14" disabled>
-                        Currently Unavailable
-                    </x-ui.button>
+                            class="w-full text-lg h-14 shadow-lg shadow-primary/20" :href="route('customer.page.book_vehicle', ['vehicle_id' => $model->id])" :disabled="!auth()->check()">
+                            {{ __('copywrite.vehicles_details_book_this_vehicle') }}
+                        </x-ui.button>
+                    @else
+                        <x-ui.button variant="secondary" size="lg" class="w-full text-lg h-14" disabled>
+                            {{ __('copywrite.vehicles_details_currently_unavailable') }}
+                        </x-ui.button>
                     @endif
                     <x-ui.text size="sm" muted class="text-center mt-4">
                         <i class="bi bi-info-circle mr-1"></i>
                         @auth
-                            You'll be redirected to the booking page to choose your dates.
+                            {{ __('copywrite.vehicles_details_booking_page_redirect_notice') }}
                         @endauth
                         @guest
-                            Please
+                            {{ __('common.please') }}
                             <x-ui.link href="{{ route('auth.page.login') }}" target="_blank ">
-                                login/register
+                                {{ __('common.login/register') }}
                             </x-ui.link>
-                            to be able to book this vehicle.
+                            {{ __('copywrite.vehicles_details_auth_notice') }}
                         @endguest
                     </x-ui.text>
                 </div>

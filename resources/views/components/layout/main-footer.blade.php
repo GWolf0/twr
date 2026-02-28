@@ -16,7 +16,7 @@
                 </h3>
 
                 <p class="mt-3 text-sm text-muted-foreground">
-                    Building reliable digital solutions with simplicity and clarity.
+                    {{ __('copywrite.footer_copy') }}
                 </p>
 
                 <div class="mt-4 text-sm text-muted-foreground space-y-1">
@@ -37,23 +37,18 @@
             {{-- Company Links --}}
             <div>
                 <h4 class="text-sm font-semibold uppercase tracking-wide text-foreground">
-                    Company
+                    {{ __('common.company') }}
                 </h4>
 
                 <ul class="mt-4 space-y-2 text-sm">
                     <li>
                         <a href="/about" class="hover:text-primary transition">
-                            About Us
+                            {{ __('common.about_us') }}
                         </a>
                     </li>
                     <li>
                         <a href="/contact" class="hover:text-primary transition">
-                            Contact
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/careers" class="hover:text-primary transition">
-                            Careers
+                            {{ __('common.contact') }}
                         </a>
                     </li>
                 </ul>
@@ -62,23 +57,23 @@
             {{-- Legal Links --}}
             <div>
                 <h4 class="text-sm font-semibold uppercase tracking-wide text-foreground">
-                    Legal
+                    {{ __('common.legal') }}
                 </h4>
 
                 <ul class="mt-4 space-y-2 text-sm">
                     <li>
                         <a href="/privacy-policy" class="hover:text-primary transition">
-                            Privacy Policy
+                            {{ __('common.privacy_policy') }}
                         </a>
                     </li>
                     <li>
                         <a href="/terms-of-service" class="hover:text-primary transition">
-                            Terms of Service
+                            {{ __('common.terms') }}
                         </a>
                     </li>
                     <li>
                         <a href="/cookie-policy" class="hover:text-primary transition">
-                            Cookie Policy
+                            {{ __('common.cookie_policy') }}
                         </a>
                     </li>
                 </ul>
@@ -87,8 +82,24 @@
         </div>
 
         {{-- Bottom Bar --}}
-        <div class="mt-12 pt-6 border-t border-border text-center text-xs text-muted-foreground">
+        {{-- <div class="mt-12 pt-6 border-t border-border text-center text-xs text-muted-foreground">
             © {{ now()->year }} {{ config('app.name') }}. All rights reserved.
+        </div> --}}
+
+        {{-- Bottom Bar --}}
+        <div
+            class="mt-12 pt-6 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+
+            {{-- Copyright --}}
+            <div>
+                © {{ now()->year }} {{ config('app.name') }}. All rights reserved.
+            </div>
+
+            {{-- Language Switch --}}
+            <div>
+                <x-layout.lang-switch class="w-28 text-xs" />
+            </div>
+
         </div>
 
     </div>

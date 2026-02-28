@@ -1,27 +1,31 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm-alpine
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     git \
     curl \
     zip \
     unzip \
     libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev
+    libzip-dev \
+    oniguruma-dev
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Set working directory
-WORKDIR /var/www/html
-
-# Copy Apache config
-COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Copy project files
+COPY . .
+
+# Install Laravel dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Cache config/routes for performance
+RUN php artisan config:cache || true
+RUN php artisan route:cache || true
+
+CMD ["php-fpm"]
