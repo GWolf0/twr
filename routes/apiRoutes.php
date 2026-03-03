@@ -86,6 +86,6 @@ Route::prefix("v1")->name("api")->group(function () {
     // misc api routes
     Route::name("misc.")->prefix("/misc")->group(function () {
         // get fk values
-        Route::get("/fk-values/{table}/column", [MiscController::class, "fkValues"])->name("fk_values");
+        Route::get("/fk-values/{table}/{column}", [MiscController::class, "fkValues"])->name("fk_values");
     });
 });

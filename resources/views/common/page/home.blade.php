@@ -5,6 +5,13 @@
 @section('content')
 
     <div class="space-y-16 py-8">
+        {{-- DEMO mode notification --}}
+        @if (config('app.demo'))
+            <section class="w-full">
+                <x-ui.alert message="This app is in demo mode, certain functionalities are limited." severity="warning" />
+            </section>
+        @endif
+
         {{-- Hero Section --}}
         <section class="text-center space-y-8 py-12">
             <div class="space-y-4">

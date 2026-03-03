@@ -37,7 +37,9 @@
             [
                 'name' => 's',
                 'type' => 'select',
+                'default' => 'created_at_desc',
                 'options' => [
+                    'created_at_desc' => 'Sort: Newest',
                     'price_per_hour_asc' => 'Sort: Price low to high',
                     'price_per_hour_desc' => 'Sort: Price high to low',
                 ],

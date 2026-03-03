@@ -46,7 +46,7 @@ class CustomerController extends Controller
         $authUser = $request->user();
 
         // get list of bookings
-        $bookingsResponse = $bookingCRUDService->readMany("user_id=" . $authUser?->id, $authUser);
+        $bookingsResponse = $bookingCRUDService->readMany("user_id=" . $authUser?->id . "&s=created_at_desc", $authUser);
 
         // make data
         $data = [

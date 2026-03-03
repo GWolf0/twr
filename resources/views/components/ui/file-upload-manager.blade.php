@@ -6,7 +6,7 @@
     <x-slot:content>
         <div id="fum-root" class="space-y-6">
 
-            {{-- Usage Progress --}}
+            {{-- Storage Usage --}}
             <div>
                 <div class="flex justify-between text-sm mb-2">
                     <span class="text-muted-foreground">Storage Usage</span>
@@ -17,26 +17,35 @@
 
             {{-- Actions --}}
             <div class="flex items-center justify-between">
+
                 <div class="flex gap-3">
-                    <x-ui.button type="button" onclick="FileUploadManager.triggerFileInput()">
+                    <x-ui.button type="button" data-fum-action onclick="FileUploadManager.triggerFileInput()">
                         Upload
                     </x-ui.button>
 
-                    <x-ui.button type="button" variant="destructive" onclick="FileUploadManager.deleteSelected()">
+                    <x-ui.button type="button" variant="destructive" data-fum-action data-fum-delete disabled
+                        onclick="FileUploadManager.deleteSelected()">
                         Delete Selected
                     </x-ui.button>
                 </div>
 
-                <x-ui.button type="button" variant="primary" onclick="FileUploadManager.returnSelected()">
+                <x-ui.button type="button" variant="primary" data-fum-action data-fum-choose disabled
+                    onclick="FileUploadManager.returnSelected()">
                     Choose
                 </x-ui.button>
+
             </div>
 
-            {{-- Hidden input --}}
+            {{-- Hidden File Input --}}
             <input type="file" id="fum-file-input" multiple class="hidden" />
 
-            {{-- Files Grid --}}
-            <div id="fum-files-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+            {{-- Dropzone + Grid --}}
+            <div id="fum-dropzone" class="border-2 border-dashed border-border rounded-lg p-4 transition-colors">
+
+                <div id="fum-files-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                </div>
+
+            </div>
 
         </div>
     </x-slot:content>

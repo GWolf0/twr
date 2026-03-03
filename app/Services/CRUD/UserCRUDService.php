@@ -52,6 +52,11 @@ class UserCRUDService implements ICRUDInterface
 
         $validated = $validator->validate();
 
+        // disable ability to create admin user in demo mode
+        if (config("app.demo") && $validated["role"] == EnumsUserRole::admin->name) {
+            return MResponse::create(["message" => "Cannot create admin user in demo mode"], 403);
+        }
+
         $validated['password'] = Hash::make($validated['password']);
 
         $model = User::create($validated);

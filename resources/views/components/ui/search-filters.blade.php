@@ -145,9 +145,10 @@
                                     class="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none">
                                     @if ($item['name'] == 's')
                                         <!-- if name of item is 's' then assume is a sorting param -->
-                                        <option value="">Sort by</option>
+                                        <option value="{{ $item['default'] ?? null }}">Sort by</option>
                                     @else
-                                        <option value="">Select {{ ucfirst($item['name']) }}</option>
+                                        <option value="{{ $item['default'] ?? null }}">Select
+                                            {{ ucfirst($item['name']) }}</option>
                                     @endif
                                     @foreach ($item['options'] ?? [] as $val => $label)
                                         <option value="{{ $val }}"

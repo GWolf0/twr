@@ -2,6 +2,11 @@
 
 return [
 
+    /**
+     * Application demo mode
+     */
+    'demo' => env('APP_DEMO', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Media;
 use App\Services\FileUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -13,27 +14,11 @@ class FileUploadController extends Controller
     /**
      * GET /api/version/file-upload
      */
-    public function getUploadedFiles(Request $request): JsonResponse
+    public function getUploadedFiles(FileUploadService $fus, Request $request): JsonResponse
     {
-        $user = $request->user();
+        $mResponse = $fus->getUploadedFiles($request->user());
 
-        if (!$user) {
-            return response()->json(["message" => "Unauthorized"], 401);
-        }
-
-        $filesQuery = $user->media();
-
-        $usedBytes = (clone $filesQuery)->sum('size');
-
-        $files = $filesQuery->latest()->get(); // switch to paginated when /managers/fileUploadManager.js updates for that
-
-        return response()->json([
-            "files" => $files,
-            "usage" => [
-                "used" => $usedBytes,
-                "total" => config('twr.file_upload.storage_capacity'),
-            ]
-        ]);
+        return response()->json($mResponse->data, $mResponse->status);
     }
 
     /**

@@ -1,9 +1,18 @@
-- Add localization
-- Test docker setup
-- Update readme
-- Refactor file uploading to support disk in accordance with Media model
-- Better upload manager ui
-- Special UI component for handling pagninated foreignkey values options
-- Integrate the "deposit_received" field to the bookings logic
-- Intergrate and test stripe
-- Implement feature tests for controllers
+- Check customer pages/actions
+- Prepare MVP/DEMO version:
+    - APP_DEMO bool env var
+    - limit file uploading (max size, storage capacity, file types, files count)
+    - limit max of x records for each table
+    - check ratelimiting and users access for routes
+    - disable registering new users
+    - disable ability to create admin users
+    - make better hero/banner in home page
+    - notify that the app is for demo purpose on home page
+    - provide admin and customer credentials for testing in login page
+    - get some images placeholders of vehicles
+    - try switching to sqlite
+    - reseed the database
+    - re-setup docker to use (nginx, php-fpm), with tight nginx setup
+    - favicon
+    - recheck localization
+    - test docker setup & deployability

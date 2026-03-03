@@ -15,6 +15,16 @@ interface IFileUploadInterface
     public function getDiskValidations(): array;
 
     /**
+     * Can upload
+     */
+    public function canUpload(?User $user, int $extraBytes = 0): bool;
+
+    /**
+     * Get uploaded files and usage data
+     */
+    public function getUploadedFiles(?User $user): MResponse;
+
+    /**
      * Upload a single file.
      * Returns DOE->data = uploaded file path on success
      */

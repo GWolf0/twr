@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('throttle:api')->group(function () {
+Route::middleware('throttle:30,1')->group(function () {
     // routes
     include(__DIR__ . "/apiRoutes.php");
 });

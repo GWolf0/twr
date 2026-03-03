@@ -12,13 +12,14 @@ use Illuminate\Support\Str;
 
 class FileUploadService implements IFileUploadInterface
 {
+
     /* -------------------------------------------------------------
         DISK VALIDATIONS
     ------------------------------------------------------------- */
     public function getDiskValidations(): array
     {
         return [
-            "images" => ["required", "file", "image", "max:2048"],
+            "images" => ["required", "file", "image", "max:" . config("twr.file_upload.max_size_kb")],
             "default" => [
                 "required",
                 "file",
@@ -26,6 +27,47 @@ class FileUploadService implements IFileUploadInterface
                 "max:" . config("twr.file_upload.max_size_kb"),
             ],
         ];
+    }
+
+    /**
+     * Can upload
+     */
+    public function canUpload(?User $user, int $extraBytes = 0): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        $usedBytes = $user->media()?->sum('size') ?? config("twr.file_upload.storage_capacity");
+        $uploadedFilesCount = $user->media()->count();
+
+        return intval($usedBytes + $extraBytes) < config("twr.file_upload.storage_capacity") ||
+            $uploadedFilesCount + 1 < config('twr.file_upload.max_files');
+    }
+
+    /**
+     * Get uploaded files and usage data
+     */
+    public function getUploadedFiles(?User $user): MResponse
+    {
+        if (!$user) {
+            return MResponse::create(["message" => "Unauthorized"], 401);
+        }
+
+
+        $filesQuery = $user->media();
+
+        $usedBytes = (clone $filesQuery)->sum('size');
+
+        $files = $filesQuery->latest()->get(); // switch to paginated when /managers/fileUploadManager.js updates for that
+
+        return MResponse::create([
+            "files" => $files,
+            "usage" => [
+                "used" => intval($usedBytes),
+                "total" => intval(config('twr.file_upload.storage_capacity')),
+            ]
+        ]);
     }
 
     /* -------------------------------------------------------------
@@ -56,7 +98,11 @@ class FileUploadService implements IFileUploadInterface
         $directory = $validated["directory"] ?? "";
         $file = $validated["file"];
 
-        // Avoid double extension bug
+        if (!$this->canUpload($authUser, $file->getSize())) {
+            return MResponse::create(["message" => "Cannot upload, limit reached!"]);
+        }
+
+        // name
         $name = isset($validated["file_name"])
             ? $validated["file_name"] . '.' . $file->extension()
             : $file->hashName();
@@ -142,7 +188,7 @@ class FileUploadService implements IFileUploadInterface
         }
 
         $validator = Validator::make($data, [
-            "media_id" => ["nullable", "numeric"],
+            "id" => ["nullable", "numeric"],
             "path" => ["nullable", "string"],
         ]);
 
@@ -154,8 +200,8 @@ class FileUploadService implements IFileUploadInterface
 
         $media = null;
 
-        if (!empty($validated["media_id"])) {
-            $media = Media::find($validated["media_id"]);
+        if (!empty($validated["id"])) {
+            $media = Media::find($validated["id"]);
         }
 
         if (!$media && !empty($validated["path"])) {
@@ -190,16 +236,16 @@ class FileUploadService implements IFileUploadInterface
         }
 
         $validator = Validator::make($data, [
-            "media_ids" => ["required", "array", "min:1"],
-            "media_ids.*" => ["numeric"],
+            "ids" => ["required", "array", "min:1"],
+            "ids.*" => ["numeric"],
         ]);
 
         if ($validator->fails()) {
             return MResponse::create($validator->errors(), 422);
         }
 
-        foreach ($validator->validate()["media_ids"] as $id) {
-            $result = $this->removeUploadedFile(["media_id" => $id], $authUser);
+        foreach ($validator->validate()["ids"] as $id) {
+            $result = $this->removeUploadedFile(["id" => $id], $authUser);
 
             if (!$result->success()) {
                 return $result;

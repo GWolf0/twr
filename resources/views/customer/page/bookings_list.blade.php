@@ -79,10 +79,10 @@
                         </x-ui.table-td>
                         <x-ui.table-td class="text-right">
                             <div class="flex justify-end gap-2">
-                                <x-ui.button variant="outline" size="sm" as="a"
+                                {{-- <x-ui.button variant="outline" size="sm" as="a"
                                     href="{{ route('customer.page.booking_details', $booking->id) }}">
                                     Details
-                                </x-ui.button>
+                                </x-ui.button> --}}
 
                                 @if (!in_array($booking->status, ['canceled', 'completed']))
                                     <form action="{{ route('customer.action.cancel_booking', $booking->id) }}"

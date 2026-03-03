@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 use function App\Helpers\appResponse;
@@ -177,6 +178,11 @@ class AdminController extends Controller
     // /admin/model/{table}/create METHOD=POST
     public function storeRecord(MasterCRUDService $crudService, Request $request, string $table): Response
     {
+        // limit maximim records in demo mode
+        if (config("app.demo") && DB::table($table)->count() + 1 > 100) {
+            return appResponse($request, ["message" => "Maximum records reached (100)"], 403, ["redirect", "admin.page.dashboard_record_create", ["table" => $table]]);
+        }
+
         $mResponse = $crudService->create($table, $request->all(), $request->user());
 
         return appResponse($request, $mResponse->data, $mResponse->status, ["redirect", "admin.page.dashboard_record_create", ["table" => $table]]);
