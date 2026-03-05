@@ -2,13 +2,17 @@
 
 namespace Database\Seeders;
 
+use App\Misc\Enums\UserRole;
 use App\Misc\Enums\VehicleAvailability;
 use App\Models\Booking;
+use App\Models\Media;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\Vehicle;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,14 +31,28 @@ class DatabaseSeeder extends Seeder
         // one default settings model
         Setting::factory()->create();
 
-        // 20 users of role "customer"
+        // 1 clear customer credentials, and other 20
+        User::factory()->create([
+            'email' => 'customer@email.com',
+            'role' => UserRole::customer->name,
+        ]);
         $customers = User::factory()->count(20)->create([
             'role' => 'customer',
         ]);
 
+        // media
+        $path = public_path('storage/images');
+        $availableImages = File::files($path);
+        $media = [];
+        foreach ($availableImages as $file) {
+            $media[] = Media::factory()->create([
+                'url' => asset('storage/images/' . $file->getFilename())
+            ]);
+        }
+
         // 30 vehicles with status "available"
         Vehicle::factory()->count(30)->create([
-            'availability' => VehicleAvailability::available->name,
+            'availability' => VehicleAvailability::available->name, 
         ]);
 
         // 3 vehicles with status "unavailable"

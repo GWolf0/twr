@@ -73,7 +73,7 @@ class MasterCRUDService implements IMasterCRUDInterface
     /* ---------------------------------
      * READ MANY
      * --------------------------------- */
-    public function readMany(string|null $table, ?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
+    public function readMany(string|null $table, ?string $queryParams, ?User $authUser, int $page = 1, $perPage = 28): MResponse
     {
         $handler = $this->resolve($table);
 

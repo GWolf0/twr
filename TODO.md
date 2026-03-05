@@ -1,18 +1,19 @@
 - Check customer pages/actions
 - Prepare MVP/DEMO version:
-    - APP_DEMO bool env var
-    - limit file uploading (max size, storage capacity, file types, files count)
-    - limit max of x records for each table
-    - check ratelimiting and users access for routes
-    - disable registering new users
-    - disable ability to create admin users
-    - make better hero/banner in home page
-    - notify that the app is for demo purpose on home page
-    - provide admin and customer credentials for testing in login page
-    - get some images placeholders of vehicles
-    - try switching to sqlite
-    - reseed the database
-    - re-setup docker to use (nginx, php-fpm), with tight nginx setup
+    - /APP_DEMO bool env var
+    - /limit file uploading (max size, storage capacity, file types, files count)
+    - /limit max of x records for each table
+    - /check ratelimiting and users access for routes
+    - /disable registering new users
+    - /disable ability to create admin users
+    - /notify that the app is for demo purpose on home page
+    - /provide admin and customer credentials for testing in login page
+    - /provide test uploaded images, an disable uploading and deleting uploaded files
+    - /get some images placeholders of vehicles
+    - /try switching to sqlite
+    - /reseed the database
+    - /integrate hero/banner in home page and login/register page (through main layout)
     - favicon
+    - re-setup docker to use (nginx, php-fpm), with tight nginx setup
     - recheck localization
     - test docker setup & deployability

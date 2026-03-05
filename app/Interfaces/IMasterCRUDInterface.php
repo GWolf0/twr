@@ -14,7 +14,7 @@ interface IMasterCRUDInterface
 
     public function create(string|null $table, array $data, ?User $authUser): MResponse;
     public function read(string|null $table, int|string $id, ?User $authUser): MResponse;
-    public function readMany(string|null $table, ?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse;
+    public function readMany(string|null $table, ?string $queryParams, ?User $authUser, int $page = 1, $perPage = 28): MResponse;
     public function update(string|null $table, int|string $id, array $data, ?User $authUser): MResponse;
     public function delete(string|null $table, int|string $id, ?User $authUser): MResponse;
 }

@@ -26,6 +26,11 @@ class FileUploadController extends Controller
      */
     public function uploadFile(FileUploadService $fileUploadService, Request $request): JsonResponse
     {
+        // disable file uploading in demo mode
+        if (config("app.demo")) {
+            return response()->json(["message" => "Cannot upload files in demo mode"], 403);
+        }
+
         $mResponse = $fileUploadService->uploadFile($request->all(), $request->user());
 
         return response()->json($mResponse->data, $mResponse->status);
@@ -36,6 +41,11 @@ class FileUploadController extends Controller
      */
     public function uploadFiles(FileUploadService $fileUploadService, Request $request): JsonResponse
     {
+        // disable file uploading in demo mode
+        if (config("app.demo")) {
+            return response()->json(["message" => "Cannot upload files in demo mode"], 403);
+        }
+
         $mResponse = $fileUploadService->uploadFiles($request->all(), $request->user());
 
         return response()->json($mResponse->data, $mResponse->status);
@@ -46,6 +56,11 @@ class FileUploadController extends Controller
      */
     public function deleteFile(FileUploadService $fileUploadService, Request $request, string $id): JsonResponse
     {
+        // disable file deleting in demo mode
+        if (config("app.demo")) {
+            return response()->json(["message" => "Cannot delete files in demo mode"], 403);
+        }
+
         $mResponse = $fileUploadService->removeUploadedFile(array_merge($request->all(), $request->route()->parameters()), $request->user());
 
         return response()->json($mResponse->data, $mResponse->status);
@@ -56,6 +71,11 @@ class FileUploadController extends Controller
      */
     public function deleteFiles(FileUploadService $fileUploadService, Request $request, string $ids): JsonResponse
     {
+        // disable file deleting in demo mode
+        if (config("app.demo")) {
+            return response()->json(["message" => "Cannot delete files in demo mode"], 403);
+        }
+        
         $mResponse = $fileUploadService->removeUploadedFiles(array_merge($request->all(), $request->route()->parameters()), $request->user());
 
         return response()->json($mResponse->data, $mResponse->status);

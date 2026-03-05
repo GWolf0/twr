@@ -158,7 +158,7 @@ class AdminController extends Controller
     public function indexRecords(MasterCRUDService $crudService, Request $request, string $table): Response
     {
         $page = $request->query("page", 1);
-        $perPage = $request->query("per_page", 30);
+        $perPage = $request->query("per_page", 28);
         $mResponse = $crudService->readMany($table, $request->getQueryString(), $request->user(), $page, $perPage);
 
         return appResponse($request, $mResponse->data, $mResponse->status, ["view", "admin.page.dashboard_records_index", ["table" => $table]]);

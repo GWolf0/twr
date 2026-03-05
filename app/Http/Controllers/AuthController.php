@@ -21,7 +21,7 @@ class AuthController extends Controller
     // /auth/register, METHOD=POST
     public function register(AuthService $authService, Request $request): Response
     {
-        // diable registering in demo mode
+        // disable registering in demo mode
         if (config("app.demo")) {
             return appResponse($request, ["message" => "Cannot register in demo mode"], 403, ["redirect", "common.page.register"]);
         }

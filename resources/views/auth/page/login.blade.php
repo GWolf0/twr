@@ -19,7 +19,7 @@
                     <tr>
                         <td class="font-bold text-sm p-2">- Admin</td>
                         <td>
-                            admin@email.com | password
+                            admin@twr.com | password
                         </td>
                     </tr>
                     <tr>

@@ -2,7 +2,7 @@
     use Illuminate\Support\Str;
 @endphp
 
-<header class="w-full h-20 border-b border-border bg-background flex items-center justify-between px-4 md:px-6">
+<header class="w-full h-20 border-b border-border bg-transparent flex items-center justify-between px-4 md:px-6">
     <x-layout.logo linkToHomePage />
 
     <div class="flex items-center gap-3">

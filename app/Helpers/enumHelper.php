@@ -20,6 +20,7 @@ function enumOptions(string $enumClass, bool $capitalize = false): array
             $label = ucfirst($label);
         }
 
-        return [$label => $value];
+        // return [$label => $value];
+        return [$value => $label];
     })->toArray();
 }

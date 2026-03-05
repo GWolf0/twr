@@ -28,7 +28,7 @@ class CommonController extends Controller
     public function searchPage(VehicleCRUDService $vehicleCRUDService, Request $request): Response
     {
         $page = $request->query("page", 1);
-        $perPage = $request->query("per_page", 30);
+        $perPage = $request->query("per_page", 28);
         $mResponse = $vehicleCRUDService->readMany($request->getQueryString(), $request->user(), $page, $perPage);
 
         return appResponse($request, $mResponse->data, $mResponse->status, ["view", "common.page.search"]);

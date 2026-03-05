@@ -18,6 +18,13 @@
 </head>
 
 <body class="w-full bg-background @yield('outerClasses')">
+    {{-- // background image --}}
+    @if (request()->routeIs('common.page.home', 'auth.page.login', 'auth.page.register'))
+        <div class="absolute w-full z-[-1] opacity-30"
+            style="height: 100vh; top: 0px; background-image: url(banner_raw.png); background-repeat: no-repeat; background-position: center; background-size: cover;">
+
+        </div>
+    @endif
 
     {{-- // header --}}
     <x-layout.main-header />

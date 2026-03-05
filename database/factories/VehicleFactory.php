@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Media;
 use App\Models\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,10 +18,16 @@ class VehicleFactory extends Factory
      */
     public function definition(): array
     {
+        $type = $this->faker->randomElement(Vehicle::Types());
+        $mediaChoices = Media::where('url', 'like', '%' . $type . '%')->get();
+        $selectedMedia = $mediaChoices->isNotEmpty()
+            ? $mediaChoices->random()
+            : Media::inRandomOrder()->first();
+
         return [
             'name' => $this->faker->company,
-            'type' => $this->faker->word,
-            'media' => $this->faker->imageUrl() . ',' . $this->faker->imageUrl(),
+            'type' => $type,
+            'media' => $selectedMedia?->url,
             'price_per_hour' => $this->faker->randomFloat(2, 10, 100),
             'availability' => $this->faker->randomElement(Vehicle::Availabilities()),
         ];

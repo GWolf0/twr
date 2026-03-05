@@ -94,7 +94,7 @@ class UserCRUDService implements ICRUDInterface
     /* ---------------------------------
      * READ MANY
      * --------------------------------- */
-    public function readMany(?string $queryParams, ?User $authUser, int $page = 1, int $perPage = 30): MResponse
+    public function readMany(?string $queryParams, ?User $authUser, int $page = 1, $perPage = 28): MResponse
     {
         if (!$authUser) {
             return MResponse::create([

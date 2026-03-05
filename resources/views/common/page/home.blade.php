@@ -4,22 +4,21 @@
 
 @section('content')
 
-    <div class="space-y-16 py-8">
-        {{-- DEMO mode notification --}}
-        @if (config('app.demo'))
-            <section class="w-full">
-                <x-ui.alert message="This app is in demo mode, certain functionalities are limited." severity="warning" />
-            </section>
-        @endif
-
+    <div class="bg-background/30 space-y-16 py-8">
         {{-- Hero Section --}}
-        <section class="text-center space-y-8 py-12">
-            <div class="space-y-4">
-                <p class="text-5xl font-medium text-center mb-10 text-shadow-lg">{{ config('app.name') }}</p>
-                <x-ui.header h="1">{{ __('copywrite.home_hero_title') }}</x-ui.header>
-                <x-ui.text size="lg" muted class="max-w-2xl mx-auto">
+        <section class="text-center space-y-8 py-12 flex flex-col justify-center" style="min-height: 70vh">
+            {{-- DEMO mode notification --}}
+            @if (config('app.demo'))
+                {{-- <section class="w-full">
+                    <x-ui.alert message="This app is in demo mode, certain functionalities are limited." severity="warning" />
+                </section> --}}
+            @endif
+
+            <div class="p-2 rounded space-y-8">
+                <h1 class="text-5xl text-foreground font-medium">{{ __('copywrite.home_hero_title') }}</h1>
+                <h2 class="max-w-2xl mx-auto text-xl text-muted-foreground font-medium">
                     {{ __('copywrite.home_hero_sub') }}
-                </x-ui.text>
+                </h2>
             </div>
 
             <div class="pt-4">
@@ -28,8 +27,8 @@
         </section>
 
         {{-- How It Works --}}
-        <section class="space-y-12">
-            <div class="text-center">
+        <section class="space-y-12 bg-muted/30 -mx-4 px-4 py-20 rounded-[3rem]">
+            <div class="p-2 rounded-lg text-center">
                 <x-ui.header h="2">{{ __('copywrite.home_how_it_works') }}</x-ui.header>
                 <x-ui.text muted>{{ __('copywrite.home_how_it_works_sub') }}</x-ui.text>
             </div>

@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type');
+            $table->enum('type', Vehicle::Types());
             $table->text('media')->nullable(); // csv media urls
             $table->decimal('price_per_hour', 8, 2);
             $table->enum('availability', Vehicle::Availabilities());

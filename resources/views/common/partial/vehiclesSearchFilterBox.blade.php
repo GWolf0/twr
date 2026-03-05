@@ -1,4 +1,11 @@
 @php
+    use App\Misc\Enums\VehicleAvailability;
+    use App\Misc\Enums\VehicleType;
+    use function App\Helpers\enumOptions;
+
+    $typesOptions = enumOptions(VehicleType::class);
+    $availabilityOptions = enumOptions(VehicleAvailability::class);
+
     $filterConfig = [
         'mainItem' => 'name',
         'items' => [
@@ -11,12 +18,7 @@
             [
                 'name' => 'type',
                 'type' => 'select',
-                'options' => [
-                    'scooter' => 'Scooter',
-                    'motorcycle' => 'Motorcycle',
-                    'bicycle' => 'Bicycle',
-                    'electric_bike' => 'Electric Bike',
-                ],
+                'options' => $typesOptions,
             ],
             [
                 'name' => 'price_per_hour',
@@ -28,11 +30,7 @@
             [
                 'name' => 'availability',
                 'type' => 'select',
-                'options' => [
-                    'available' => 'Available',
-                    'unavailable' => 'Unavailable',
-                    'maintenance' => 'Maintenance',
-                ],
+                'options' => $availabilityOptions,
             ],
             [
                 'name' => 's',

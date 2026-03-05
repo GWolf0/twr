@@ -1,8 +1,10 @@
 @php
+    use App\Misc\Enums\VehicleType;
     use App\Misc\Enums\VehicleAvailability;
     use function App\Helpers\enumOptions;
 
     $record = $model;
+    $availabilityTypes = enumOptions(VehicleType::class);
     $availabilityOptions = enumOptions(VehicleAvailability::class);
 @endphp
 
@@ -26,11 +28,13 @@
                     required minLength="3" maxLength="64" />
             </x-ui.form-group>
 
+            @php
+                $typeValue = old('type', $record->type);
+            @endphp
             <x-ui.form-group>
                 <x-ui.error key="type" />
                 <x-ui.label for="f_type">Type</x-ui.label>
-                <x-ui.input id="f_type" name="type" placeholder="type" value="{{ old('type', $record->type) }}"
-                    required minLength="3" maxLength="64" />
+                <x-ui.select id="f_type" name="type" :options="$typeOptions" :initialValue="$typeValue" required />
             </x-ui.form-group>
 
             <x-ui.form-group>

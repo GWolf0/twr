@@ -107,7 +107,7 @@ function appResponse(
 /**
  * retrieves all records from a table as ["id" => "columnValue", ..]
  */
-function getFKValues(string $table, string $column, int $page = 1, int $perPage = 30): MResponse
+function getFKValues(string $table, string $column, int $page = 1, $perPage = 28): MResponse
 {
     $query = DB::table($table)->select('id', $column);
 
