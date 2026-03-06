@@ -2,30 +2,43 @@ FROM php:8.2-fpm-alpine
 
 # Install system dependencies
 RUN apk add --no-cache \
-    git \
-    curl \
-    zip \
-    unzip \
-    libpng-dev \
+    bash \
     libzip-dev \
-    oniguruma-dev
+    oniguruma-dev \
+    sqlite-dev \
+    curl
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+RUN docker-php-ext-install \
+    pdo \
+    pdo_sqlite \
+    mbstring \
+    zip
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy project files
+# Copy application
 COPY . .
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Ensure database exists
+RUN touch database/database.sqlite \
+    && chown -R www-data:www-data database
 
-# Cache config/routes for performance
+# Install PHP dependencies
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction
+
+# Permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+# Laravel optimization
 RUN php artisan config:cache || true
 RUN php artisan route:cache || true
+RUN php artisan view:cache || true
 
 CMD ["php-fpm"]

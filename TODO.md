@@ -13,7 +13,8 @@
     - /try switching to sqlite
     - /reseed the database
     - /integrate hero/banner in home page and login/register page (through main layout)
-    - favicon
+    - /favicon
     - re-setup docker to use (nginx, php-fpm), with tight nginx setup
     - recheck localization
     - test docker setup & deployability
+    - readme

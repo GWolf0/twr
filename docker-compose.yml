@@ -1,53 +1,23 @@
-version: "3.8"
+version: "3.9"
 
 services:
-
   app:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: twr_app
-    restart: unless-stopped
+    container_name: laravel_app
     env_file:
       - .env.docker
-    networks:
-      - twr_network
+    restart: unless-stopped
+    mem_limit: 256m
 
   nginx:
     image: nginx:alpine
-    container_name: twr_nginx
-    restart: unless-stopped
+    container_name: laravel_nginx
     ports:
-      - "80:80"
+      - "8080:80"
+    restart: unless-stopped
     volumes:
-      - .:/var/www/html
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
-    networks:
-      - twr_network
-
-  mysql:
-    image: mariadb:10.6
-    container_name: twr_mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: twr
-      MYSQL_USER: twr_user
-      MYSQL_PASSWORD: twr_password
-    command: >
-      --innodb-buffer-pool-size=128M
-      --max_connections=20
-      --key_buffer_size=16M
-    volumes:
-      - dbdata:/var/lib/mysql
-    networks:
-      - twr_network
-
-volumes:
-  dbdata:
-
-networks:
-  twr_network:
-    driver: bridge
