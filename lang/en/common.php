@@ -19,4 +19,8 @@ return [
 
     "hour" => "hour",
     "my_bookings" => "my bookings",
+    "condition" => "condition",
+    "excellent" => "excellent",
+    "insurance" => "insurance",
+    "basic_included" => "basic included",
 ];

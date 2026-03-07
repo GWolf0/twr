@@ -20,21 +20,21 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy application
-COPY . .
+# Copy only required for caching
+COPY composer.json composer.lock .env.docker ./
 
-# Ensure database exists
-RUN touch database/database.sqlite \
-    && chown -R www-data:www-data database
+# Create .env from .env.docker
+RUN cp .env.docker .env
 
-# Install PHP dependencies
+# Install dependencies
 RUN composer install \
-    --no-dev \
     --optimize-autoloader \
     --no-interaction
 
-# Permissions
-RUN chown -R www-data:www-data storage bootstrap/cache
+# Create required directories and files and permissions
+RUN touch database/database.sqlite \
+    && mkdir -p storage/app/public/images \
+    && chown -R www-data:www-data storage bootstrap/cache database
 
 # Laravel optimization
 RUN php artisan config:cache || true

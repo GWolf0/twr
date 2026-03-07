@@ -71,8 +71,8 @@
                             <i class="bi bi-speedometer2 text-xl"></i>
                         </div>
                         <div>
-                            <x-ui.text size="sm" muted>Condition</x-ui.text>
-                            <x-ui.text size="sm" class="font-medium">Excellent</x-ui.text>
+                            <x-ui.text size="sm" muted>{{ __('common.condition') }}</x-ui.text>
+                            <x-ui.text size="sm" class="font-medium">{{ __('common.excellent') }}</x-ui.text>
                         </div>
                     </x-ui.paper>
                     <x-ui.paper class="flex items-center gap-4 border border-border/50 bg-muted/5">
@@ -80,8 +80,8 @@
                             <i class="bi bi-shield-check text-xl"></i>
                         </div>
                         <div>
-                            <x-ui.text size="sm" muted>Insurance</x-ui.text>
-                            <x-ui.text size="sm" class="font-medium">Basic Included</x-ui.text>
+                            <x-ui.text size="sm" muted>{{ __('common.insurance') }}</x-ui.text>
+                            <x-ui.text size="sm" class="font-medium">{{ __('common.basic_included') }}</x-ui.text>
                         </div>
                     </x-ui.paper>
                 </div>

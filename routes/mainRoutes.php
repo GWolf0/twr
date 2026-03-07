@@ -11,6 +11,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 // auth (authentication reltated routes)
@@ -74,12 +76,12 @@ Route::name("common.")->group(function () {
 
     // lang switch
     Route::get('/lang', function (Request $request) {
-        $locale = $request->query('locale', 'en');
+        $locale = $request->query('locale');
         if (in_array($locale, ['en', 'ja'])) {
             session(['locale' => $locale]);
         }
-        return back();
-    })->name("action.lang_switch");
+        return redirect()->back();
+    })->name('action.lang_switch');
 });
 
 // admin (routes for admin users only)

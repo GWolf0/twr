@@ -41,18 +41,23 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // media
-        $path = public_path('storage/images');
-        $availableImages = File::files($path);
-        $media = [];
-        foreach ($availableImages as $file) {
-            $media[] = Media::factory()->create([
-                'url' => asset('storage/images/' . $file->getFilename())
+        $sourcePath = database_path('seed-assets/images');
+        $destinationPath = storage_path('app/public/images');
+        File::ensureDirectoryExists($destinationPath);
+        $files = File::files($sourcePath);
+        foreach ($files as $file) {
+            $filename = $file->getFilename();
+
+            File::copy($file->getRealPath(), $destinationPath . '/' . $filename);
+
+            Media::factory()->create([
+                'url' => asset('storage/images/' . $filename)
             ]);
         }
 
         // 30 vehicles with status "available"
         Vehicle::factory()->count(30)->create([
-            'availability' => VehicleAvailability::available->name, 
+            'availability' => VehicleAvailability::available->name,
         ]);
 
         // 3 vehicles with status "unavailable"

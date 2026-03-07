@@ -15,6 +15,6 @@
     - /integrate hero/banner in home page and login/register page (through main layout)
     - /favicon
     - re-setup docker to use (nginx, php-fpm), with tight nginx setup
-    - recheck localization
+    - /recheck localization
     - test docker setup & deployability
     - readme
