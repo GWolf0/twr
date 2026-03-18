@@ -66,56 +66,43 @@ function appResponse(
 
     return redirect()->route("common.page.home");
 }
-// function appResponse(
-//     Request $request,
-//     array | MessageBag $data = [],
-//     int $status = 200,
-//     ?string $page = null,
-//     array $authorizations = [],
-//     array $fkValues = [],
-// ): Response {
-//     $sharedPayload = [
-//         'user' => $request->user()?->only(['id', 'name', 'email', 'role']),
-//         'page' => $page,
-//         'status' => $status,
-//         'authorizations' => $authorizations,
-//         'fk_values' => $fkValues,
-//         'merrors' => !is_array($data) ? $data->toArray() : [],
-//     ];
-//     $payload = is_array($data) ? array_merge($data, $sharedPayload) : $sharedPayload;
-
-//     if ($request->expectsJson()) {
-//         return response()->json($payload, $status);
-//     }
-
-//     if ($page) {
-//         if ($page[0] == "/") {
-//             return response()->redirectToRoute($page)->with("data", $payload);
-//         } else {
-//             return response()->view(
-//                 ($status < 400 || $status == 422) ? $page : 'common.page.error',
-//                 $payload,
-//                 $status
-//             );
-//         }
-//     }
-
-//     return redirect()->back();
-// }
-
 
 /**
  * retrieves all records from a table as ["id" => "columnValue", ..]
+ * IMPORTANT: make sure to not return sensitive columns
  */
 function getFKValues(string $table, string $column, int $page = 1, $perPage = 28): MResponse
 {
+    $allowed = [
+        'users' => ['name', 'email'],
+        'vehicles' => ['name'],
+    ];
+
+    // Validate table
+    if (!array_key_exists($table, $allowed)) {
+        return MResponse::create([
+            "message" => "Invalid table",
+        ], 403);
+    }
+
+    // Validate column
+    if (!in_array($column, $allowed[$table])) {
+        return MResponse::create([
+            "message" => "Invalid column",
+        ], 403);
+    }
+
     $query = DB::table($table)->select('id', $column);
 
     $count = (clone $query)->count();
 
     $offset = ($page - 1) * $perPage;
 
-    $data = $query->orderBy($column)->limit($perPage)->offset($offset)->pluck($column, 'id');
+    $data = $query
+        ->orderBy($column)
+        ->limit($perPage)
+        ->offset($offset)
+        ->pluck($column, 'id');
 
     return MResponse::create([
         'data' => $data,

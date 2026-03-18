@@ -1,227 +1,207 @@
 # TWR
 
-## App name
-TWR (two-wheeler renting), temp name
+## App Name
+**TWR (Two-Wheeler Renting)** - temporary project name.
+
+---
 
 ## Index
-- [description](#description)
-- [features](#features)
-- [stack](#stack)
-- [getting started](#getting-started)
-- [pages](#pages)
-- [models](#models)
-- [project assumptions](#project-assumptions)
-- [non goals](#non-goals)
-- [notes](#notes)
+
+- [Description](#description)
+- [Features](#features)
+- [Stack](#stack)
+- [Screenshots](#screenshots)
+- [Getting Started](#getting-started)
+- [Models](#models)
+- [Model Relationships](#model-relationships)
+- [Project Assumptions](#project-assumptions)
+- [Non-goals](#non-goals)
+- [Notes](#notes)
+
+---
 
 ## Description
-TWR is a two-wheeler rental management application designed to handle vehicle listings, bookings, users, and administrative operations.
-The system provides a clear separation between client and admin roles and focuses on delivering a structured, maintainable rental workflow.
+
+TWR is a **two-wheeler rental management application** designed to manage vehicle listings, bookings, users, and administrative operations.
+
+The system provides a clear separation between **client and administrator roles** and focuses on delivering a structured and maintainable rental workflow.
+
+The project emphasizes **clean architecture, maintainability, and API-driven design** while implementing a realistic rental management flow.
+
+---
 
 ## Features
-- Role-bound users (admin, client)
-- Client can browse vehicles
-- Client can book a vehicle (if certain conditions are met)
-- Client can view his bookings
-- Client can cancel a booking
-- Admin can CRUD vehicles
-- Admin can CRUD users
-- Admin can CRUD bookings
-- Client and admin can view a booking's invoice (receipt/simple rental summary)
-- Multi-language support
+
+- Role-based users (Admin, Client)
+- Clients can browse available vehicles
+- Clients can book vehicles (subject to availability conditions)
+- Clients can view their bookings
+- Clients can cancel bookings
+- Administrators can manage vehicles (CRUD)
+- Administrators can manage users (CRUD)
+- Administrators can manage bookings (CRUD)
+- Booking invoice generation (rental summary / receipt)
+- Multi-language support (Partial)
+
+---
 
 ## Stack
-- Laravel (blade, front-end and back-end)
-- MySQL (DBMS)
-- TailwindCSS (Styling)
+
+- **Backend:** Laravel
+- **Frontend:** Blade, JavaScript
+- **Database:** MySQL / SQLite
+- **Styling:** TailwindCSS
+
+---
+
+## Screenshots
+
+---
 
 ## Getting Started
-- cp .env.example .env
-- php artisan key:generate
-- php artisan migrate --seed
-- php artisan serve
 
-## Pages
-- Home page: /
-- Login page: /login (guest)
-- Register page: /register (guest)
-- Password reset notification sending: /password-reset-notification
-- Password reset: /password-reset
-- Email confirmation: /email-confirmation
-- Search page: /search?query..
-- Book page: /book/{vehicle_uuid}
-- Booking confirmation page: /book/{vehicle_uuid}/confirmation (auth:client)
-- My bookings page: /bookings (auth:client)
-- My profile page: /profile (auth:client)
-- Booking invoice page: /vehicles/{vehicle_uuid}/invoice (auth:client if owner | auth:admin)
-- Admin dashboard: /dashboard (auth:admin, defaults to stats page)
-- Admin dashboard stats: /dashboard/stats (auth:admin)
-- Admin dashboard vehicles list and delete: /dashboard/models/vehicles (auth:admin)
-- Admin dashboard vehicles new record: /dashboard/models/vehicles/new (auth:admin)
-- Admin dashboard vehicles edit record: /dashboard/models/vehicles/edit/{vehicle_uuid} (auth:admin)
-- Admin dashboard (same crud as above for all other models)
-- Admin dashboard settings: /dashboard/settings (auth:admin)
+### Local Setup
+
+```bash
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+composer run dev
+```
+
+### Docker
+
+Docker support may be implemented in the future.
+
+---
 
 ## Models
-- User (users):
+- User (users)
     - id
     - name
     - email
     - password
-    - role (admin, customer), default=customer
+    - role (admin, customer) — default: customer
     - created_at
     - updated_at
-- Vehicle (vehicles):
+
+- Vehicle (vehicles)
     - id
     - name
     - type
-    - media (array of media ids)
+    - media (array of media IDs)
     - price_per_hour
-    - availability (available, unavailable, maintenance), default=available
+    - availability (available, unavailable, maintenance) — default: available
     - created_at
     - updated_at
-- Booking (bookings):
+
+- Booking (bookings)
     - id
     - user_id
     - vehicle_id
     - start_date
     - end_date
-    - status (pending, confirmed, canceled, completed), default=pending
-    - payment_status (unpaid, paid, refunded), default=unpaid
-    - payment_method (cash, credit_card, other), default=cash
+    - status (pending, confirmed, canceled, completed) — default: pending
+    - payment_status (unpaid, paid, refunded) — default: unpaid
+    - payment_method (cash, credit_card, other) — default: cash
     - total_amount
     - created_at
     - updated_at
-- Media (media):
+
+- Media (media)
     - id
     - type (image, video)
     - url
     - size
-    - user_id (admin id may be used)
+    - user_id (typically the admin uploader)
     - created_at
     - updated_at
-- Setting (settings, one record/instance holding project settings):
+
+- Setting (settings)
+    A single record storing application configuration.
     - id
     - business_name
     - business_description
     - business_phone_number
-    - business_addresses (csv)
+    - business_addresses (CSV format)
     - created_at
     - updated_at
 
-## Models relationships
-- Booking:
+---
+
+## Model Relationships
+
+- Booking
     - belongsTo User
     - belongsTo Vehicle
-- Vehicle:
-    - hasMany Booking
-- User:
+
+- Vehicle
     - hasMany Booking
 
-## Project assumptions
-- api first design:
-    - define restful apis for all relevant operations (auth, crud, etc)
-    - unit/integration tests are checking primarily the api
-- using hashids for encoding/decoding (id obfuscating):
-    - UUID-like public identifier generated via Hashids
-- each model must have (crud-only-controller, policies, api-resources, factory)
-- interfaces are located in: /app/Interfaces
-- helpers (functions) are located in: /app/Helpers
-- services (class) are located in: /app/Services
-- enums are located in: /app/Misc/enums.php
-- project specific configs in: /config/twr.php
-- multi-language support is expected
-- testing:
-    - integration tests only (since a test function may use several components)
-    - tests are testing only api calls (since the entire application is based around it)
-    - structure:
-        - auth tests: /tests/Feature/authTest.php
-        - crud tests (for each model): /tests/Feature/{model_name}CRUDTest.php
-        - others tests (for later)
-- UI interface:
-    - beige background
-    - reddish accent color
-    - white rabbit, red scarf, riding a red scooter
+- User
+    - hasMany Booking
 
-## UI hierarchy
-### pages:
-- auth:
-    - register
-    - login
-    - send_reset_password_notification
-    - reset_password
-    - confirm_email
-- admin:
-    - dashboard_stats (default dashboard page)
-    - dashboard_settings
-    - dashboard_records_index
-    - dashboard_record_create
-    - dashboard_record_edit
-- customer:
-    - bookings_list
-    - booking_details
-    - profile
-- common:
-    - home
-    - search
-    - vehicle details
-### components:
-- layouts:
-    - mainLayout
-    - dashboardLayout
-    - main-header
-    - main-footer
-    - dashboard-header
-    - dashboard-footer
-    - logo
-- forms:
-    - auth:
-        - register-form
-        - login-form
-        - send-password-reset-notificationForm
-        - reset-password-form
-        - send-email-confirmation-notificationForm
-    - admin:
-        - settings-form
-        - user-form
-        - vehicle-form
-        - booking-form
-    - customer:
-        - book-form
-    - common:
-        - vehicles-search-form
-        - vehicle-card
-- ui:
-    - form:
-        - label
-        - input
-        - textarea
-        - checkbox
-        - select
-        - file
-    - button:
-        - button
-    - text:
-        - header
-        - paragraph
-    - layout:
-        - paper
-        - card
-    - data:
-        - table
-    - misc:
-        - link
-        - dropdown
-        - modal
-        - alert
-        - error
-- modals:
-    - file-upload-modal
+---
+
+## Project Assumptions
+
+### API-first design
+The application follows an API-first architecture:
+- RESTful APIs are defined for all operations (authentication, CRUD, etc.)
+- Integration tests focus primarily on API behavior through controllers
+
+### ID Obfuscation
+- Public identifiers use Hashids for ID obfuscation
+- This generates UUID-like public identifiers derived from internal numeric IDs
+
+### Project Structure
+- Interfaces > /app/Interfaces
+- Helper functions > /app/Helpers
+- Services > /app/Services
+- Enums > /app/Misc/Enums
+- Project configuration > /config/twr.php
+
+### Model Requirements
+Each model must include:
+- CRUD controller
+- Factory
+- Policy implementation
+
+### Multi-language Support
+The application is designed to support multiple languages through Laravel localization.
+
+### Testing
+Testing focuses primarily on integration tests.
+Tests verify API behavior rather than individual components.
+
+---
+
+## UI Design
+
+Visual theme:
+- Beige background
+- Purple accent color
+
+Mascot concept:
+- White rabbit
+- Purple scarf
+- Riding a red scooter
+
+---
 
 ## Non-goals
-- No real payment gateway integration (mocked/manual)
-- No real-time availability syncing
-- No mobile app
+
+The project intentionally excludes the following features:
+- Real payment gateway integration (payments are mocked or manual)
+- Real-time vehicle availability synchronization
+- Mobile application
+
+---
 
 ## Notes
-- While real-world rental management systems often require extensive domain research, specifications and business consultation, this project takes a high-level approach and focuses primarily on architectural decisions and implementation quality from a web developer’s perspective.
+
+Real-world rental management systems typically require extensive domain research, detailed specifications, and business consultation.
+
+This project intentionally takes a high-level approach, focusing primarily on software architecture, implementation quality, and maintainable backend design from a web developer’s perspective.  
+
+Some details in this README may not exactly match the final implementation as the project evolved during development.

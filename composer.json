@@ -35,7 +35,8 @@
         "files": [
             "app/Helpers/responseHelper.php",
             "app/Helpers/searchHelper.php",
-            "app/Helpers/enumHelper.php"
+            "app/Helpers/enumHelper.php",
+            "app/Helpers/currencyHelper.php"
         ]
     },
     "autoload-dev": {

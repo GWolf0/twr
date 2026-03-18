@@ -1,4 +1,4 @@
-# TWR (Two Wheeler Renting) Demo
+# TWR (Two Wheeler Renting) Demo, Docker Setup Instructions
 
 ## Requirements
 
@@ -7,15 +7,10 @@
 
 ---
 
-# Run the project
+## Notes
+- Generating the APP_KEY in or after the building phase doesn't reflect on laravel, so to avoid the struggle, we generate the key before building the containers
 
-docker compose up -d --build
-
----
-
-# Setup Laravel
-
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan config:clear
-docker compose exec app php artisan storage:link
-docker compose exec app php artisan migrate:fresh --seed
+# Steps
+- Generate the app key in ".env.docker" (the env file copied into the container)
+- Run containers: docker compose up -d --build
+- Optional seed: docker compose exec app php artisan db:seed

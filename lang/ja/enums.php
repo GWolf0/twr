@@ -6,6 +6,16 @@ return [
         "customer" => "顧客"
     ],
 
+    "vehicle_type" => [
+        "scooter" => "スクーター",
+        "motorbike" => "バイク",
+        "electric_bike" => "電動自転車",
+        "moped" => "モペット",
+        "bicycle" => "自転車",
+        "sports_bike" => "スポーツバイク",
+        "cruiser" => "クルーザー",
+    ],
+
     "vehicle_availability" => [
         "available" => "利用可能",
         "unavailable" => "利用不可",

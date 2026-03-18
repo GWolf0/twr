@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // one default admin user
-        User::factory()->create([
+        $admin = User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@twr.com',
             'role' => 'admin',
@@ -51,7 +51,8 @@ class DatabaseSeeder extends Seeder
             File::copy($file->getRealPath(), $destinationPath . '/' . $filename);
 
             Media::factory()->create([
-                'url' => asset('storage/images/' . $filename)
+                'url' => asset('storage/images/' . $filename),
+                'user_id' => $admin->id
             ]);
         }
 
@@ -65,7 +66,7 @@ class DatabaseSeeder extends Seeder
             'availability' => VehicleAvailability::unavailable->name,
         ]);
 
-        // pick 5 users, each one one from 1 to 2 bookings
+        // pick 5 users, make each one from 1 to 2 bookings
         $customers->random(5)->each(function ($customer) {
             Booking::factory()->count(rand(1, 2))->create([
                 'user_id' => $customer->id,

@@ -34,6 +34,14 @@ return [
         ],
     ],
 
+    "home_search_box_name_placeholder" => "車両を検索...",
+    "home_search_box_price_per_hour_placeholder" => "最大料金（$/時間）",
+    "home_search_box_sort_options" => [
+        'created_at_desc' => '並び替え：新着順',
+        'price_per_hour_asc' => '並び替え：料金が安い順',
+        'price_per_hour_desc' => '並び替え：料金が高い順',
+    ],
+
     "search_title" => "車両を探す",
     "search_sub" => ":total 件の車両が見つかりました",
     "search_no_vehicles_found" => "車両が見つかりませんでした",

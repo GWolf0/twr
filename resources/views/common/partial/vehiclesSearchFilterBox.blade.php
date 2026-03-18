@@ -3,8 +3,10 @@
     use App\Misc\Enums\VehicleType;
     use function App\Helpers\enumOptions;
 
-    $typesOptions = enumOptions(VehicleType::class);
-    $availabilityOptions = enumOptions(VehicleAvailability::class);
+    // $typesOptions = enumOptions(VehicleType::class);
+    $typesOptions = __('enums.vehicle_type');
+    // $availabilityOptions = enumOptions(VehicleAvailability::class);
+    $availabilityOptions = __('enums.vehicle_availability');
 
     $filterConfig = [
         'mainItem' => 'name',
@@ -13,7 +15,7 @@
                 'name' => 'name',
                 'type' => 'input:text',
                 'op' => 'l',
-                'attrs' => 'placeholder="Search vehicles (e.g. Honda, Scooter)..."',
+                'attrs' => 'placeholder="' . __('copywrite.home_search_box_name_placeholder') . '"',
             ],
             [
                 'name' => 'type',
@@ -24,8 +26,7 @@
                 'name' => 'price_per_hour',
                 'type' => 'input:number',
                 'op' => 'lt',
-                'attrs' => 'placeholder="Max $/hr"',
-                // 'inline' => true,
+                'attrs' => 'placeholder="' . __('copywrite.home_search_box_price_per_hour_placeholder') . '"',
             ],
             [
                 'name' => 'availability',
@@ -36,11 +37,7 @@
                 'name' => 's',
                 'type' => 'select',
                 'default' => 'created_at_desc',
-                'options' => [
-                    'created_at_desc' => 'Sort: Newest',
-                    'price_per_hour_asc' => 'Sort: Price low to high',
-                    'price_per_hour_desc' => 'Sort: Price high to low',
-                ],
+                'options' => __('copywrite.home_search_box_sort_options'),
             ],
         ],
     ];

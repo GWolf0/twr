@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Filters and paginates results based on dynamic query parameters.
@@ -36,8 +37,16 @@ function searchFiltered(Builder $builder, string|array|null $queryParams, array 
         $builder->with($with);
     }
 
+    $table = $builder->getModel()->getTable();
+    $columns = cache()->remember("table_columns_{$table}", 3600, function () use ($table) {
+        return Schema::getColumnListing($table);
+    });
+
     foreach ($queryParams as $field => $value) {
         if (in_array($field, $reserved)) continue;
+
+        // Skip invalid columns
+        if (!in_array($field, $columns)) continue;
 
         // Handle multi-value arrays (?status[]=active&status[]=pending)
         if (is_array($value)) {

@@ -36,7 +36,7 @@
         @endisset
 
         {{-- Content --}}
-        <div class="px-6 py-4">
+        <div class="px-6 py-4 max-h-128 overflow-y-auto">
             {{ $content ?? ($slot ?? '') }}
         </div>
 

@@ -34,6 +34,14 @@ return [
         ],
     ],
 
+    "home_search_box_name_placeholder" => "Search vehicles...",
+    "home_search_box_price_per_hour_placeholder" => "Max $/hr",
+    "home_search_box_sort_options" => [
+        'created_at_desc' => 'Sort: Newest',
+        'price_per_hour_asc' => 'Sort: Price low to high',
+        'price_per_hour_desc' => 'Sort: Price high to low',
+    ],
+
     "search_title" => "Find Your Ride",
     "search_sub" => "Showing :total vehicles found",
     "search_no_vehicles_found" => "No vehicles found",

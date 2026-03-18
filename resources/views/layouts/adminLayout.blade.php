@@ -39,33 +39,42 @@
 
             {{-- Navigation --}}
             <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
+                @php
+                    $activeClass = 'bg-secondary text-foreground';
+                    $inactiveClass = 'hover:bg-secondary hover:text-foreground';
+                @endphp
 
                 <a href="{{ route('admin.page.dashboard_stats') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+    {{ request()->routeIs('admin.page.dashboard_stats') ? $activeClass : $inactiveClass }}">
                     <i class="bi bi-speedometer2"></i>
                     <span>Stats</span>
                 </a>
 
                 <a href="{{ route('admin.page.dashboard_settings') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+   {{ request()->routeIs('admin.page.dashboard_settings') ? $activeClass : $inactiveClass }}">
                     <i class="bi bi-gear-wide"></i>
-                    <span>Setings</span>
+                    <span>Settings</span>
                 </a>
 
                 <a href="{{ route('admin.page.dashboard_records_index', ['table' => 'users']) }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+   {{ request()->routeIs('admin.page.dashboard_records_index') && request('table') === 'users' ? $activeClass : $inactiveClass }}">
                     <i class="bi bi-people"></i>
                     <span>Users</span>
                 </a>
 
                 <a href="{{ route('admin.page.dashboard_records_index', ['table' => 'vehicles']) }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+   {{ request()->routeIs('admin.page.dashboard_records_index') && request('table') === 'vehicles' ? $activeClass : $inactiveClass }}">
                     <i class="bi bi-circle"></i>
                     <span>Vehicles</span>
                 </a>
 
                 <a href="{{ route('admin.page.dashboard_records_index', ['table' => 'bookings']) }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition hover:bg-secondary hover:text-foreground">
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg transition 
+   {{ request()->routeIs('admin.page.dashboard_records_index') && request('table') === 'bookings' ? $activeClass : $inactiveClass }}">
                     <i class="bi bi-ticket-detailed"></i>
                     <span>Bookings</span>
                 </a>

@@ -1,44 +1,39 @@
 FROM php:8.2-fpm-alpine
 
-# Install system dependencies
 RUN apk add --no-cache \
     bash \
     libzip-dev \
     oniguruma-dev \
     sqlite-dev \
-    curl
+    curl \
+    nodejs \
+    npm
 
-# Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
     pdo_sqlite \
     mbstring \
     zip
 
-# Install composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy only required for caching
-COPY composer.json composer.lock .env.docker ./
+COPY . .
 
-# Create .env from .env.docker
 RUN cp .env.docker .env
 
-# Install dependencies
+RUN touch database/database.sqlite
+
 RUN composer install \
     --optimize-autoloader \
     --no-interaction
 
-# Create required directories and files and permissions
-RUN touch database/database.sqlite \
-    && mkdir -p storage/app/public/images \
-    && chown -R www-data:www-data storage bootstrap/cache database
+RUN chown -R www-data:www-data database storage bootstrap/cache
 
-# Laravel optimization
-RUN php artisan config:cache || true
-RUN php artisan route:cache || true
-RUN php artisan view:cache || true
+RUN php artisan migrate:fresh --force \
+    && npm install \
+    && npm run build \
+    && php artisan storage:link
 
 CMD ["php-fpm"]

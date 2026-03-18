@@ -87,7 +87,9 @@
                                 @if (!in_array($booking->status, ['canceled', 'completed']))
                                     <form action="{{ route('customer.action.cancel_booking', $booking->id) }}"
                                         method="POST"
-                                        onsubmit="return confirm('Are you sure you want to cancel this booking?')">
+                                        data-confirm
+                                        {{-- onsubmit="return confirm('Are you sure you want to cancel this booking?')" --}}
+                                    >
                                         @csrf
                                         <x-ui.button variant="destructive" size="sm" type="submit">
                                             Cancel

@@ -23,4 +23,6 @@ return [
     "excellent" => "非常に良い",
     "insurance" => "保険",
     "basic_included" => "基本補償込み",
+    "availability" => "availability",
+    "type" => "type"
 ];

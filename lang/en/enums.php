@@ -6,6 +6,16 @@ return [
         "customer" => "customer"
     ],
 
+    "vehicle_type" => [
+        "scooter" => "scooter",
+        "motorbike" => "motorbike",
+        "electric_bike" => "electric bike",
+        "moped" => "moped",
+        "bicycle" => "bicycle",
+        "sports_bike" => "sports bike",
+        "cruiser" => "cruiser",
+    ],
+
     "vehicle_availability" => [
         "available" => "available",
         "unavailable" => "unavailable",

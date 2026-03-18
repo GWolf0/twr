@@ -105,7 +105,7 @@ class BookingService implements IBookingInterface
         $to = Carbon::parse($validated["end_date"]);
 
         $hours = max(1, ceil($from->floatDiffInHours($to)));
-        $amount = $vehicle->price_per_hour * $hours;
+        $amount = round($vehicle->price_per_hour * $hours, 2);
 
         return MResponse::create([
             "amount" => $amount,

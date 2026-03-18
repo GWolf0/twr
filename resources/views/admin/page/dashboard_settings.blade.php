@@ -16,7 +16,6 @@ dashboard seetinfs page
         <x-slot:header>
             <div class="flex gap-2">
                 <x-ui.header h="3">Settings</x-ui.header>
-                <p>{{ request()->user()->name }}</p>
             </div>
         </x-slot:header>
 

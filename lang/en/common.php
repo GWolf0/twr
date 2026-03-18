@@ -23,4 +23,6 @@ return [
     "excellent" => "excellent",
     "insurance" => "insurance",
     "basic_included" => "basic included",
+    "availability" => "availability",
+    "type" => "type"
 ];

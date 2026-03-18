@@ -4,7 +4,7 @@
     use function App\Helpers\enumOptions;
 
     $record = $model;
-    $availabilityTypes = enumOptions(VehicleType::class);
+    $typesOptions = enumOptions(VehicleType::class);
     $availabilityOptions = enumOptions(VehicleAvailability::class);
 @endphp
 
@@ -34,7 +34,7 @@
             <x-ui.form-group>
                 <x-ui.error key="type" />
                 <x-ui.label for="f_type">Type</x-ui.label>
-                <x-ui.select id="f_type" name="type" :options="$typeOptions" :initialValue="$typeValue" required />
+                <x-ui.select id="f_type" name="type" :options="$typesOptions" :initialValue="$typeValue" required />
             </x-ui.form-group>
 
             <x-ui.form-group>

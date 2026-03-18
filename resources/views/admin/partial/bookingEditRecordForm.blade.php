@@ -9,7 +9,13 @@
     $record = $model;
 
     $userOptions = User::select('id', 'name')->pluck('id', 'name')->toArray();
-    $vehicleOptions = Vehicle::select('id', DB::raw("CONCAT(name, ' ($', price_per_hour, '/h)') as label"))
+
+    $driver = DB::getDriverName();
+    $labelExpr =
+        $driver === 'sqlite'
+            ? "name || ' ($' || price_per_hour || '/h)'"
+            : "CONCAT(name, ' ($', price_per_hour, '/h)')";
+    $vehicleOptions = Vehicle::select('id', DB::raw("$labelExpr as label"))
         ->pluck('id', 'label')
         ->toArray();
 
