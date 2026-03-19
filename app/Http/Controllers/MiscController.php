@@ -18,7 +18,7 @@ class MiscController extends Controller
     public function fkValues(Request $request, string $table, string $column): JsonResponse
     {
         $page = $request->query("page", 1);
-        $perPage = $request->query("per_page", 1);
+        $perPage = $request->query("per_page", 27);
         $fkValuesResponse = getFKValues($table, $column, $page, $perPage);
         
         return response()->json($fkValuesResponse->data, $fkValuesResponse->status);

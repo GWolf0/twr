@@ -44,15 +44,21 @@ class DatabaseSeeder extends Seeder
         $sourcePath = database_path('seed-assets/images');
         $destinationPath = storage_path('app/public/images');
         File::ensureDirectoryExists($destinationPath);
+
         $files = File::files($sourcePath);
         foreach ($files as $file) {
             $filename = $file->getFilename();
+            $storedPath = $destinationPath . '/' . $filename;
 
-            File::copy($file->getRealPath(), $destinationPath . '/' . $filename);
+            if (!File::exists($storedPath)) {
+                File::copy($file->getRealPath(), $storedPath);
+            }
 
             Media::factory()->create([
+                // 'url' => 'storage/images/' . $filename,
                 'url' => asset('storage/images/' . $filename),
-                'user_id' => $admin->id
+                'user_id' => $admin->id,
+                'size' => File::size($storedPath),
             ]);
         }
 

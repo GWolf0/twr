@@ -56,6 +56,12 @@ The project emphasizes **clean architecture, maintainability, and API-driven des
 
 ## Screenshots
 
+![Alt text](public/screenshots/twr%20(2).png)
+![Alt text](public/screenshots/twr%20(3).png)
+![Alt text](public/screenshots/twr%20(4).png)
+![Alt text](public/screenshots/twr%20(5).png)
+![Alt text](public/screenshots/twr%20(6).png)
+
 ---
 
 ## Getting Started
@@ -71,7 +77,7 @@ composer run dev
 
 ### Docker
 
-Docker support may be implemented in the future.
+Refer to "/docker/INSTRUCTIONS.md".
 
 ---
 
@@ -205,3 +211,7 @@ Real-world rental management systems typically require extensive domain research
 This project intentionally takes a high-level approach, focusing primarily on software architecture, implementation quality, and maintainable backend design from a web developer’s perspective.  
 
 Some details in this README may not exactly match the final implementation as the project evolved during development.
+
+Bugs are expected.
+
+Approx dev duration: 2 months (01-2026, 03-2026)
