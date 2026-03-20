@@ -21,19 +21,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN cp .env.docker .env
+COPY docker/php/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-RUN touch database/database.sqlite
-
-RUN composer install \
-    --optimize-autoloader \
-    --no-interaction
-
-RUN chown -R www-data:www-data database storage bootstrap/cache
-
-RUN php artisan migrate:fresh --force \
-    && npm install \
-    && npm run build \
-    && php artisan storage:link
-
-CMD ["php-fpm"]
+CMD ["./entrypoint.sh"]

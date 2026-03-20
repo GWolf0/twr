@@ -68,12 +68,35 @@ The project emphasizes **clean architecture, maintainability, and API-driven des
 
 ### Local Setup
 
-```bash
-cp .env.example .env
-php artisan key:generate
-php artisan migrate --seed
-composer run dev
-```
+1. Clone the repository
+    - git clone [https://github.com/GWolf0/twr.git](https://github.com/GWolf0/twr.git)
+    - cd twr
+
+2. Install PHP dependencies
+    - composer install
+
+3. Setup environment file
+    - cp .env.example .env
+
+4. Generate app key
+    - php artisan key:generate
+
+5. Create SQLite database
+    - touch database/database.sqlite
+
+6. Configure .env (SQLite)
+- Make sure these values are set:
+    - DB_CONNECTION=sqlite
+    - DB_DATABASE=database/database.sqlite
+
+7. Run migrations & seeders
+    - php artisan migrate --seed
+
+8. Storage symlink
+    - php artisan storage:link
+
+9. Run dev server
+    - composer run dev
 
 ### Docker
 

@@ -42,25 +42,44 @@ class DatabaseSeeder extends Seeder
 
         // media
         $sourcePath = database_path('seed-assets/images');
-        $destinationPath = storage_path('app/public/images');
-        File::ensureDirectoryExists($destinationPath);
-
         $files = File::files($sourcePath);
+
         foreach ($files as $file) {
             $filename = $file->getFilename();
-            $storedPath = $destinationPath . '/' . $filename;
 
-            if (!File::exists($storedPath)) {
-                File::copy($file->getRealPath(), $storedPath);
+            if (!Storage::disk('images')->exists($filename)) {
+                Storage::disk('images')->put(
+                    $filename,
+                    File::get($file->getRealPath())
+                );
+
+                Media::factory()->create([
+                    'url' => Storage::disk('images')->url($filename),
+                    'user_id' => $admin->id,
+                    'size' => Storage::disk('images')->size($filename),
+                ]);
             }
-
-            Media::factory()->create([
-                // 'url' => 'storage/images/' . $filename,
-                'url' => asset('storage/images/' . $filename),
-                'user_id' => $admin->id,
-                'size' => File::size($storedPath),
-            ]);
         }
+        // $sourcePath = database_path('seed-assets/images');
+        // $destinationPath = storage_path('app/public/images');
+        // File::ensureDirectoryExists($destinationPath);
+
+        // $files = File::files($sourcePath);
+        // foreach ($files as $file) {
+        //     $filename = $file->getFilename();
+        //     $storedPath = $destinationPath . '/' . $filename;
+
+        //     if (!File::exists($storedPath)) {
+        //         File::copy($file->getRealPath(), $storedPath);
+        //     }
+
+        //     Media::factory()->create([
+        //         // 'url' => 'storage/images/' . $filename,
+        //         'url' => asset('storage/images/' . $filename),
+        //         'user_id' => $admin->id,
+        //         'size' => File::size($storedPath),
+        //     ]);
+        // }
 
         // 30 vehicles with status "available"
         Vehicle::factory()->count(30)->create([
