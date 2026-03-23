@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: laravel_app
+    # set user (optional)
+    # user: "1000:1000"
     env_file:
       - .env
     restart: unless-stopped

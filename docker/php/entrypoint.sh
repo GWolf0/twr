@@ -1,3 +1,5 @@
+#! THIS FILE IS NOT USED !#
+
 #!/bin/sh
 
 # ensure sqlite exists
