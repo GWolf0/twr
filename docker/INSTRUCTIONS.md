@@ -38,20 +38,26 @@ npm run build
 ```
 php artisan key:generate
 ```
+or generate key in cmd and copy it into the env:
+```
+php -r "echo base64_encode(random_bytes(32));"
+```
 6. Run containers:
 ```
 docker compose up --build
 ```
 7. Link storage:
 ```
-php artisan storage:link
+docker compose exec app php artisan storage:link
 ```
 8. Run migrations (and seed):
 ```
-php artisan migrate:fresh --seed
+docker compose exec app php artisan migrate:fresh --seed
 ```
-
----
+9. Give permissions to "www-data" for specific files:
+```
+docker compose exec app chown -R www-data:www-data storage bootstrap/cache database
+```
 
 ## Notes:
 
